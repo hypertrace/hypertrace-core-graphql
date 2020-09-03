@@ -16,13 +16,13 @@ import org.hypertrace.core.graphql.spi.config.GraphQlServiceConfig;
  * <p>This differs from the default Scheduler.io implementation which uses an unbounded number of
  * threads.
  */
-class NetworkSchedulerProvider implements Provider<Scheduler> {
+class BoundedIoSchedulerProvider implements Provider<Scheduler> {
 
   private final Scheduler scheduler;
   private final GraphQlServiceConfig serviceConfig;
 
   @Inject
-  NetworkSchedulerProvider(GraphQlServiceConfig serviceConfig) {
+  BoundedIoSchedulerProvider(GraphQlServiceConfig serviceConfig) {
     this.serviceConfig = serviceConfig;
     this.scheduler = Schedulers.from(this.buildExecutor());
   }
@@ -34,13 +34,13 @@ class NetworkSchedulerProvider implements Provider<Scheduler> {
 
   private Executor buildExecutor() {
     return Executors.newFixedThreadPool(
-        this.serviceConfig.getMaxNetworkThreads(), this.buildThreadFactory());
+        this.serviceConfig.getMaxIoThreads(), this.buildThreadFactory());
   }
 
   private ThreadFactory buildThreadFactory() {
     return new ThreadFactoryBuilder()
         .setDaemon(true)
-        .setNameFormat("rx-network-scheduler-%d")
+        .setNameFormat("rx-bounded-io-scheduler-%d")
         .build();
   }
 }

@@ -12,4 +12,4 @@ import javax.inject.Qualifier;
 @Qualifier
 @Target({FIELD, PARAMETER, METHOD})
 @Retention(RUNTIME)
-public @interface NetworkScheduler {}
+public @interface BoundedIoScheduler {}

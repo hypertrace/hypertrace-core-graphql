@@ -8,8 +8,8 @@ public class RxUtilModule extends AbstractModule {
   @Override
   protected void configure() {
     bind(Scheduler.class)
-        .annotatedWith(NetworkScheduler.class)
-        .toProvider(NetworkSchedulerProvider.class)
+        .annotatedWith(BoundedIoScheduler.class)
+        .toProvider(BoundedIoSchedulerProvider.class)
         .in(Singleton.class);
   }
 }
