@@ -75,7 +75,7 @@ jobs:
     steps:
       - setup_build_environment
       - snyk/scan:
-          additional-arguments: --all-sub-projects
+          additional-arguments: --all-sub-projects --policy-path=.snyk
 
   publish:
     executor: java
@@ -132,7 +132,7 @@ workflows:
           filters:
             branches:
               only:
-                - master
+                - main
       - package-charts:
           context: hypertrace-publishing
           requires:
@@ -140,4 +140,4 @@ workflows:
           filters:
             branches:
               only:
-                - master
+                - main

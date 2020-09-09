@@ -4,10 +4,6 @@ plugins {
   id("org.hypertrace.jacoco-report-plugin")
 }
 
-java {
-  sourceCompatibility = JavaVersion.VERSION_11
-}
-
 dependencies {
   api("com.google.inject:guice:4.2.3")
   api(project(":hypertrace-core-graphql-spi"))
@@ -17,7 +13,7 @@ dependencies {
   implementation("io.reactivex.rxjava3:rxjava:3.0.2")
   implementation("com.google.guava:guava:29.0-jre")
 
-  implementation("org.hypertrace.core.attribute.service:attribute-service-api:0.1.2")
+  implementation("org.hypertrace.core.attribute.service:attribute-service-api:0.1.9")
   implementation(project(":hypertrace-core-graphql-grpc-utils"))
 
   annotationProcessor("org.projectlombok:lombok:1.18.12")
