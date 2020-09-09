@@ -11,9 +11,9 @@ java {
 dependencies {
   api("com.google.inject:guice:4.2.3")
   api("com.graphql-java:graphql-java:14.0")
-  api("io.grpc:grpc-api:1.30.2")
-  api("io.grpc:grpc-core:1.30.2")
-  api("io.grpc:grpc-stub:1.30.2")
+  api("io.grpc:grpc-api:1.31.0")
+  api("io.grpc:grpc-core:1.31.0")
+  api("io.grpc:grpc-stub:1.31.0")
   api(project(":hypertrace-core-graphql-context"))
 
   implementation("org.hypertrace.core.grpcutils:grpc-context-utils:0.1.1")
