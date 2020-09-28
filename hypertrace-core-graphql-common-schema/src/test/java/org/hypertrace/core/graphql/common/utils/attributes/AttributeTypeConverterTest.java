@@ -12,7 +12,7 @@ public class AttributeTypeConverterTest {
   void testConvert() {
     AttributeTypeConverter attributeTypeConverter = new AttributeTypeConverter();
 
-    assertEquals(Single.just(AttributeType.STRING).blockingGet(),
+    assertEquals(AttributeType.STRING,
         attributeTypeConverter.convert(AttributeModelType.STRING).blockingGet());
     assertEquals(Single.just(AttributeType.BOOLEAN).blockingGet(),
         attributeTypeConverter.convert(AttributeModelType.BOOLEAN).blockingGet());
