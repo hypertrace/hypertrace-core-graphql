@@ -14,17 +14,17 @@ public class AttributeTypeConverterTest {
 
     assertEquals(AttributeType.STRING,
         attributeTypeConverter.convert(AttributeModelType.STRING).blockingGet());
-    assertEquals(Single.just(AttributeType.BOOLEAN).blockingGet(),
+    assertEquals(AttributeType.BOOLEAN,
         attributeTypeConverter.convert(AttributeModelType.BOOLEAN).blockingGet());
-    assertEquals(Single.just(AttributeType.LONG).blockingGet(),
+    assertEquals(AttributeType.LONG,
         attributeTypeConverter.convert(AttributeModelType.LONG).blockingGet());
-    assertEquals(Single.just(AttributeType.DOUBLE).blockingGet(),
+    assertEquals(AttributeType.DOUBLE,
         attributeTypeConverter.convert(AttributeModelType.DOUBLE).blockingGet());
-    assertEquals(Single.just(AttributeType.TIMESTAMP).blockingGet(),
+    assertEquals(AttributeType.TIMESTAMP,
         attributeTypeConverter.convert(AttributeModelType.TIMESTAMP).blockingGet());
-    assertEquals(Single.just(AttributeType.STRING_MAP).blockingGet(),
+    assertEquals(AttributeType.STRING_MAP,
         attributeTypeConverter.convert(AttributeModelType.STRING_MAP).blockingGet());
-    assertEquals(Single.just(AttributeType.STRING_ARRAY).blockingGet(),
+    assertEquals(AttributeType.STRING_ARRAY,
         attributeTypeConverter.convert(AttributeModelType.STRING_ARRAY).blockingGet());
   }
 }
