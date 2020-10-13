@@ -5,9 +5,6 @@ plugins {
 }
 
 dependencies {
-  api(platform(project(":hypertrace-core-graphql-platform")))
-  testImplementation(platform(project(":hypertrace-core-graphql-test-platform")))
-  
   api("com.graphql-java:graphql-java")
 
   implementation("org.slf4j:slf4j-api")

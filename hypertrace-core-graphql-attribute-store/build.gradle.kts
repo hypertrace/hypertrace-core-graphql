@@ -5,10 +5,6 @@ plugins {
 }
 
 dependencies {
-  api(platform(project(":hypertrace-core-graphql-platform")))
-  annotationProcessor(platform(project(":hypertrace-core-graphql-platform")))
-  testImplementation(platform(project(":hypertrace-core-graphql-test-platform")))
-  
   api("com.google.inject:guice")
   api(project(":hypertrace-core-graphql-spi"))
   api(project(":hypertrace-core-graphql-context"))
