@@ -5,19 +5,23 @@ plugins {
 }
 
 dependencies {
-  api("com.google.inject:guice:4.2.3")
-  api("com.fasterxml.jackson.core:jackson-databind:2.11.0")
-  api("com.graphql-java:graphql-java:14.0")
+  api(platform(project(":hypertrace-core-graphql-platform")))
+  annotationProcessor(platform(project(":hypertrace-core-graphql-platform")))
+  testImplementation(platform(project(":hypertrace-core-graphql-test-platform")))
+  
+  api("com.google.inject:guice")
+  api("com.fasterxml.jackson.core:jackson-databind")
+  api("com.graphql-java:graphql-java")
 
-  annotationProcessor("org.projectlombok:lombok:1.18.12")
-  compileOnly("org.projectlombok:lombok:1.18.12")
+  annotationProcessor("org.projectlombok:lombok")
+  compileOnly("org.projectlombok:lombok")
 
-  implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.11.0")
-  implementation("org.slf4j:slf4j-api:1.7.3")
+  implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+  implementation("org.slf4j:slf4j-api")
 
-  testImplementation("org.junit.jupiter:junit-jupiter:5.5.1")
-  testImplementation("org.mockito:mockito-core:3.2.4")
-  testImplementation("org.mockito:mockito-junit-jupiter:3.2.4")
+  testImplementation("org.junit.jupiter:junit-jupiter")
+  testImplementation("org.mockito:mockito-core")
+  testImplementation("org.mockito:mockito-junit-jupiter")
 }
 
 tasks.test {

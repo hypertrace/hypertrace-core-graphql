@@ -5,15 +5,19 @@ plugins {
 }
 
 dependencies {
-  api("com.google.inject:guice:4.2.3")
-  api("com.graphql-java:graphql-java:14.0")
+  api(platform(project(":hypertrace-core-graphql-platform")))
+  annotationProcessor(platform(project(":hypertrace-core-graphql-platform")))
+  testImplementation(platform(project(":hypertrace-core-graphql-test-platform")))
 
-  annotationProcessor("org.projectlombok:lombok:1.18.12")
-  compileOnly("org.projectlombok:lombok:1.18.12")
+  api("com.google.inject:guice")
+  api("com.graphql-java:graphql-java")
 
-  testImplementation("org.junit.jupiter:junit-jupiter:5.5.1")
-  testImplementation("org.mockito:mockito-core:3.2.4")
-  testImplementation("org.mockito:mockito-junit-jupiter:3.2.4")
+  annotationProcessor("org.projectlombok:lombok")
+  compileOnly("org.projectlombok:lombok")
+
+  testImplementation("org.junit.jupiter:junit-jupiter")
+  testImplementation("org.mockito:mockito-core")
+  testImplementation("org.mockito:mockito-junit-jupiter")
 }
 
 tasks.test {

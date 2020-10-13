@@ -4,15 +4,15 @@ plugins {
 
 dependencies {
   api(platform(project(":hypertrace-core-graphql-platform")))
+  annotationProcessor(platform(project(":hypertrace-core-graphql-platform")))
 
   api("com.google.inject:guice")
   api("com.graphql-java:graphql-java")
   api(project(":hypertrace-core-graphql-spi"))
   api("io.github.graphql-java:graphql-java-annotations")
 
-  // Compile only time things don't require a platform since they're isolated to this project
-  annotationProcessor("org.projectlombok:lombok:1.18.12")
-  compileOnly("org.projectlombok:lombok:1.18.12")
+  annotationProcessor("org.projectlombok:lombok")
+  compileOnly("org.projectlombok:lombok")
 
   implementation("org.slf4j:slf4j-api")
   implementation("io.reactivex.rxjava3:rxjava")
