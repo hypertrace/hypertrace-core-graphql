@@ -22,6 +22,7 @@ public interface AttributeMetadata {
   String ATTRIBUTE_METADATA_GROUPABLE_NAME = "groupable";
 
   @GraphQLField
+  @GraphQLNonNull
   @GraphQLName(ATTRIBUTE_METADATA_SCOPE_NAME)
   String scope();
 
