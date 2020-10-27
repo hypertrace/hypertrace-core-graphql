@@ -16,7 +16,9 @@ dependencies {
   implementation("org.slf4j:slf4j-api")
   implementation("io.reactivex.rxjava3:rxjava")
   implementation("org.hypertrace.gateway.service:gateway-service-api")
+  implementation("org.hypertrace.core.serviceframework:platform-metrics")
   implementation("com.google.protobuf:protobuf-java-util")
+
 
   implementation(project(":hypertrace-core-graphql-context"))
   implementation(project(":hypertrace-core-graphql-grpc-utils"))
