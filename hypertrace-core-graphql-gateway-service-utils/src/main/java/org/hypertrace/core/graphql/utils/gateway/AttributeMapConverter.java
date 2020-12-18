@@ -17,6 +17,7 @@ class AttributeMapConverter
     implements BiConverter<Collection<AttributeRequest>, Map<String, Value>, Map<String, Object>> {
 
   private final Converter<Value, Object> valueConverter;
+  private static final Object EMPTY = new Object();
 
   @Inject
   AttributeMapConverter(Converter<Value, Object> valueConverter) {
@@ -34,9 +35,15 @@ class AttributeMapConverter
 
   private Single<Entry<String, Object>> buildAttributeMapEntry(
       AttributeRequest attributeRequest, Map<String, Value> response) {
+    Value value = response.get(attributeRequest.alias());
+    String attributeKey = attributeRequest.attribute().key();
+    if (Value.getDefaultInstance().equals(value)) {
+      return Single.just(new SimpleImmutableEntry<>(attributeKey, EMPTY));
+    }
+
     // Uses SimpleImmutableEntry to support null values
     return this.valueConverter
-        .convert(response.get(attributeRequest.alias()))
-        .map(value -> new SimpleImmutableEntry<>(attributeRequest.attribute().key(), value));
+        .convert(value)
+        .map(convertedValue -> new SimpleImmutableEntry<>(attributeKey, convertedValue));
   }
 }
