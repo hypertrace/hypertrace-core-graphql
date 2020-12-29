@@ -48,27 +48,51 @@ class DefaultArgumentDeserializer implements ArgumentDeserializer {
   @Override
   public <T> Optional<T> deserializeObject(Map<String, Object> arguments, Class<T> argSchema) {
     return this.argumentKeyForSchema(argSchema)
-        .flatMap(key -> this.deserializeValue(arguments.get(key), argSchema));
+        .flatMap(key -> this.deserializeObject(arguments, argSchema, key));
+  }
+
+  @Override
+  public <T> Optional<T> deserializeObject(
+      Map<String, Object> arguments, Class<T> argSchema, String name) {
+    return this.deserializeValue(arguments.get(name), argSchema);
   }
 
   @Override
   public <T> Optional<List<T>> deserializeObjectList(
       Map<String, Object> arguments, Class<T> argSchema) {
     return this.argumentKeyForSchema(argSchema)
-        .flatMap(key -> this.deserializeValueList(arguments.get(key), argSchema));
+        .flatMap(key -> this.deserializeObjectList(arguments, argSchema, key));
+  }
+
+  @Override
+  public <T> Optional<List<T>> deserializeObjectList(
+      Map<String, Object> arguments, Class<T> argSchema, String argName) {
+    return this.deserializeValueList(arguments.get(argName), argSchema);
   }
 
   @Override
   public <T> Optional<T> deserializePrimitive(
       Map<String, Object> arguments, Class<? extends PrimitiveArgument<T>> argSchema) {
-    return this.argumentKeyForSchema(argSchema).map(key -> this.uncheckedCast(arguments.get(key)));
+    return this.argumentKeyForSchema(argSchema)
+        .flatMap(key -> this.deserializePrimitive(arguments, key));
+  }
+
+  @Override
+  public <T> Optional<T> deserializePrimitive(Map<String, Object> arguments, String argName) {
+    return Optional.ofNullable(this.uncheckedCast(arguments.get(argName)));
   }
 
   @Override
   public <T> Optional<List<T>> deserializePrimitiveList(
       Map<String, Object> arguments, Class<? extends PrimitiveArgument<T>> argSchema) {
     return this.argumentKeyForSchema(argSchema)
-        .flatMap(key -> this.logIfNotList(arguments.get(key)));
+        .flatMap(key -> this.deserializePrimitiveList(arguments, key));
+  }
+
+  @Override
+  public <T> Optional<List<T>> deserializePrimitiveList(
+      Map<String, Object> arguments, String argName) {
+    return this.logIfNotList(arguments.get(argName));
   }
 
   private <T> Optional<T> deserializeValue(@Nullable Object rawValue, Class<T> argSchema) {

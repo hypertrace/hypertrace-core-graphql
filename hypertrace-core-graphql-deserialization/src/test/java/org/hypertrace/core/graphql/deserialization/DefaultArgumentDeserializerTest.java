@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,17 +28,29 @@ class DefaultArgumentDeserializerTest {
   private interface TestObjectArgument {
     String ARG_NAME = "objectArg";
     String VALUE_NAME = "value";
-
-    String value();
   }
 
   private static class DefaultTestObjectArgument implements TestObjectArgument {
     @JsonProperty(VALUE_NAME)
     private String value;
 
+    private DefaultTestObjectArgument(String value) {
+      this.value = value;
+    }
+
+    DefaultTestObjectArgument() {}
+
     @Override
-    public String value() {
-      return this.value;
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      DefaultTestObjectArgument that = (DefaultTestObjectArgument) o;
+      return Objects.equals(value, that.value);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(value);
     }
   }
 
@@ -92,8 +105,8 @@ class DefaultArgumentDeserializerTest {
             .deserializeObjectList(argMap, TestObjectArgument.class)
             .orElseThrow();
     assertEquals(2, result.size());
-    assertEquals("foo", result.get(0).value());
-    assertEquals("bar", result.get(1).value());
+    assertEquals(new DefaultTestObjectArgument("foo"), result.get(0));
+    assertEquals(new DefaultTestObjectArgument("bar"), result.get(1));
   }
 
   @Test
@@ -128,11 +141,10 @@ class DefaultArgumentDeserializerTest {
         Map.of(TestObjectArgument.ARG_NAME, Map.of(TestObjectArgument.VALUE_NAME, "baz"));
 
     assertEquals(
-        "baz",
+        new DefaultTestObjectArgument("baz"),
         this.argumentDeserializer
             .deserializeObject(argMap, TestObjectArgument.class)
-            .orElseThrow()
-            .value());
+            .orElseThrow());
   }
 
   @Test
@@ -166,7 +178,7 @@ class DefaultArgumentDeserializerTest {
   void emptyIfNoPrimitivePresent() {
     assertEquals(
         Optional.empty(),
-        this.argumentDeserializer.deserializeObject(
+        this.argumentDeserializer.deserializePrimitive(
             Collections.emptyMap(), TestPrimitiveArgument.class));
   }
 
@@ -201,5 +213,35 @@ class DefaultArgumentDeserializerTest {
     assertEquals(
         Optional.empty(),
         this.argumentDeserializer.deserializePrimitiveList(argMap, TestPrimitiveArgument.class));
+  }
+
+  @Test
+  void allowsArgNameOverride() {
+
+    Map<String, Object> argMap =
+        Map.of(
+            "custom-primitive",
+            "baz",
+            "custom-primitive-list",
+            List.of("baz"),
+            "custom-object",
+            Map.of(TestObjectArgument.VALUE_NAME, "baz"),
+            "custom-object-list",
+            List.of(Map.of(TestObjectArgument.VALUE_NAME, "baz")));
+
+    assertEquals(
+        Optional.of("baz"),
+        this.argumentDeserializer.deserializePrimitive(argMap, "custom-primitive"));
+    assertEquals(
+        Optional.of(List.of("baz")),
+        this.argumentDeserializer.deserializePrimitiveList(argMap, "custom-primitive-list"));
+    assertEquals(
+        Optional.of(new DefaultTestObjectArgument("baz")),
+        this.argumentDeserializer.deserializeObject(
+            argMap, TestObjectArgument.class, "custom-object"));
+    assertEquals(
+        Optional.of(List.of(new DefaultTestObjectArgument("baz"))),
+        this.argumentDeserializer.deserializeObjectList(
+            argMap, TestObjectArgument.class, "custom-object-list"));
   }
 }
