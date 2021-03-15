@@ -9,17 +9,15 @@ plugins {
 
 subprojects {
   group = "org.hypertrace.core.graphql"
-
   pluginManager.withPlugin("java") {
+    apply(plugin = "org.hypertrace.code-style-plugin")
     configure<JavaPluginExtension> {
       sourceCompatibility = JavaVersion.VERSION_11
       targetCompatibility = JavaVersion.VERSION_11
     }
-
   }
 
   pluginManager.withPlugin("java-library") {
-    apply(plugin = "org.hypertrace.code-style-plugin")
     dependencies {
       "api"(platform(project(":hypertrace-core-graphql-platform")))
       "annotationProcessor"(platform(project(":hypertrace-core-graphql-platform")))
