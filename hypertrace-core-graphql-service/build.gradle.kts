@@ -9,7 +9,7 @@ dependencies {
   implementation(platform(project(":hypertrace-core-graphql-platform")))
 
   implementation("com.typesafe:config")
-  implementation("org.hypertrace.core.serviceframework:platform-service-framework:0.1.21")
+  implementation("org.hypertrace.core.serviceframework:platform-service-framework:0.1.23")
   implementation("org.slf4j:slf4j-api")
 
   implementation("org.eclipse.jetty:jetty-server:9.4.38.v20210224")
