@@ -8,6 +8,7 @@ import org.hypertrace.core.graphql.atttributes.scopes.HypertraceCoreAttributeSco
 import org.hypertrace.core.graphql.common.fetcher.InjectableDataFetcher;
 import org.hypertrace.core.graphql.common.request.ResultSetRequestBuilder;
 import org.hypertrace.core.graphql.log.event.dao.LogEventDao;
+import org.hypertrace.core.graphql.log.event.request.LogEventRequestBuilder;
 import org.hypertrace.core.graphql.log.event.schema.LogEventResultSet;
 
 public class LogEventFetcher extends InjectableDataFetcher<LogEventResultSet> {
@@ -18,11 +19,11 @@ public class LogEventFetcher extends InjectableDataFetcher<LogEventResultSet> {
 
   static final class LogEventFetcherImpl implements
       DataFetcher<CompletableFuture<LogEventResultSet>> {
-    private final ResultSetRequestBuilder requestBuilder;
+    private final LogEventRequestBuilder requestBuilder;
     private final LogEventDao logEventDao;
 
     @Inject
-    LogEventFetcherImpl(ResultSetRequestBuilder requestBuilder, LogEventDao logEventDao) {
+    LogEventFetcherImpl(LogEventRequestBuilder requestBuilder, LogEventDao logEventDao) {
       this.requestBuilder = requestBuilder;
       this.logEventDao = logEventDao;
     }
@@ -32,9 +33,7 @@ public class LogEventFetcher extends InjectableDataFetcher<LogEventResultSet> {
       return this.requestBuilder
           .build(
               environment.getContext(),
-              HypertraceCoreAttributeScopeString.SPAN,
-              environment.getArguments(),
-              environment.getSelectionSet())
+              environment.getArguments())
           .flatMap(this.logEventDao::getLogEvents)
           .toCompletionStage()
           .toCompletableFuture();
