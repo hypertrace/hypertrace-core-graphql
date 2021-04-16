@@ -8,11 +8,11 @@ import org.hypertrace.core.graphql.common.schema.results.ResultSet;
 
 @GraphQLName(LogEventResultSet.TYPE_NAME)
 public interface LogEventResultSet extends ResultSet<LogEvent> {
-    String TYPE_NAME = "LogEventResultSet";
+  String TYPE_NAME = "LogEventResultSet";
 
-    @Override
-    @GraphQLField
-    @GraphQLNonNull
-    @GraphQLName(RESULT_SET_RESULTS_NAME)
-    List<LogEvent> results();
+  @Override
+  @GraphQLField
+  @GraphQLNonNull
+  @GraphQLName(RESULT_SET_RESULTS_NAME)
+  List<LogEvent> results();
 }

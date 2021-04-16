@@ -8,7 +8,6 @@ import org.hypertrace.core.graphql.common.utils.attributes.AttributeUtilsModule;
 import org.hypertrace.core.graphql.context.GraphQlRequestContextModule;
 import org.hypertrace.core.graphql.deserialization.GraphQlDeserializationRegistryModule;
 import org.hypertrace.core.graphql.log.event.LogEventSchemaModule;
-import org.hypertrace.core.graphql.log.event.dao.LogEventDaoModule;
 import org.hypertrace.core.graphql.metadata.MetadataSchemaModule;
 import org.hypertrace.core.graphql.rx.RxUtilModule;
 import org.hypertrace.core.graphql.schema.registry.GraphQlSchemaRegistryModule;

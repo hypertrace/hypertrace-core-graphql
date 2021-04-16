@@ -23,18 +23,31 @@ public class MockLogEventDao implements LogEventDao {
       attributeString = "";
     }
 
-    LogEvent logEvent1 = new MockLogEvent(Map.of(
-        "spanId", "span-1",
-        "traceId", "trace-1",
-        "timestamp_nanos", 10000L,
-        "attributes", attributeString));
+    LogEvent logEvent1 =
+        new MockLogEvent(
+            Map.of(
+                "spanId",
+                "span-1",
+                "traceId",
+                "trace-1",
+                "timestamp_nanos",
+                10000L,
+                "attributes",
+                attributeString));
 
-    LogEvent logEvent2 = new MockLogEvent(Map.of(
-        "spanId", "span-2",
-        "traceId", "trace-1",
-        "timestamp_nanos", 20000L,
-        "attributes", attributeString));
-    LogEventResultSet logEventResultSet = new MockLogEventResultSet(List.of(logEvent1, logEvent2), 2, 2);
+    LogEvent logEvent2 =
+        new MockLogEvent(
+            Map.of(
+                "spanId",
+                "span-2",
+                "traceId",
+                "trace-1",
+                "timestamp_nanos",
+                20000L,
+                "attributes",
+                attributeString));
+    LogEventResultSet logEventResultSet =
+        new MockLogEventResultSet(List.of(logEvent1, logEvent2), 2, 2);
 
     return Single.just(logEventResultSet);
   }
