@@ -15,7 +15,10 @@ public class MockLogEventDao implements LogEventDao {
   @Override
   public Single<LogEventResultSet> getLogEvents(LogEventRequest request) {
     ObjectMapper objectMapper = new ObjectMapper();
-    Map<String, String> attributes = Map.of();
+    Map<String, String> attributes = Map.of(
+        "event", "Acquired lock with 0 transaction waiting",
+        "network", "tcp",
+        "message", "Slow transaction");
     String attributeString;
     try {
       attributeString = objectMapper.writeValueAsString(attributes);
@@ -31,7 +34,7 @@ public class MockLogEventDao implements LogEventDao {
                 "traceId",
                 "trace-1",
                 "timestamp_nanos",
-                10000L,
+                System.nanoTime(),
                 "attributes",
                 attributeString));
 
@@ -43,7 +46,7 @@ public class MockLogEventDao implements LogEventDao {
                 "traceId",
                 "trace-1",
                 "timestamp_nanos",
-                20000L,
+                System.nanoTime(),
                 "attributes",
                 attributeString));
     LogEventResultSet logEventResultSet =

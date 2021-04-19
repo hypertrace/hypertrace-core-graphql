@@ -23,5 +23,4 @@ dependencies {
     implementation(project(":hypertrace-core-graphql-common-schema"))
     implementation(project(":hypertrace-core-graphql-attribute-store"))
     implementation(project(":hypertrace-core-graphql-deserialization"))
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.12.2")
 }
