@@ -34,7 +34,7 @@ public class MockLogEventDao implements LogEventDao {
                 "span-1",
                 "traceId",
                 "trace-1",
-                "timestamp_nanos",
+                "timestamp",
                 System.nanoTime(),
                 "attributes",
                 attributeString));
@@ -46,7 +46,7 @@ public class MockLogEventDao implements LogEventDao {
                 "span-2",
                 "traceId",
                 "trace-1",
-                "timestamp_nanos",
+                "timestamp",
                 System.nanoTime(),
                 "attributes",
                 attributeString));
