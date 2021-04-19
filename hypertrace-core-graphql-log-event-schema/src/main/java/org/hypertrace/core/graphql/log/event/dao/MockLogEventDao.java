@@ -15,10 +15,11 @@ public class MockLogEventDao implements LogEventDao {
   @Override
   public Single<LogEventResultSet> getLogEvents(LogEventRequest request) {
     ObjectMapper objectMapper = new ObjectMapper();
-    Map<String, String> attributes = Map.of(
-        "event", "Acquired lock with 0 transaction waiting",
-        "network", "tcp",
-        "message", "Slow transaction");
+    Map<String, String> attributes =
+        Map.of(
+            "event", "Acquired lock with 0 transaction waiting",
+            "network", "tcp",
+            "message", "Slow transaction");
     String attributeString;
     try {
       attributeString = objectMapper.writeValueAsString(attributes);
