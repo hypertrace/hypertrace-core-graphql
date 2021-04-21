@@ -95,20 +95,20 @@ public class DefaultLogEventRequestBuilder implements LogEventRequestBuilder {
             .orElse(Collections.emptyList());
 
     return zip(
-        this.attributeAssociator
-            .associateAttributes(context, requestScope, requestedOrders, OrderArgument::key)
-            .collect(Collectors.toUnmodifiableList()),
-        this.filterRequestBuilder.build(context, requestScope, requestedFilters),
-        (orders, filters) ->
-            this.build(
-                context,
-                requestScope,
-                limit,
-                offset,
-                timeRange,
-                orders,
-                filters,
-                this.getAttributeQueryableFields(selectionSet)))
+            this.attributeAssociator
+                .associateAttributes(context, requestScope, requestedOrders, OrderArgument::key)
+                .collect(Collectors.toUnmodifiableList()),
+            this.filterRequestBuilder.build(context, requestScope, requestedFilters),
+            (orders, filters) ->
+                this.build(
+                    context,
+                    requestScope,
+                    limit,
+                    offset,
+                    timeRange,
+                    orders,
+                    filters,
+                    this.getAttributeQueryableFields(selectionSet)))
         .flatMap(single -> single);
   }
 
@@ -121,17 +121,14 @@ public class DefaultLogEventRequestBuilder implements LogEventRequestBuilder {
       List<AttributeAssociation<OrderArgument>> orderArguments,
       Collection<AttributeAssociation<FilterArgument>> filterArguments,
       Stream<SelectedField> attributeQueryableFields) {
-    Collection<AttributeRequest> attributeRequests = this.attributeRequestBuilder
-        .buildForAttributeQueryableFields(context, requestScope, attributeQueryableFields)
-        .collect(Collectors.toUnmodifiableSet()).blockingGet();
-    return Single.just(new DefaultLogEventRequest(
-        context,
-        attributeRequests,
-        timeRange,
-        limit,
-        offset,
-        orderArguments,
-        filterArguments));
+    Collection<AttributeRequest> attributeRequests =
+        this.attributeRequestBuilder
+            .buildForAttributeQueryableFields(context, requestScope, attributeQueryableFields)
+            .collect(Collectors.toUnmodifiableSet())
+            .blockingGet();
+    return Single.just(
+        new DefaultLogEventRequest(
+            context, attributeRequests, timeRange, limit, offset, orderArguments, filterArguments));
   }
 
   private Stream<SelectedField> getAttributeQueryableFields(
@@ -142,8 +139,7 @@ public class DefaultLogEventRequestBuilder implements LogEventRequestBuilder {
 
   @Value
   @Accessors(fluent = true)
-  private static class DefaultLogEventRequest implements
-      LogEventRequest {
+  private static class DefaultLogEventRequest implements LogEventRequest {
 
     GraphQlRequestContext context;
     Collection<AttributeRequest> attributes;

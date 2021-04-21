@@ -50,6 +50,7 @@ public class LogEventDaoModule extends AbstractModule {
     requireBinding(
         Key.get(
             new TypeLiteral<
-                BiConverter<Collection<AttributeRequest>, Map<String, Value>, Map<String, Object>>>() {}));
+                BiConverter<
+                    Collection<AttributeRequest>, Map<String, Value>, Map<String, Object>>>() {}));
   }
 }

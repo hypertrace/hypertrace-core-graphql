@@ -10,6 +10,7 @@ import org.hypertrace.gateway.service.v1.common.Value;
 class UnwrappedValueConverter implements Converter<Value, Object> {
 
   private static final long NANOS_IN_SECOND = 1_000_000_000L;
+
   @Override
   public Single<Object> convert(Value from) {
     Value value = Optional.ofNullable(from).orElse(Value.getDefaultInstance());
@@ -25,9 +26,10 @@ class UnwrappedValueConverter implements Converter<Value, Object> {
       case TIMESTAMP:
         if (!StringUtils.isEmpty(value.getTimestampUnit())) {
           if ("ns".equals(value.getTimestampUnit())) {
-            return Single.just(Instant.ofEpochSecond(
-                value.getTimestamp() / NANOS_IN_SECOND,
-                value.getTimestamp() % NANOS_IN_SECOND));
+            return Single.just(
+                Instant.ofEpochSecond(
+                    value.getTimestamp() / NANOS_IN_SECOND,
+                    value.getTimestamp() % NANOS_IN_SECOND));
           } else if ("ms".equals(value.getTimestampUnit())) {
             return Single.just(Instant.ofEpochMilli(value.getTimestamp()));
           }

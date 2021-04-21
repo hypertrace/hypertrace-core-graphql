@@ -39,8 +39,8 @@ public class GatewayServiceLogEventDao implements LogEventDao {
 
     this.gatewayServiceStub =
         GatewayServiceGrpc.newFutureStub(
-            channelRegistry.forAddress(
-                serviceConfig.getGatewayServiceHost(), serviceConfig.getGatewayServicePort()))
+                channelRegistry.forAddress(
+                    serviceConfig.getGatewayServiceHost(), serviceConfig.getGatewayServicePort()))
             .withCallCredentials(credentials);
   }
 
@@ -52,7 +52,8 @@ public class GatewayServiceLogEventDao implements LogEventDao {
         .flatMap(serverResponse -> this.logEventConverter.convert(request, serverResponse));
   }
 
-  private Single<LogEventsResponse> makeRequest(GraphQlRequestContext context, LogEventsRequest request) {
+  private Single<LogEventsResponse> makeRequest(
+      GraphQlRequestContext context, LogEventsRequest request) {
     return Single.fromFuture(
         this.grpcContextBuilder
             .build(context)

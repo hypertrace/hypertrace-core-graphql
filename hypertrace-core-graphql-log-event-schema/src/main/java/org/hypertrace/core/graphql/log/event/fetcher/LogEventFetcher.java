@@ -30,8 +30,10 @@ public class LogEventFetcher extends InjectableDataFetcher<LogEventResultSet> {
     public CompletableFuture<LogEventResultSet> get(DataFetchingEnvironment environment) {
       return this.requestBuilder
           .build(
-              environment.getContext(), "LOG_EVENT",
-              environment.getArguments(), environment.getSelectionSet())
+              environment.getContext(),
+              "LOG_EVENT",
+              environment.getArguments(),
+              environment.getSelectionSet())
           .flatMap(this.logEventDao::getLogEvents)
           .toCompletionStage()
           .toCompletableFuture();
