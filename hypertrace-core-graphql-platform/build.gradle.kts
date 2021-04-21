@@ -27,6 +27,7 @@ dependencies {
     api("io.grpc:grpc-context:1.36.0")
     api("com.fasterxml.jackson.core:jackson-databind:2.12.1")
     api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.1")
+    api("org.apache.commons:commons-lang3:3.10")
 
     runtime("org.apache.logging.log4j:log4j-slf4j-impl:2.14.0")
     runtime("io.grpc:grpc-netty:1.37.0")
