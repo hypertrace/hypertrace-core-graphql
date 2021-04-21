@@ -14,7 +14,6 @@ public class LogEventSchemaModule extends AbstractModule {
         .addBinding()
         .to(LogEventSchemaFragment.class);
 
-    requireBinding(ResultSetRequestBuilder.class);
     install(new LogEventDaoModule());
     install(new LogEventRequestModule());
   }

@@ -9,7 +9,6 @@ import java.util.Set;
 import javax.inject.Inject;
 import org.hypertrace.core.graphql.common.request.AttributeAssociation;
 import org.hypertrace.core.graphql.common.request.AttributeRequest;
-import org.hypertrace.core.graphql.common.request.ResultSetRequest;
 import org.hypertrace.core.graphql.common.schema.results.arguments.filter.FilterArgument;
 import org.hypertrace.core.graphql.common.schema.results.arguments.order.OrderArgument;
 import org.hypertrace.core.graphql.common.utils.Converter;
@@ -43,8 +42,8 @@ public class GatewayServiceLogEventsRequestBuilder {
         this.filterConverter.convert(gqlRequest.filterArguments()),
         (selections, orderBys, filters) ->
             LogEventsRequest.newBuilder()
-                .setStartTimeNanos(gqlRequest.timeRange().startTime().toEpochMilli() * 1_000_000)
-                .setEndTimeNanos(gqlRequest.timeRange().endTime().toEpochMilli() * 1_000_000)
+                .setStartTimeMillis(gqlRequest.timeRange().startTime().toEpochMilli())
+                .setEndTimeMillis(gqlRequest.timeRange().endTime().toEpochMilli())
                 .addAllSelection(selections)
                 .addAllOrderBy(orderBys)
                 .setLimit(gqlRequest.limit())
