@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 import javax.inject.Inject;
 import lombok.Value;
 import lombok.experimental.Accessors;
+import org.hypertrace.core.graphql.atttributes.scopes.HypertraceCoreAttributeScopeString;
 import org.hypertrace.core.graphql.common.request.AttributeAssociation;
 import org.hypertrace.core.graphql.common.request.AttributeRequest;
 import org.hypertrace.core.graphql.common.request.AttributeRequestBuilder;
@@ -57,10 +58,14 @@ public class DefaultLogEventRequestBuilder implements LogEventRequestBuilder {
   @Override
   public Single<LogEventRequest> build(
       GraphQlRequestContext context,
-      String requestScope,
       Map<String, Object> arguments,
       DataFetchingFieldSelectionSet selectionSet) {
-    return this.build(context, requestScope, arguments, selectionSet, OrderArgument.class);
+    return this.build(
+        context,
+        HypertraceCoreAttributeScopeString.LOG_EVENT,
+        arguments,
+        selectionSet,
+        OrderArgument.class);
   }
 
   Single<LogEventRequest> build(
@@ -95,40 +100,19 @@ public class DefaultLogEventRequestBuilder implements LogEventRequestBuilder {
             .orElse(Collections.emptyList());
 
     return zip(
+            this.attributeRequestBuilder
+                .buildForAttributeQueryableFields(
+                    context, requestScope, getAttributeQueryableFields(selectionSet))
+                .collect(Collectors.toUnmodifiableSet()),
             this.attributeAssociator
                 .associateAttributes(context, requestScope, requestedOrders, OrderArgument::key)
                 .collect(Collectors.toUnmodifiableList()),
             this.filterRequestBuilder.build(context, requestScope, requestedFilters),
-            (orders, filters) ->
-                this.build(
-                    context,
-                    requestScope,
-                    limit,
-                    offset,
-                    timeRange,
-                    orders,
-                    filters,
-                    this.getAttributeQueryableFields(selectionSet)))
+            (attributeRequests, orders, filters) ->
+                Single.just(
+                    new DefaultLogEventRequest(
+                        context, attributeRequests, timeRange, limit, offset, orders, filters)))
         .flatMap(single -> single);
-  }
-
-  Single<LogEventRequest> build(
-      GraphQlRequestContext context,
-      String requestScope,
-      int limit,
-      int offset,
-      TimeRangeArgument timeRange,
-      List<AttributeAssociation<OrderArgument>> orderArguments,
-      Collection<AttributeAssociation<FilterArgument>> filterArguments,
-      Stream<SelectedField> attributeQueryableFields) {
-    Collection<AttributeRequest> attributeRequests =
-        this.attributeRequestBuilder
-            .buildForAttributeQueryableFields(context, requestScope, attributeQueryableFields)
-            .collect(Collectors.toUnmodifiableSet())
-            .blockingGet();
-    return Single.just(
-        new DefaultLogEventRequest(
-            context, attributeRequests, timeRange, limit, offset, orderArguments, filterArguments));
   }
 
   private Stream<SelectedField> getAttributeQueryableFields(

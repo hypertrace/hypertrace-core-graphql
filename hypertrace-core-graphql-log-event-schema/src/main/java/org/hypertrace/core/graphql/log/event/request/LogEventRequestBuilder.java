@@ -8,7 +8,6 @@ import org.hypertrace.core.graphql.context.GraphQlRequestContext;
 public interface LogEventRequestBuilder {
   Single<LogEventRequest> build(
       GraphQlRequestContext context,
-      String requestScope,
       Map<String, Object> arguments,
       DataFetchingFieldSelectionSet selectionSet);
 }

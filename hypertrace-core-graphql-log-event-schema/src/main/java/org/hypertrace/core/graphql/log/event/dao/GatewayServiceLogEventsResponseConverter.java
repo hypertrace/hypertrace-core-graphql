@@ -32,7 +32,9 @@ class GatewayServiceLogEventsResponseConverter {
     return Observable.fromIterable(response.getLogEventsList())
         .concatMapSingle(logEvent -> this.convert(request, logEvent))
         .toList()
-        .map(logEvents -> new ConvertedLogEventResultSet(logEvents, 0, logEvents.size()));
+        .map(
+            logEvents ->
+                new ConvertedLogEventResultSet(logEvents, logEvents.size(), logEvents.size()));
   }
 
   private Single<LogEvent> convert(

@@ -9,8 +9,8 @@ import org.hypertrace.core.graphql.common.utils.Converter;
 import org.hypertrace.gateway.service.v1.common.Value;
 import org.hypertrace.gateway.service.v1.common.ValueType;
 
-class UnwrappedValueConverter implements Converter<Value, Object>,
-    BiConverter<Value, AttributeModel, Object> {
+class UnwrappedValueConverter
+    implements Converter<Value, Object>, BiConverter<Value, AttributeModel, Object> {
 
   @Override
   public Single<Object> convert(Value from) {

@@ -4,7 +4,6 @@ import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
 import java.util.concurrent.CompletableFuture;
 import javax.inject.Inject;
-import org.hypertrace.core.graphql.atttributes.scopes.HypertraceCoreAttributeScopeString;
 import org.hypertrace.core.graphql.common.fetcher.InjectableDataFetcher;
 import org.hypertrace.core.graphql.log.event.dao.LogEventDao;
 import org.hypertrace.core.graphql.log.event.request.LogEventRequestBuilder;
@@ -31,10 +30,7 @@ public class LogEventFetcher extends InjectableDataFetcher<LogEventResultSet> {
     public CompletableFuture<LogEventResultSet> get(DataFetchingEnvironment environment) {
       return this.requestBuilder
           .build(
-              environment.getContext(),
-              HypertraceCoreAttributeScopeString.LOG_EVENT,
-              environment.getArguments(),
-              environment.getSelectionSet())
+              environment.getContext(), environment.getArguments(), environment.getSelectionSet())
           .flatMap(this.logEventDao::getLogEvents)
           .toCompletionStage()
           .toCompletableFuture();

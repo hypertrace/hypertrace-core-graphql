@@ -30,6 +30,7 @@ public class UnknownScalar implements TypeFunction {
                 @Override
                 public Object serialize(Object fetcherResult) throws CoercingSerializeException {
                   if (fetcherResult instanceof Instant) {
+                    // todo handle for other direction as well
                     return fetcherResult.toString();
                   }
                   // Use default serializer
