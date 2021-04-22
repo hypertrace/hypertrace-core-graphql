@@ -16,10 +16,10 @@ import org.hypertrace.gateway.service.v1.common.Value;
 class AttributeMapConverter
     implements BiConverter<Collection<AttributeRequest>, Map<String, Value>, Map<String, Object>> {
 
-  private final Converter<Value, Object> valueConverter;
+  private final Converter<ValueWrapper, Object> valueConverter;
 
   @Inject
-  AttributeMapConverter(Converter<Value, Object> valueConverter) {
+  AttributeMapConverter(Converter<ValueWrapper, Object> valueConverter) {
     this.valueConverter = valueConverter;
   }
 
@@ -37,7 +37,7 @@ class AttributeMapConverter
       AttributeRequest attributeRequest, Map<String, Value> response) {
     // Uses SimpleImmutableEntry to support null values
     return this.valueConverter
-        .convert(response.get(attributeRequest.alias()))
+        .convert(new ValueWrapper(response.get(attributeRequest.alias()), attributeRequest))
         .map(value -> new SimpleImmutableEntry<>(attributeRequest.attribute().key(), value));
   }
 }

@@ -18,7 +18,7 @@ import org.hypertrace.gateway.service.v1.common.Filter;
 import org.hypertrace.gateway.service.v1.common.OrderByExpression;
 import org.hypertrace.gateway.service.v1.log.events.LogEventsRequest;
 
-public class GatewayServiceLogEventsRequestBuilder {
+class GatewayServiceLogEventsRequestBuilder {
 
   private final Converter<Collection<AttributeAssociation<FilterArgument>>, Filter> filterConverter;
   private final Converter<List<AttributeAssociation<OrderArgument>>, List<OrderByExpression>>

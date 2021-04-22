@@ -11,8 +11,6 @@ dependencies {
   api("io.reactivex.rxjava3:rxjava")
   api(project(":hypertrace-core-graphql-common-schema"))
 
-  implementation("org.apache.commons:commons-lang3")
-
   testImplementation("org.junit.jupiter:junit-jupiter")
   testImplementation("org.mockito:mockito-core")
   testImplementation("org.mockito:mockito-junit-jupiter")

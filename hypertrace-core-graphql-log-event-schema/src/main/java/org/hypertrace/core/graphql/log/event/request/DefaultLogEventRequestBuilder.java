@@ -112,7 +112,7 @@ public class DefaultLogEventRequestBuilder implements LogEventRequestBuilder {
         .flatMap(single -> single);
   }
 
-  <O extends OrderArgument> Single<LogEventRequest> build(
+  Single<LogEventRequest> build(
       GraphQlRequestContext context,
       String requestScope,
       int limit,

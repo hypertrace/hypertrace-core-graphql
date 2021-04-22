@@ -18,7 +18,7 @@ import org.hypertrace.gateway.service.v1.log.events.LogEventsRequest;
 import org.hypertrace.gateway.service.v1.log.events.LogEventsResponse;
 
 @Singleton
-public class GatewayServiceLogEventDao implements LogEventDao {
+class GatewayServiceLogEventDao implements LogEventDao {
   private static final int DEFAULT_DEADLINE_SEC = 10;
   private final GatewayServiceFutureStub gatewayServiceStub;
   private final GraphQlGrpcContextBuilder grpcContextBuilder;

@@ -13,7 +13,7 @@ public class LogEventSchemaModule extends AbstractModule {
         .addBinding()
         .to(LogEventSchemaFragment.class);
 
-    install(new LogEventDaoModule());
     install(new LogEventRequestModule());
+    install(new LogEventDaoModule());
   }
 }

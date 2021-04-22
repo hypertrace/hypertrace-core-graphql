@@ -15,7 +15,7 @@ import org.hypertrace.core.graphql.log.event.schema.LogEventResultSet;
 import org.hypertrace.gateway.service.v1.common.Value;
 import org.hypertrace.gateway.service.v1.log.events.LogEventsResponse;
 
-public class GatewayServiceLogEventsResponseConverter {
+class GatewayServiceLogEventsResponseConverter {
 
   private final BiConverter<Collection<AttributeRequest>, Map<String, Value>, Map<String, Object>>
       attributeMapConverter;
@@ -28,12 +28,11 @@ public class GatewayServiceLogEventsResponseConverter {
   }
 
   public Single<LogEventResultSet> convert(LogEventRequest request, LogEventsResponse response) {
+    // todo populate total correctly
     return Observable.fromIterable(response.getLogEventsList())
-        .flatMapSingle(logEvent -> this.convert(request, logEvent))
+        .concatMapSingle(logEvent -> this.convert(request, logEvent))
         .toList()
-        .map(
-            logEvents ->
-                new ConvertedLogEventResultSet(logEvents, logEvents.size(), logEvents.size()));
+        .map(logEvents -> new ConvertedLogEventResultSet(logEvents, 0, logEvents.size()));
   }
 
   private Single<LogEvent> convert(

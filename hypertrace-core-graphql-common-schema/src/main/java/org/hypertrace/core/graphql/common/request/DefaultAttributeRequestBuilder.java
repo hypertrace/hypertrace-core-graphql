@@ -17,7 +17,7 @@ import org.hypertrace.core.graphql.deserialization.ArgumentDeserializer;
 import org.hypertrace.core.graphql.utils.schema.GraphQlSelectionFinder;
 import org.hypertrace.core.graphql.utils.schema.SelectionQuery;
 
-public class DefaultAttributeRequestBuilder implements AttributeRequestBuilder {
+class DefaultAttributeRequestBuilder implements AttributeRequestBuilder {
 
   private final AttributeStore attributeStore;
   private final ArgumentDeserializer argumentDeserializer;
