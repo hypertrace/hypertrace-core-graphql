@@ -8,13 +8,13 @@ import java.util.Map;
 import javax.inject.Inject;
 import lombok.experimental.Accessors;
 import org.hypertrace.core.graphql.common.request.AttributeRequest;
-import org.hypertrace.core.graphql.common.request.ResultSetRequest;
 import org.hypertrace.core.graphql.common.utils.BiConverter;
+import org.hypertrace.core.graphql.log.event.schema.LogEvent;
+import org.hypertrace.core.graphql.span.request.SpanRequest;
 import org.hypertrace.core.graphql.span.schema.Span;
 import org.hypertrace.core.graphql.span.schema.SpanResultSet;
 import org.hypertrace.gateway.service.v1.common.Value;
 import org.hypertrace.gateway.service.v1.span.SpanEvent;
-import org.hypertrace.gateway.service.v1.span.SpansResponse;
 
 class GatewayServiceSpanConverter {
 
@@ -28,22 +28,27 @@ class GatewayServiceSpanConverter {
     this.attributeMapConverter = attributeMapConverter;
   }
 
-  public Single<SpanResultSet> convert(ResultSetRequest<?> request, SpansResponse response) {
-    int total = response.getTotal();
+  public Single<SpanResultSet> convert(SpanRequest<?> request, SpanLogEventsResponse response) {
+    int total = response.spansResponse().getTotal();
 
-    return Observable.fromIterable(response.getSpansList())
-        .flatMapSingle(spanEvent -> this.convert(request, spanEvent))
+    return Observable.fromIterable(response.spansResponse().getSpansList())
+        .flatMapSingle(spanEvent -> this.convert(request, spanEvent, response.spanIdToLogEvents()))
         .toList()
         .map(spans -> new ConvertedSpanResultSet(spans, total, spans.size()));
   }
 
-  private Single<Span> convert(ResultSetRequest<?> request, SpanEvent spanEvent) {
+  private Single<Span> convert(
+      SpanRequest<?> request, SpanEvent spanEvent, Map<String, List<LogEvent>> spanIdToLogEvents) {
     return this.attributeMapConverter
-        .convert(request.attributes(), spanEvent.getAttributesMap())
+        .convert(request.spanEventsRequest().attributes(), spanEvent.getAttributesMap())
         .map(
             attrMap ->
                 new ConvertedSpan(
-                    attrMap.get(request.idAttribute().attribute().key()).toString(), attrMap));
+                    attrMap
+                        .get(request.spanEventsRequest().idAttribute().attribute().key())
+                        .toString(),
+                    attrMap,
+                    spanIdToLogEvents));
   }
 
   @lombok.Value
@@ -51,10 +56,16 @@ class GatewayServiceSpanConverter {
   private static class ConvertedSpan implements Span {
     String id;
     Map<String, Object> attributeValues;
+    Map<String, List<LogEvent>> spanIdToLogEvents;
 
     @Override
     public Object attribute(String key) {
       return this.attributeValues.get(key);
+    }
+
+    @Override
+    public List<LogEvent> logEvents() {
+      return spanIdToLogEvents.get(id);
     }
   }
 
