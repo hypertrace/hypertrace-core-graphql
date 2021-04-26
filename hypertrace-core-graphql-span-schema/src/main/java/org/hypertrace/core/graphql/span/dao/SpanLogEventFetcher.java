@@ -117,7 +117,7 @@ class SpanLogEventFetcher {
             .map(
                 v ->
                     v.getAttributesMap()
-                        .get(gqlRequest.spanEventsRequest().idAttribute().attribute().key())
+                        .get(gqlRequest.spanEventsRequest().idAttribute().attribute().id())
                         .getString())
             .collect(Collectors.toList());
     Map<String, Object> argMap =
