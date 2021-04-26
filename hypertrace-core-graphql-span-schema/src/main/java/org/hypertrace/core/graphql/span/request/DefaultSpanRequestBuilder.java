@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import javax.inject.Inject;
 import lombok.Value;
 import lombok.experimental.Accessors;
 import org.hypertrace.core.graphql.common.request.AttributeAssociation;
@@ -25,6 +26,7 @@ public class DefaultSpanRequestBuilder implements SpanRequestBuilder {
   private final ResultSetRequestBuilder resultSetRequestBuilder;
   private final LogEventAttributeRequestBuilder logEventAttributeRequestBuilder;
 
+  @Inject
   public DefaultSpanRequestBuilder(
       ResultSetRequestBuilder resultSetRequestBuilder,
       LogEventAttributeRequestBuilder logEventAttributeRequestBuilder) {

@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import lombok.experimental.Accessors;
 import org.hypertrace.core.graphql.atttributes.scopes.HypertraceCoreAttributeScopeString;
 import org.hypertrace.core.graphql.common.request.AttributeAssociation;
@@ -36,7 +35,6 @@ import org.hypertrace.gateway.service.v1.log.events.LogEventsRequest;
 import org.hypertrace.gateway.service.v1.log.events.LogEventsResponse;
 import org.hypertrace.gateway.service.v1.span.SpansResponse;
 
-@Singleton
 class SpanLogEventFetcher {
 
   private static final int DEFAULT_DEADLINE_SEC = 10;
@@ -183,6 +181,7 @@ class SpanLogEventFetcher {
   @Accessors(fluent = true)
   private static class ConvertedLogEvent
       implements org.hypertrace.core.graphql.log.event.schema.LogEvent {
+
     Map<String, Object> attributeValues;
 
     @Override

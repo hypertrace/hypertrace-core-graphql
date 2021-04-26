@@ -33,7 +33,7 @@ class LogEventAttributeRequestBuilder {
   Single<Set<AttributeRequest>> buildAttributeRequest(
       GraphQlRequestContext context, DataFetchingFieldSelectionSet selectionSet) {
     return attributeRequestBuilder
-        .buildForAttributeQueryableFieldsAndId(
+        .buildForAttributeQueryableFields(
             context,
             HypertraceCoreAttributeScopeString.LOG_EVENT,
             getLogEventSelectionFields(selectionSet))

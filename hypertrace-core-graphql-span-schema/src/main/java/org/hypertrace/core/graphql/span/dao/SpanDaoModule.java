@@ -11,10 +11,12 @@ import java.util.Map;
 import java.util.Set;
 import org.hypertrace.core.graphql.common.request.AttributeAssociation;
 import org.hypertrace.core.graphql.common.request.AttributeRequest;
+import org.hypertrace.core.graphql.common.request.FilterRequestBuilder;
 import org.hypertrace.core.graphql.common.schema.results.arguments.filter.FilterArgument;
 import org.hypertrace.core.graphql.common.schema.results.arguments.order.OrderArgument;
 import org.hypertrace.core.graphql.common.utils.BiConverter;
 import org.hypertrace.core.graphql.common.utils.Converter;
+import org.hypertrace.core.graphql.deserialization.ArgumentDeserializer;
 import org.hypertrace.core.graphql.spi.config.GraphQlServiceConfig;
 import org.hypertrace.core.graphql.utils.grpc.GraphQlGrpcContextBuilder;
 import org.hypertrace.core.graphql.utils.grpc.GrpcChannelRegistry;
@@ -36,6 +38,8 @@ public class SpanDaoModule extends AbstractModule {
     requireBinding(GraphQlServiceConfig.class);
     requireBinding(GraphQlGrpcContextBuilder.class);
     requireBinding(GrpcChannelRegistry.class);
+    requireBinding(FilterRequestBuilder.class);
+    requireBinding(ArgumentDeserializer.class);
 
     requireBinding(
         Key.get(new TypeLiteral<Converter<Collection<AttributeRequest>, Set<Expression>>>() {}));

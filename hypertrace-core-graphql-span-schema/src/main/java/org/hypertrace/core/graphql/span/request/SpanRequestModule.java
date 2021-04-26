@@ -21,5 +21,6 @@ public class SpanRequestModule extends AbstractModule {
     requireBinding(AttributeAssociator.class);
     requireBinding(GraphQlSelectionFinder.class);
     requireBinding(AttributeScopeStringTranslator.class);
+    requireBinding(AttributeRequestBuilder.class);
   }
 }
