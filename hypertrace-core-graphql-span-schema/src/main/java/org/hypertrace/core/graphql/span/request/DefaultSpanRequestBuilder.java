@@ -5,21 +5,15 @@ import static io.reactivex.rxjava3.core.Single.zip;
 import graphql.schema.DataFetchingFieldSelectionSet;
 import io.reactivex.rxjava3.core.Single;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import javax.inject.Inject;
 import lombok.Value;
 import lombok.experimental.Accessors;
-import org.hypertrace.core.graphql.common.request.AttributeAssociation;
 import org.hypertrace.core.graphql.common.request.AttributeRequest;
 import org.hypertrace.core.graphql.common.request.ResultSetRequest;
 import org.hypertrace.core.graphql.common.request.ResultSetRequestBuilder;
-import org.hypertrace.core.graphql.common.schema.arguments.TimeRangeArgument;
-import org.hypertrace.core.graphql.common.schema.results.arguments.filter.FilterArgument;
 import org.hypertrace.core.graphql.common.schema.results.arguments.order.OrderArgument;
 import org.hypertrace.core.graphql.context.GraphQlRequestContext;
-import org.hypertrace.core.graphql.log.event.request.LogEventRequest;
 
 class DefaultSpanRequestBuilder implements SpanRequestBuilder {
 
@@ -54,32 +48,5 @@ class DefaultSpanRequestBuilder implements SpanRequestBuilder {
   private static class DefaultSpanRequest<O extends OrderArgument> implements SpanRequest<O> {
     ResultSetRequest<O> spanEventsRequest;
     Collection<AttributeRequest> logEventAttributes;
-  }
-
-  @Value
-  @Accessors(fluent = true)
-  private static class DefaultResultSetRequest<O extends OrderArgument>
-      implements ResultSetRequest<O> {
-    GraphQlRequestContext context;
-    Collection<AttributeRequest> attributes;
-    AttributeRequest idAttribute;
-    TimeRangeArgument timeRange;
-    int limit;
-    int offset;
-    List<AttributeAssociation<O>> orderArguments;
-    Collection<AttributeAssociation<FilterArgument>> filterArguments;
-    Optional<String> spaceId;
-  }
-
-  @Value
-  @Accessors(fluent = true)
-  private static class DefaultLogEventRequest implements LogEventRequest {
-    GraphQlRequestContext context;
-    Collection<AttributeRequest> attributes;
-    TimeRangeArgument timeRange;
-    int limit;
-    int offset;
-    List<AttributeAssociation<OrderArgument>> orderArguments;
-    Collection<AttributeAssociation<FilterArgument>> filterArguments;
   }
 }

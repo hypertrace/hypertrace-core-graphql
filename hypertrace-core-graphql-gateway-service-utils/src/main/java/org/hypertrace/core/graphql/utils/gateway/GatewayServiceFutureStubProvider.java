@@ -1,4 +1,4 @@
-package org.hypertrace.core.graphql.span.dao;
+package org.hypertrace.core.graphql.utils.gateway;
 
 import io.grpc.CallCredentials;
 import javax.inject.Inject;

@@ -2,7 +2,6 @@ package org.hypertrace.core.graphql.span.dao;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Key;
-import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import io.grpc.CallCredentials;
 import java.util.Collection;
@@ -31,9 +30,7 @@ public class SpanDaoModule extends AbstractModule {
   @Override
   protected void configure() {
     bind(SpanDao.class).to(GatewayServiceSpanDao.class);
-    bind(GatewayServiceFutureStub.class)
-        .toProvider(GatewayServiceFutureStubProvider.class)
-        .in(Singleton.class);
+    requireBinding(GatewayServiceFutureStub.class);
     requireBinding(CallCredentials.class);
     requireBinding(GraphQlServiceConfig.class);
     requireBinding(GraphQlGrpcContextBuilder.class);
