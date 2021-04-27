@@ -3,6 +3,7 @@ package org.hypertrace.core.graphql.span.dao;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
@@ -10,6 +11,7 @@ import lombok.experimental.Accessors;
 import org.hypertrace.core.graphql.common.request.AttributeRequest;
 import org.hypertrace.core.graphql.common.utils.BiConverter;
 import org.hypertrace.core.graphql.log.event.schema.LogEvent;
+import org.hypertrace.core.graphql.log.event.schema.LogEventResultSet;
 import org.hypertrace.core.graphql.span.request.SpanRequest;
 import org.hypertrace.core.graphql.span.schema.Span;
 import org.hypertrace.core.graphql.span.schema.SpanResultSet;
@@ -28,7 +30,7 @@ class GatewayServiceSpanConverter {
     this.attributeMapConverter = attributeMapConverter;
   }
 
-  public Single<SpanResultSet> convert(SpanRequest<?> request, SpanLogEventsResponse response) {
+  public Single<SpanResultSet> convert(SpanRequest request, SpanLogEventsResponse response) {
     int total = response.spansResponse().getTotal();
 
     return Observable.fromIterable(response.spansResponse().getSpansList())
@@ -38,7 +40,7 @@ class GatewayServiceSpanConverter {
   }
 
   private Single<Span> convert(
-      SpanRequest<?> request, SpanEvent spanEvent, Map<String, List<LogEvent>> spanIdToLogEvents) {
+      SpanRequest request, SpanEvent spanEvent, Map<String, List<LogEvent>> spanIdToLogEvents) {
     return this.attributeMapConverter
         .convert(request.spanEventsRequest().attributes(), spanEvent.getAttributesMap())
         .map(
@@ -64,8 +66,9 @@ class GatewayServiceSpanConverter {
     }
 
     @Override
-    public List<LogEvent> logEvents() {
-      return spanIdToLogEvents.get(id);
+    public LogEventResultSet logEvents() {
+      List<LogEvent> list = spanIdToLogEvents.getOrDefault(id, Collections.emptyList());
+      return new ConvertedLogEventResultSet(list, list.size(), list.size());
     }
   }
 
@@ -73,6 +76,14 @@ class GatewayServiceSpanConverter {
   @Accessors(fluent = true)
   private static class ConvertedSpanResultSet implements SpanResultSet {
     List<Span> results;
+    long total;
+    long count;
+  }
+
+  @lombok.Value
+  @Accessors(fluent = true)
+  private static class ConvertedLogEventResultSet implements LogEventResultSet {
+    List<LogEvent> results;
     long total;
     long count;
   }

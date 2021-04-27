@@ -5,7 +5,6 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import io.reactivex.rxjava3.core.Single;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import org.hypertrace.core.graphql.common.schema.results.arguments.order.OrderArgument;
 import org.hypertrace.core.graphql.context.GraphQlRequestContext;
 import org.hypertrace.core.graphql.span.request.SpanRequest;
 import org.hypertrace.core.graphql.span.schema.SpanResultSet;
@@ -38,7 +37,7 @@ class GatewayServiceSpanDao implements SpanDao {
   }
 
   @Override
-  public Single<SpanResultSet> getSpans(SpanRequest<OrderArgument> request) {
+  public Single<SpanResultSet> getSpans(SpanRequest request) {
     return this.requestBuilder
         .buildRequest(request)
         .flatMap(

@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import lombok.experimental.Accessors;
+import org.hypertrace.core.graphql.attributes.AttributeStore;
 import org.hypertrace.core.graphql.atttributes.scopes.HypertraceCoreAttributeScopeString;
 import org.hypertrace.core.graphql.common.request.AttributeAssociation;
 import org.hypertrace.core.graphql.common.request.AttributeRequest;
@@ -37,7 +38,6 @@ import org.hypertrace.gateway.service.v1.span.SpansResponse;
 class SpanLogEventFetcher {
 
   private static final int DEFAULT_DEADLINE_SEC = 10;
-  private static final String LOG_EVENT_SPAN_ID_ATTRIBUTE = "spanId";
 
   private final Converter<Collection<AttributeRequest>, Set<Expression>> attributeConverter;
   private final Converter<Collection<AttributeAssociation<FilterArgument>>, Filter> filterConverter;
@@ -46,6 +46,7 @@ class SpanLogEventFetcher {
   private final FilterRequestBuilder filterRequestBuilder;
   private final GatewayServiceFutureStub gatewayServiceStub;
   private final GraphQlGrpcContextBuilder grpcContextBuilder;
+  private final AttributeStore attributeStore;
 
   @Inject
   SpanLogEventFetcher(
@@ -55,13 +56,15 @@ class SpanLogEventFetcher {
           attributeMapConverter,
       FilterRequestBuilder filterRequestBuilder,
       GatewayServiceFutureStub gatewayServiceFutureStub,
-      GraphQlGrpcContextBuilder grpcContextBuilder) {
+      GraphQlGrpcContextBuilder grpcContextBuilder,
+      AttributeStore attributeStore) {
     this.attributeConverter = attributeConverter;
     this.filterConverter = filterConverter;
     this.attributeMapConverter = attributeMapConverter;
     this.filterRequestBuilder = filterRequestBuilder;
     this.gatewayServiceStub = gatewayServiceFutureStub;
     this.grpcContextBuilder = grpcContextBuilder;
+    this.attributeStore = attributeStore;
   }
 
   /**
@@ -87,7 +90,11 @@ class SpanLogEventFetcher {
                 makeRequest(gqlRequest.spanEventsRequest().context(), logEventsRequest))
         .flatMap(
             logEventsResponse ->
-                buildResponse(gqlRequest.logEventAttributes(), spansResponse, logEventsResponse));
+                buildResponse(
+                    gqlRequest.spanEventsRequest().context(),
+                    gqlRequest.logEventAttributes(),
+                    spansResponse,
+                    logEventsResponse));
   }
 
   private Single<LogEventsRequest> buildLogEventsRequest(
@@ -137,15 +144,22 @@ class SpanLogEventFetcher {
   }
 
   private Single<SpanLogEventsResponse> buildResponse(
+      GraphQlRequestContext graphQlRequestContext,
       Collection<AttributeRequest> attributeRequests,
       SpansResponse spansResponse,
       LogEventsResponse logEventsResponse) {
+    String key =
+        attributeStore
+            .getForeignIdAttribute(
+                graphQlRequestContext,
+                HypertraceCoreAttributeScopeString.LOG_EVENT,
+                HypertraceCoreAttributeScopeString.SPAN)
+            .blockingGet()
+            .key();
     return Observable.fromIterable(logEventsResponse.getLogEventsList())
         .concatMapSingle(
             logEventsResponseVar -> this.convert(attributeRequests, logEventsResponseVar))
-        .collect(
-            Collectors.groupingBy(
-                logEvent -> (String) logEvent.attribute(LOG_EVENT_SPAN_ID_ATTRIBUTE)))
+        .collect(Collectors.groupingBy(logEvent -> (String) logEvent.attribute(key)))
         .map(
             spanIdVsLogEventsMap -> new SpanLogEventsResponse(spansResponse, spanIdVsLogEventsMap));
   }
@@ -174,11 +188,11 @@ class SpanLogEventFetcher {
   @lombok.Value
   @Accessors(fluent = true)
   private static class LogEventFilter implements FilterArgument {
-    FilterType type = FilterType.ATTRIBUTE;
-    String key = LOG_EVENT_SPAN_ID_ATTRIBUTE;
+    FilterType type = FilterType.ID;
+    String key = null;
     FilterOperatorType operator = FilterOperatorType.IN;
     Collection<String> value;
     AttributeScope idType = null;
-    String idScope = HypertraceCoreAttributeScopeString.LOG_EVENT;
+    String idScope = HypertraceCoreAttributeScopeString.SPAN;
   }
 }

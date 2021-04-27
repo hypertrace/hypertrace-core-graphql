@@ -8,7 +8,7 @@ import org.hypertrace.core.graphql.context.GraphQlRequestContext;
 
 public interface SpanRequestBuilder {
 
-  Single<SpanRequest<OrderArgument>> build(
+  Single<SpanRequest> build(
       GraphQlRequestContext context,
       String requestScope,
       Map<String, Object> arguments,

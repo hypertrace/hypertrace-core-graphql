@@ -35,7 +35,7 @@ class GatewayServiceSpanRequestBuilder {
     this.attributeConverter = attributeConverter;
   }
 
-  Single<SpansRequest> buildRequest(SpanRequest<OrderArgument> gqlRequest) {
+  Single<SpansRequest> buildRequest(SpanRequest gqlRequest) {
     return zip(
         this.attributeConverter.convert(gqlRequest.spanEventsRequest().attributes()),
         this.orderConverter.convert(gqlRequest.spanEventsRequest().orderArguments()),

@@ -29,7 +29,7 @@ class DefaultSpanRequestBuilder implements SpanRequestBuilder {
   }
 
   @Override
-  public Single<SpanRequest<OrderArgument>> build(
+  public Single<SpanRequest> build(
       GraphQlRequestContext context,
       String requestScope,
       Map<String, Object> arguments,
@@ -39,14 +39,14 @@ class DefaultSpanRequestBuilder implements SpanRequestBuilder {
                 context, requestScope, arguments, selectionSet, OrderArgument.class),
             logEventAttributeRequestBuilder.buildAttributeRequest(context, selectionSet),
             (resultSetRequest, logEventAttributeRequest) ->
-                Single.just(new DefaultSpanRequest<>(resultSetRequest, logEventAttributeRequest)))
+                Single.just(new DefaultSpanRequest(resultSetRequest, logEventAttributeRequest)))
         .flatMap(single -> single);
   }
 
   @Value
   @Accessors(fluent = true)
-  private static class DefaultSpanRequest<O extends OrderArgument> implements SpanRequest<O> {
-    ResultSetRequest<O> spanEventsRequest;
+  private static class DefaultSpanRequest implements SpanRequest {
+    ResultSetRequest<OrderArgument> spanEventsRequest;
     Collection<AttributeRequest> logEventAttributes;
   }
 }
