@@ -2,6 +2,7 @@ package org.hypertrace.core.graphql.span.schema;
 
 import graphql.annotations.annotationTypes.GraphQLField;
 import graphql.annotations.annotationTypes.GraphQLName;
+import graphql.annotations.annotationTypes.GraphQLNonNull;
 import java.util.List;
 import org.hypertrace.core.graphql.common.schema.attributes.AttributeQueryable;
 import org.hypertrace.core.graphql.common.schema.id.Identifiable;
@@ -13,6 +14,7 @@ public interface Span extends AttributeQueryable, Identifiable {
   String LOG_EVENT_KEY = "logEvents";
 
   @GraphQLField
+  @GraphQLNonNull
   @GraphQLName(LOG_EVENT_KEY)
   List<LogEvent> logEvents();
 }

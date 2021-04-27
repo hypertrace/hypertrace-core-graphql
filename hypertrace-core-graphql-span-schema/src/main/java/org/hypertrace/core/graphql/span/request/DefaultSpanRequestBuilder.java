@@ -21,7 +21,7 @@ import org.hypertrace.core.graphql.common.schema.results.arguments.order.OrderAr
 import org.hypertrace.core.graphql.context.GraphQlRequestContext;
 import org.hypertrace.core.graphql.log.event.request.LogEventRequest;
 
-public class DefaultSpanRequestBuilder implements SpanRequestBuilder {
+class DefaultSpanRequestBuilder implements SpanRequestBuilder {
 
   private final ResultSetRequestBuilder resultSetRequestBuilder;
   private final LogEventAttributeRequestBuilder logEventAttributeRequestBuilder;
