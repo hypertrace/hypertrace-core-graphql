@@ -20,7 +20,7 @@ class GatewayServiceSpanDao implements SpanDao {
   private final GraphQlGrpcContextBuilder grpcContextBuilder;
   private final GatewayServiceSpanRequestBuilder requestBuilder;
   private final GatewayServiceSpanConverter spanConverter;
-  private final SpanLogEventFetcher spanLogEventFetcher;
+  private final SpanLogEventDao spanLogEventDao;
 
   @Inject
   GatewayServiceSpanDao(
@@ -28,11 +28,11 @@ class GatewayServiceSpanDao implements SpanDao {
       GraphQlGrpcContextBuilder grpcContextBuilder,
       GatewayServiceSpanRequestBuilder requestBuilder,
       GatewayServiceSpanConverter spanConverter,
-      SpanLogEventFetcher spanLogEventFetcher) {
+      SpanLogEventDao spanLogEventDao) {
     this.grpcContextBuilder = grpcContextBuilder;
     this.requestBuilder = requestBuilder;
     this.spanConverter = spanConverter;
-    this.spanLogEventFetcher = spanLogEventFetcher;
+    this.spanLogEventDao = spanLogEventDao;
     this.gatewayServiceStub = gatewayServiceFutureStub;
   }
 
@@ -42,7 +42,7 @@ class GatewayServiceSpanDao implements SpanDao {
         .buildRequest(request)
         .flatMap(
             serverRequest -> this.makeRequest(request.spanEventsRequest().context(), serverRequest))
-        .flatMap(serverResponse -> spanLogEventFetcher.fetchLogEvents(request, serverResponse))
+        .flatMap(serverResponse -> spanLogEventDao.fetchLogEvents(request, serverResponse))
         .flatMap(
             spanLogEventsResponse -> this.spanConverter.convert(request, spanLogEventsResponse));
   }

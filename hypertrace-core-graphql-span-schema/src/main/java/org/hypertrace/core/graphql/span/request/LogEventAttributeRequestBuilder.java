@@ -45,7 +45,7 @@ class LogEventAttributeRequestBuilder {
     return this.selectionFinder.findSelections(
         selectionSet,
         SelectionQuery.builder()
-            .selectionPath(List.of(RESULT_SET_RESULTS_NAME, LOG_EVENT_KEY))
+            .selectionPath(List.of(RESULT_SET_RESULTS_NAME, LOG_EVENT_KEY, RESULT_SET_RESULTS_NAME))
             .build());
   }
 }
