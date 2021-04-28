@@ -1,5 +1,9 @@
 package org.hypertrace.core.graphql.span.dao;
 
+import static org.hypertrace.core.graphql.span.dao.DaoTestUtil.attributesAttribute;
+import static org.hypertrace.core.graphql.span.dao.DaoTestUtil.spanIdAttribute;
+import static org.hypertrace.core.graphql.span.dao.DaoTestUtil.spansResponse;
+import static org.hypertrace.core.graphql.span.dao.DaoTestUtil.traceIdAttribute;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyCollection;
@@ -27,6 +31,10 @@ import org.hypertrace.core.graphql.common.request.FilterRequestBuilder;
 import org.hypertrace.core.graphql.common.request.ResultSetRequest;
 import org.hypertrace.core.graphql.common.schema.results.arguments.filter.FilterArgument;
 import org.hypertrace.core.graphql.common.utils.Converter;
+import org.hypertrace.core.graphql.span.dao.DaoTestUtil.DefaultResultSetRequest;
+import org.hypertrace.core.graphql.span.dao.DaoTestUtil.DefaultSpanRequest;
+import org.hypertrace.core.graphql.span.dao.DaoTestUtil.DefaultTimeRange;
+import org.hypertrace.core.graphql.span.dao.DaoTestUtil.NormalizedFilter;
 import org.hypertrace.core.graphql.span.request.SpanRequest;
 import org.hypertrace.core.graphql.spi.config.GraphQlServiceConfig;
 import org.hypertrace.core.graphql.utils.gateway.GatewayUtilsModule;
@@ -42,7 +50,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class SpanLogEventRequestBuilderTest extends BaseDaoTest {
+class SpanLogEventRequestBuilderTest {
 
   @Mock private FilterRequestBuilder filterRequestBuilder;
 
@@ -103,9 +111,9 @@ class SpanLogEventRequestBuilderTest extends BaseDaoTest {
     ResultSetRequest resultSetRequest =
         new DefaultResultSetRequest(
             null,
-            List.of(eventIdAttribute),
+            List.of(DaoTestUtil.eventIdAttribute),
             new DefaultTimeRange(Instant.ofEpochMilli(startTime), Instant.ofEpochMilli(endTime)),
-            eventIdAttribute,
+            DaoTestUtil.eventIdAttribute,
             0,
             0,
             List.of(),

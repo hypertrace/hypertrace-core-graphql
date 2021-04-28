@@ -29,7 +29,7 @@ import org.hypertrace.gateway.service.v1.log.events.LogEventsResponse;
 import org.hypertrace.gateway.service.v1.span.SpanEvent;
 import org.hypertrace.gateway.service.v1.span.SpansResponse;
 
-class BaseDaoTest {
+class DaoTestUtil {
 
   @Value
   @Accessors(fluent = true)
@@ -96,7 +96,7 @@ class BaseDaoTest {
 
   @Value
   @Accessors(fluent = true)
-  class DefaultTimeRange implements TimeRangeArgument {
+  static class DefaultTimeRange implements TimeRangeArgument {
 
     @JsonProperty(TIME_RANGE_ARGUMENT_START_TIME)
     Instant startTime;

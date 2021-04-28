@@ -1,5 +1,10 @@
 package org.hypertrace.core.graphql.span.dao;
 
+import static org.hypertrace.core.graphql.span.dao.DaoTestUtil.attributesAttribute;
+import static org.hypertrace.core.graphql.span.dao.DaoTestUtil.logEventsResponse;
+import static org.hypertrace.core.graphql.span.dao.DaoTestUtil.spanIdAttribute;
+import static org.hypertrace.core.graphql.span.dao.DaoTestUtil.spansResponse;
+import static org.hypertrace.core.graphql.span.dao.DaoTestUtil.traceIdAttribute;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyCollection;
@@ -27,7 +32,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class SpanLogEventResponseConverterTest extends BaseDaoTest {
+class SpanLogEventResponseConverterTest {
 
   @Mock
   BiConverter<Collection<AttributeRequest>, Map<String, Value>, Map<String, Object>>
