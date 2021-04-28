@@ -86,10 +86,10 @@ class SpanLogEventRequestBuilder {
                             logEventAttribute ->
                                 logEventAttribute.attribute().key().equals(spanId.key()))
                     ? Single.just(logEventAttributes)
-                    : get(spanId, logEventAttributes));
+                    : updateRequestAttribute(spanId, logEventAttributes));
   }
 
-  private Single<Collection<AttributeRequest>> get(
+  private Single<Collection<AttributeRequest>> updateRequestAttribute(
       AttributeModel attributeModel, Collection<AttributeRequest> requests) {
     List<AttributeRequest> list = new ArrayList<>(requests);
     list.add(new DefaultAttributeRequest(attributeModel, ""));
