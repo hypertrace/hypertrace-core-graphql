@@ -5,6 +5,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import io.reactivex.rxjava3.core.Single;
 import java.util.Map;
 import javax.inject.Inject;
+import org.hypertrace.core.graphql.attributes.AttributeStore;
 import org.hypertrace.core.graphql.context.GraphQlRequestContext;
 import org.hypertrace.core.graphql.span.request.SpanRequest;
 import org.hypertrace.core.graphql.utils.grpc.GraphQlGrpcContextBuilder;
@@ -21,17 +22,20 @@ class SpanLogEventDao {
   private final GraphQlGrpcContextBuilder grpcContextBuilder;
   private final SpanLogEventRequestBuilder spanLogEventRequestBuilder;
   private final SpanLogEventResponseConverter spanLogEventResponseConverter;
+  private final AttributeStore attributeStore;
 
   @Inject
   SpanLogEventDao(
       GatewayServiceFutureStub gatewayServiceFutureStub,
       GraphQlGrpcContextBuilder grpcContextBuilder,
       SpanLogEventRequestBuilder spanLogEventRequestBuilder,
-      SpanLogEventResponseConverter spanLogEventResponseConverter) {
+      SpanLogEventResponseConverter spanLogEventResponseConverter,
+      AttributeStore attributeStore) {
     this.gatewayServiceStub = gatewayServiceFutureStub;
     this.grpcContextBuilder = grpcContextBuilder;
     this.spanLogEventRequestBuilder = spanLogEventRequestBuilder;
     this.spanLogEventResponseConverter = spanLogEventResponseConverter;
+    this.attributeStore = attributeStore;
   }
 
   /**

@@ -54,18 +54,37 @@ class SpanLogEventResponseConverter {
       LogEventsResponse logEventsResponse) {
     return Observable.fromIterable(logEventsResponse.getLogEventsList())
         .concatMapSingle(
-            logEventsResponseVar -> this.convert(attributeRequests, logEventsResponseVar))
-        .collect(Collectors.groupingBy(logEvent -> (String) logEvent.attribute(foreignIdAttribute)))
+            logEventsResponseVar ->
+                this.convert(foreignIdAttribute, attributeRequests, logEventsResponseVar))
+        .collect(
+            Collectors.groupingBy(
+                spanLogEventPair -> spanLogEventPair.spanId,
+                Collectors.mapping(v -> v.logEvent, Collectors.toList())))
         .map(
             spanIdVsLogEventsMap -> new SpanLogEventsResponse(spansResponse, spanIdVsLogEventsMap));
   }
 
-  private Single<LogEvent> convert(
+  private Single<SpanLogEventPair> convert(
+      String foreignIdAttribute,
       Collection<AttributeRequest> request,
       org.hypertrace.gateway.service.v1.log.events.LogEvent logEvent) {
     return this.attributeMapConverter
         .convert(request, logEvent.getAttributesMap())
-        .map(ConvertedLogEvent::new);
+        .map(
+            attributeMap ->
+                new SpanLogEventPair(
+                    logEvent.getAttributesMap().get(foreignIdAttribute).getString(),
+                    new ConvertedLogEvent(attributeMap)));
+  }
+
+  static class SpanLogEventPair {
+    String spanId;
+    LogEvent logEvent;
+
+    SpanLogEventPair(String spanId, LogEvent logEvent) {
+      this.spanId = spanId;
+      this.logEvent = logEvent;
+    }
   }
 
   @lombok.Value
