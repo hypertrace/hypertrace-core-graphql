@@ -66,9 +66,10 @@ class GatewayServiceSpanConverter {
     }
 
     @Override
-    public LogEventResultSet logEvents() {
+    public List<LogEvent> logEvents() {
       List<LogEvent> list = spanIdToLogEvents.getOrDefault(id, Collections.emptyList());
-      return new ConvertedLogEventResultSet(list, list.size(), list.size());
+      return list;
+      // return new ConvertedLogEventResultSet(list, list.size(), list.size());
     }
   }
 

@@ -4,8 +4,7 @@ import org.hypertrace.core.graphql.common.schema.attributes.AttributeScope;
 
 enum HypertraceCoreAttributeScope implements AttributeScope {
   TRACE(HypertraceCoreAttributeScopeString.TRACE),
-  SPAN(HypertraceCoreAttributeScopeString.SPAN),
-  LOG_EVENT(HypertraceCoreAttributeScopeString.LOG_EVENT);
+  SPAN(HypertraceCoreAttributeScopeString.SPAN);
 
   private final String scope;
 

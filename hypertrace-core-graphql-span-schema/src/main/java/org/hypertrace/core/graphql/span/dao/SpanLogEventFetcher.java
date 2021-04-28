@@ -21,7 +21,6 @@ import org.hypertrace.core.graphql.common.schema.attributes.AttributeScope;
 import org.hypertrace.core.graphql.common.schema.results.arguments.filter.FilterArgument;
 import org.hypertrace.core.graphql.common.schema.results.arguments.filter.FilterOperatorType;
 import org.hypertrace.core.graphql.common.schema.results.arguments.filter.FilterType;
-import org.hypertrace.core.graphql.common.schema.results.arguments.order.OrderArgument;
 import org.hypertrace.core.graphql.common.utils.BiConverter;
 import org.hypertrace.core.graphql.common.utils.Converter;
 import org.hypertrace.core.graphql.context.GraphQlRequestContext;
@@ -78,7 +77,7 @@ class SpanLogEventFetcher {
    * </ul>
    */
   Single<SpanLogEventsResponse> fetchLogEvents(
-      SpanRequest<OrderArgument> gqlRequest, SpansResponse spansResponse) {
+      SpanRequest gqlRequest, SpansResponse spansResponse) {
     if (null == gqlRequest.spanEventsRequest().idAttribute()
         || null == gqlRequest.logEventAttributes()
         || gqlRequest.logEventAttributes().isEmpty()) {
@@ -98,7 +97,7 @@ class SpanLogEventFetcher {
   }
 
   private Single<LogEventsRequest> buildLogEventsRequest(
-      SpanRequest<OrderArgument> gqlRequest, SpansResponse spansResponse) {
+      SpanRequest gqlRequest, SpansResponse spansResponse) {
     return zip(
         this.attributeConverter.convert(gqlRequest.logEventAttributes()),
         buildLogEventsQueryFilter(gqlRequest, spansResponse).flatMap(filterConverter::convert),
@@ -114,7 +113,7 @@ class SpanLogEventFetcher {
   }
 
   private Single<List<AttributeAssociation<FilterArgument>>> buildLogEventsQueryFilter(
-      SpanRequest<OrderArgument> gqlRequest, SpansResponse spansResponse) {
+      SpanRequest gqlRequest, SpansResponse spansResponse) {
     List<String> spanIds =
         spansResponse.getSpansList().stream()
             .map(
