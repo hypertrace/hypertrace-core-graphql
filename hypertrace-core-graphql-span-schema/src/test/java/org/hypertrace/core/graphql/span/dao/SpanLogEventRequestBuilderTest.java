@@ -27,13 +27,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.hypertrace.core.graphql.attributes.AttributeModel;
 import org.hypertrace.core.graphql.attributes.AttributeStore;
 import org.hypertrace.core.graphql.common.request.AttributeAssociation;
 import org.hypertrace.core.graphql.common.request.AttributeRequest;
+import org.hypertrace.core.graphql.common.request.AttributeRequestBuilder;
 import org.hypertrace.core.graphql.common.request.FilterRequestBuilder;
 import org.hypertrace.core.graphql.common.request.ResultSetRequest;
 import org.hypertrace.core.graphql.common.schema.results.arguments.filter.FilterArgument;
 import org.hypertrace.core.graphql.common.utils.Converter;
+import org.hypertrace.core.graphql.span.dao.DaoTestUtil.DefaultAttributeRequest;
 import org.hypertrace.core.graphql.span.dao.DaoTestUtil.DefaultResultSetRequest;
 import org.hypertrace.core.graphql.span.dao.DaoTestUtil.DefaultSpanRequest;
 import org.hypertrace.core.graphql.span.dao.DaoTestUtil.DefaultTimeRange;
@@ -57,7 +60,9 @@ class SpanLogEventRequestBuilderTest {
 
   @Mock private FilterRequestBuilder filterRequestBuilder;
 
-  @Mock AttributeStore attributeStore;
+  @Mock private AttributeStore attributeStore;
+
+  @Mock private AttributeRequestBuilder attributeRequestBuilder;
 
   private SpanLogEventRequestBuilder spanLogEventRequestBuilder;
 
@@ -88,7 +93,11 @@ class SpanLogEventRequestBuilderTest {
 
     spanLogEventRequestBuilder =
         new SpanLogEventRequestBuilder(
-            attributeConverter, filterConverter, filterRequestBuilder, attributeStore);
+            attributeConverter,
+            filterConverter,
+            filterRequestBuilder,
+            attributeStore,
+            attributeRequestBuilder);
 
     doAnswer(
             invocation -> {
@@ -108,6 +117,14 @@ class SpanLogEventRequestBuilderTest {
 
     when(attributeStore.getForeignIdAttribute(any(), anyString(), anyString()))
         .thenReturn(Single.just(spanIdAttribute.attribute()));
+
+    doAnswer(
+            invocation -> {
+              AttributeModel attributeModel = invocation.getArgument(0, AttributeModel.class);
+              return new DefaultAttributeRequest(attributeModel);
+            })
+        .when(attributeRequestBuilder)
+        .buildForAttribute(any());
   }
 
   @Test
@@ -159,7 +176,7 @@ class SpanLogEventRequestBuilderTest {
     assertEquals(
         Set.of("attributes", "traceId", "spanId"),
         logEventsRequest.getSelectionList().stream()
-            .map(v -> v.getColumnIdentifier().getColumnName())
+            .map(expression -> expression.getColumnIdentifier().getColumnName())
             .collect(Collectors.toSet()));
   }
 
@@ -210,7 +227,7 @@ class SpanLogEventRequestBuilderTest {
     assertEquals(
         Set.of("traceId", "spanId"),
         logEventsRequest.getSelectionList().stream()
-            .map(v -> v.getColumnIdentifier().getColumnName())
+            .map(expression -> expression.getColumnIdentifier().getColumnName())
             .collect(Collectors.toSet()));
   }
 }
