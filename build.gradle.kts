@@ -5,6 +5,7 @@ plugins {
   id("org.hypertrace.docker-java-application-plugin") version "0.9.0" apply false
   id("org.hypertrace.docker-publish-plugin") version "0.9.0" apply false
   id("org.hypertrace.code-style-plugin") version "1.1.0" apply false
+  id("com.google.protobuf") version "0.8.15" apply false
 }
 
 subprojects {

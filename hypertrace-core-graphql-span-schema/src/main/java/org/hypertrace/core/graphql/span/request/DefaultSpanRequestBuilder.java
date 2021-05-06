@@ -5,6 +5,7 @@ import static io.reactivex.rxjava3.core.Single.zip;
 import graphql.schema.DataFetchingFieldSelectionSet;
 import io.reactivex.rxjava3.core.Single;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 import lombok.Value;
@@ -38,6 +39,21 @@ class DefaultSpanRequestBuilder implements SpanRequestBuilder {
             resultSetRequestBuilder.build(
                 context, requestScope, arguments, selectionSet, OrderArgument.class),
             logEventAttributeRequestBuilder.buildAttributeRequest(context, selectionSet),
+            (resultSetRequest, logEventAttributeRequest) ->
+                Single.just(new DefaultSpanRequest(resultSetRequest, logEventAttributeRequest)))
+        .flatMap(single -> single);
+  }
+
+  @Override
+  public Single<SpanRequest> build(
+      GraphQlRequestContext context,
+      String requestScope,
+      Map<String, Object> arguments,
+      List<String> spanAttributes,
+      List<String> logAttributes) {
+    return zip(
+            resultSetRequestBuilder.build(context, requestScope, arguments, spanAttributes),
+            logEventAttributeRequestBuilder.buildAttributeRequest(context, logAttributes),
             (resultSetRequest, logEventAttributeRequest) ->
                 Single.just(new DefaultSpanRequest(resultSetRequest, logEventAttributeRequest)))
         .flatMap(single -> single);
