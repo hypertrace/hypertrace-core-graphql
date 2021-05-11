@@ -37,12 +37,11 @@ class DefaultSpanRequestBuilder implements SpanRequestBuilder {
       Map<String, Object> arguments,
       DataFetchingFieldSelectionSet selectionSet) {
     return zip(
-            resultSetRequestBuilder.build(
-                context, requestScope, arguments, selectionSet, OrderArgument.class),
-            logEventAttributeRequestBuilder.buildAttributeRequest(context, selectionSet),
-            (resultSetRequest, logEventAttributeRequest) ->
-                Single.just(new DefaultSpanRequest(resultSetRequest, logEventAttributeRequest)))
-        .flatMap(single -> single);
+        resultSetRequestBuilder.build(
+            context, requestScope, arguments, selectionSet, OrderArgument.class),
+        logEventAttributeRequestBuilder.buildAttributeRequest(context, selectionSet),
+        (resultSetRequest, logEventAttributeRequest) ->
+            new DefaultSpanRequest(resultSetRequest, logEventAttributeRequest));
   }
 
   @Override
@@ -52,12 +51,11 @@ class DefaultSpanRequestBuilder implements SpanRequestBuilder {
       List<String> spanAttributes,
       List<String> logAttributes) {
     return zip(
-            resultSetRequestBuilder.build(
-                context, HypertraceCoreAttributeScopeString.SPAN, arguments, spanAttributes),
-            logEventAttributeRequestBuilder.buildAttributeRequest(context, logAttributes),
-            (resultSetRequest, logEventAttributeRequest) ->
-                Single.just(new DefaultSpanRequest(resultSetRequest, logEventAttributeRequest)))
-        .flatMap(single -> single);
+        resultSetRequestBuilder.build(
+            context, HypertraceCoreAttributeScopeString.SPAN, arguments, spanAttributes),
+        logEventAttributeRequestBuilder.buildAttributeRequest(context, logAttributes),
+        (resultSetRequest, logEventAttributeRequest) ->
+            new DefaultSpanRequest(resultSetRequest, logEventAttributeRequest));
   }
 
   @Value
