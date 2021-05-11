@@ -33,12 +33,15 @@ class DefaultSpanRequestBuilder implements SpanRequestBuilder {
   @Override
   public Single<SpanRequest> build(
       GraphQlRequestContext context,
-      String requestScope,
       Map<String, Object> arguments,
       DataFetchingFieldSelectionSet selectionSet) {
     return zip(
         resultSetRequestBuilder.build(
-            context, requestScope, arguments, selectionSet, OrderArgument.class),
+            context,
+            HypertraceCoreAttributeScopeString.SPAN,
+            arguments,
+            selectionSet,
+            OrderArgument.class),
         logEventAttributeRequestBuilder.buildAttributeRequest(context, selectionSet),
         (resultSetRequest, logEventAttributeRequest) ->
             new DefaultSpanRequest(resultSetRequest, logEventAttributeRequest));
