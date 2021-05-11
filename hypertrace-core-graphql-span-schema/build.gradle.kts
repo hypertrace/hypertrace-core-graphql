@@ -17,6 +17,8 @@ dependencies {
   implementation("io.reactivex.rxjava3:rxjava")
   implementation("org.hypertrace.gateway.service:gateway-service-api")
   implementation("com.google.protobuf:protobuf-java-util")
+  implementation("io.opentelemetry:opentelemetry-proto")
+  implementation("org.apache.commons:commons-text")
 
   implementation(project(":hypertrace-core-graphql-context"))
   implementation(project(":hypertrace-core-graphql-grpc-utils"))
@@ -26,7 +28,6 @@ dependencies {
   implementation(project(":hypertrace-core-graphql-deserialization"))
   implementation(project(":hypertrace-core-graphql-schema-utils"))
   implementation(project(":hypertrace-core-graphql-attribute-scope-constants"))
-  implementation(project(":hypertrace-core-graphql-export-span-utils"))
 
   testImplementation("org.junit.jupiter:junit-jupiter")
   testImplementation("com.fasterxml.jackson.core:jackson-databind")

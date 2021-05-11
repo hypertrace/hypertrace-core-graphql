@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import lombok.Value;
 import lombok.experimental.Accessors;
+import org.hypertrace.core.graphql.atttributes.scopes.HypertraceCoreAttributeScopeString;
 import org.hypertrace.core.graphql.common.request.AttributeRequest;
 import org.hypertrace.core.graphql.common.request.ResultSetRequest;
 import org.hypertrace.core.graphql.common.request.ResultSetRequestBuilder;
@@ -47,12 +48,12 @@ class DefaultSpanRequestBuilder implements SpanRequestBuilder {
   @Override
   public Single<SpanRequest> build(
       GraphQlRequestContext context,
-      String requestScope,
       Map<String, Object> arguments,
       List<String> spanAttributes,
       List<String> logAttributes) {
     return zip(
-            resultSetRequestBuilder.build(context, requestScope, arguments, spanAttributes),
+            resultSetRequestBuilder.build(
+                context, HypertraceCoreAttributeScopeString.SPAN, arguments, spanAttributes),
             logEventAttributeRequestBuilder.buildAttributeRequest(context, logAttributes),
             (resultSetRequest, logEventAttributeRequest) ->
                 Single.just(new DefaultSpanRequest(resultSetRequest, logEventAttributeRequest)))

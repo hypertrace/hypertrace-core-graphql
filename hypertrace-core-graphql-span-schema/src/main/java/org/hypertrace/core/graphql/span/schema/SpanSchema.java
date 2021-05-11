@@ -37,6 +37,5 @@ public interface SpanSchema {
   ExportSpanResult exportSpans(
       @GraphQLName(TimeRangeArgument.ARGUMENT_NAME) @GraphQLNonNull TimeRangeArgument between,
       @GraphQLName(FilterArgument.ARGUMENT_NAME) List<FilterArgument> filterBy,
-      @GraphQLName(LimitArgument.ARGUMENT_NAME) int limit,
-      @GraphQLName(SpaceArgument.ARGUMENT_NAME) String space);
+      @GraphQLName(LimitArgument.ARGUMENT_NAME) int limit);
 }

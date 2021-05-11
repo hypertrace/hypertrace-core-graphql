@@ -16,7 +16,6 @@ public interface SpanRequestBuilder {
 
   Single<SpanRequest> build(
       GraphQlRequestContext context,
-      String requestScope,
       Map<String, Object> arguments,
       List<String> spanAttributes,
       List<String> logAttributes);

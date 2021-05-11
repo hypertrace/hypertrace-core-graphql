@@ -1,4 +1,4 @@
-package org.hypertrace.core.graphql.utils.export.span;
+package org.hypertrace.core.graphql.span.export;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -18,7 +18,7 @@ import org.apache.commons.text.StringEscapeUtils;
 
 @lombok.Value
 @Accessors(fluent = true)
-public class ExportSpanResponse {
+public class ExportSpanConverter {
 
   private static final ObjectMapper OBJECT_MAPPER =
       new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -37,21 +37,13 @@ public class ExportSpanResponse {
   @JsonSerialize(contentUsing = MessageSerializer.class)
   List<ResourceSpans> resourceSpans;
 
-  public String toJson() throws JsonProcessingException {
+  private String toJson() throws JsonProcessingException {
     return StringEscapeUtils.unescapeJson(OBJECT_MAPPER.writeValueAsString(this));
   }
 
-  public static class Builder {
-    private List<ExportSpan> exportSpans;
-
-    public Builder(List<ExportSpan> exportSpans) {
-      this.exportSpans = exportSpans;
-    }
-
-    public ExportSpanResponse build() {
-      List<ResourceSpans> spans =
-          this.exportSpans.stream().map(s -> s.resourceSpans()).collect(Collectors.toList());
-      return new ExportSpanResponse(spans);
-    }
+  public static String toJson(List<ExportSpan> exportSpans) throws JsonProcessingException {
+    List<ResourceSpans> spans =
+        exportSpans.stream().map(s -> s.resourceSpans()).collect(Collectors.toList());
+    return new ExportSpanConverter(spans).toJson();
   }
 }

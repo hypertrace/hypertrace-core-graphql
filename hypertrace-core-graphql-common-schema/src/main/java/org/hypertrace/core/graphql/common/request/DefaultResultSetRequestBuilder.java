@@ -165,9 +165,6 @@ class DefaultResultSetRequestBuilder implements ResultSetRequestBuilder {
             .deserializeObjectList(arguments, FilterArgument.class)
             .orElse(Collections.emptyList());
 
-    Optional<String> spaceId =
-        this.argumentDeserializer.deserializePrimitive(arguments, SpaceArgument.class);
-
     return zip(
         this.getAttributeRequests(context, requestScope, attributes).collect(Collectors.toList()),
         this.attributeRequestBuilder.buildForId(context, requestScope),
@@ -182,16 +179,16 @@ class DefaultResultSetRequestBuilder implements ResultSetRequestBuilder {
                 0,
                 List.of(),
                 filters,
-                spaceId));
+                Optional.empty()));
   }
 
   private Observable<AttributeRequest> getAttributeRequests(
       GraphQlRequestContext context, String requestScope, List<String> attributes) {
     return Observable.fromIterable(attributes)
+        .distinct()
         .flatMapSingle(
             attributeKey ->
-                this.attributeRequestBuilder.buildForKey(context, requestScope, attributeKey))
-        .distinct();
+                this.attributeRequestBuilder.buildForKey(context, requestScope, attributeKey));
   }
 
   private Stream<SelectedField> getAttributeQueryableFields(
