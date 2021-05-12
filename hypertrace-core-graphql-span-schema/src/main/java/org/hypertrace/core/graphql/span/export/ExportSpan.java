@@ -33,54 +33,57 @@ public class ExportSpan {
 
   public static class Builder {
 
-    private final ResourceSpans.Builder resourceSpansBuilder;
-    private final Resource.Builder resourceBuilder;
-    private final InstrumentationLibrarySpans.Builder instrumentationLibrarySpansBuilder;
-    private final Span.Builder spanBuilder;
     private final org.hypertrace.core.graphql.span.schema.Span span;
 
     public Builder(org.hypertrace.core.graphql.span.schema.Span span) {
-      this.resourceSpansBuilder = ResourceSpans.newBuilder();
-      this.resourceBuilder = Resource.newBuilder();
-      this.instrumentationLibrarySpansBuilder = InstrumentationLibrarySpans.newBuilder();
-      this.spanBuilder = Span.newBuilder();
       this.span = span;
     }
 
-    private void setResourceServiceName(String serviceName) {
-      KeyValue keyValue =
-          KeyValue.newBuilder()
-              .setKey(SERVICE_NAME_KEY)
-              .setValue(AnyValue.newBuilder().setStringValue(serviceName).build())
-              .build();
-      this.resourceBuilder.addAttributes(keyValue);
+    private void setResourceServiceName(Resource.Builder resourceBuilder) {
+      if (span.attribute(SpanAttributes.SERVICE_NAME) != null) {
+        String serviceName = span.attribute(SpanAttributes.SERVICE_NAME).toString();
+        KeyValue keyValue =
+            KeyValue.newBuilder()
+                .setKey(SERVICE_NAME_KEY)
+                .setValue(AnyValue.newBuilder().setStringValue(serviceName).build())
+                .build();
+        resourceBuilder.addAttributes(keyValue);
+      }
     }
 
-    private void setBytesFields(String spanId, String traceId, String parentSpanId) {
-      byte[] spanIdBytes = BaseEncoding.base64().decode(spanId);
+    private void setBytesFields(Span.Builder spanBuilder) {
+      byte[] spanIdBytes = BaseEncoding.base64().decode(span.id());
       spanBuilder.setSpanId(ByteString.copyFrom(spanIdBytes));
 
+      String traceId = span.attribute(SpanAttributes.TRACE_ID).toString();
       byte[] traceIdBytes = BaseEncoding.base64().decode(traceId);
       spanBuilder.setTraceId(ByteString.copyFrom(traceIdBytes));
 
       byte[] parentSpanIdBytes = BaseEncoding.base64().decode("");
-      if (parentSpanId != null) {
-        parentSpanIdBytes = BaseEncoding.base64().decode(parentSpanId);
+      if (span.attribute(SpanAttributes.PARENT_SPAN_ID) != null) {
+        parentSpanIdBytes =
+            BaseEncoding.base64().decode(span.attribute(SpanAttributes.PARENT_SPAN_ID).toString());
       }
       spanBuilder.setParentSpanId(ByteString.copyFrom(parentSpanIdBytes));
     }
 
-    public void setTimeFields(long startTime, long endTime) {
+    private void setTimeFields(Span.Builder spanBuilder) {
+      long startTime = Long.parseLong(span.attribute(SpanAttributes.START_TIME).toString());
       spanBuilder.setStartTimeUnixNano(
           TimeUnit.NANOSECONDS.convert(startTime, TimeUnit.MILLISECONDS));
+
+      long endTime = Long.parseLong(span.attribute(SpanAttributes.END_TIME).toString());
       spanBuilder.setEndTimeUnixNano(TimeUnit.NANOSECONDS.convert(endTime, TimeUnit.MILLISECONDS));
     }
 
-    public void setName(String name) {
-      spanBuilder.setName(name);
+    private void setName(Span.Builder spanBuilder) {
+      if (span.attribute(SpanAttributes.NAME) != null) {
+        spanBuilder.setName(span.attribute(SpanAttributes.NAME).toString());
+      }
     }
 
-    public void setAttributes(Map<String, String> tags, List<String> excludeKeys) {
+    private static void setAttributes(
+        Span.Builder spanBuilder, Map<String, String> tags, List<String> excludeKeys) {
       List<KeyValue> attributes =
           tags.entrySet().stream()
               .filter(e -> !excludeKeys.contains(e.getKey()))
@@ -94,7 +97,8 @@ public class ExportSpan {
       spanBuilder.addAllAttributes(attributes);
     }
 
-    private void setStatusCode(Map<String, String> tags, List<String> statusCodeKeys) {
+    private static void setStatusCode(
+        Span.Builder spanBuilder, Map<String, String> tags, List<String> statusCodeKeys) {
       int statusCode =
           statusCodeKeys.stream()
               .filter(e -> tags.containsKey(e))
@@ -104,7 +108,7 @@ public class ExportSpan {
       spanBuilder.setStatus(Status.newBuilder().setCode(StatusCode.forNumber(statusCode)).build());
     }
 
-    private void setSpanKind(String spanKind) {
+    private static void setSpanKind(Span.Builder spanBuilder, String spanKind) {
       if (spanKind != null) {
         spanBuilder.setKind(
             SpanKind.valueOf(String.join("_", "SPAN_KIND", spanKind.toUpperCase())));
@@ -115,23 +119,24 @@ public class ExportSpan {
 
     public ExportSpan build() {
 
-      setResourceServiceName(span.attribute(SpanAttributes.SERVICE_NAME).toString());
+      ResourceSpans.Builder resourceSpansBuilder = ResourceSpans.newBuilder();
+      Resource.Builder resourceBuilder = Resource.newBuilder();
+      InstrumentationLibrarySpans.Builder instrumentationLibrarySpansBuilder =
+          InstrumentationLibrarySpans.newBuilder();
+      Span.Builder spanBuilder = Span.newBuilder();
 
-      setBytesFields(
-          span.attribute(SpanAttributes.ID).toString(),
-          span.attribute(SpanAttributes.TRACE_ID).toString(),
-          span.attribute(SpanAttributes.PARENT_SPAN_ID).toString());
+      setResourceServiceName(resourceBuilder);
+      setBytesFields(spanBuilder);
+      setTimeFields(spanBuilder);
+      setName(spanBuilder);
 
-      setTimeFields(
-          Long.parseLong(span.attribute(SpanAttributes.START_TIME).toString()),
-          Long.parseLong(span.attribute(SpanAttributes.END_TIME).toString()));
-
-      setName(span.attribute(SpanAttributes.NAME).toString());
-
-      Map<String, String> tags = (Map<String, String>) span.attribute(SpanAttributes.TAGS);
-      setStatusCode(tags, SpanTagsKey.getStatusCodeKeys());
-      setSpanKind(tags.get(SPAN_KIND));
-      setAttributes(tags, SpanTagsKey.getExcludeKeys());
+      Map<String, String> tags =
+          span.attribute(SpanAttributes.TAGS) != null
+              ? (Map<String, String>) span.attribute(SpanAttributes.TAGS)
+              : Map.of();
+      setStatusCode(spanBuilder, tags, SpanTagsKey.getStatusCodeKeys());
+      setSpanKind(spanBuilder, tags.get(SPAN_KIND));
+      setAttributes(spanBuilder, tags, SpanTagsKey.getExcludeKeys());
 
       resourceSpansBuilder.setResource(resourceBuilder.build());
       instrumentationLibrarySpansBuilder.addSpans(spanBuilder.build());
