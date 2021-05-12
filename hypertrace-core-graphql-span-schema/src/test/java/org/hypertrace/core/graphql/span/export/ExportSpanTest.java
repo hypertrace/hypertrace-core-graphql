@@ -1,6 +1,5 @@
 package org.hypertrace.core.graphql.span.export;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.BaseEncoding;
 import com.google.protobuf.ByteString;
 import io.opentelemetry.proto.trace.v1.Span.SpanKind;
@@ -17,7 +16,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class ExportSpanTest {
-  private static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
   @lombok.Value
   @Accessors(fluent = true)
@@ -83,10 +81,9 @@ public class ExportSpanTest {
         "frontend",
         exportSpan.resourceSpans().getResource().getAttributes(0).getValue().getStringValue());
 
-    // test for few converted values
+    // check for span count, start time, end time
     Assertions.assertEquals(1, exportSpan.resourceSpans().getInstrumentationLibrarySpansCount());
 
-    // check for start time, end time
     Assertions.assertEquals(
         1620743557759L * 1_000_000L,
         exportSpan
@@ -152,10 +149,9 @@ public class ExportSpanTest {
     // check resource
     Assertions.assertEquals(0, exportSpan.resourceSpans().getResource().getAttributesCount());
 
-    // test for few converted values
+    // check for span count, start time, end time
     Assertions.assertEquals(1, exportSpan.resourceSpans().getInstrumentationLibrarySpansCount());
 
-    // check for start time, end time
     Assertions.assertEquals(
         1620743557759L * 1_000_000L,
         exportSpan

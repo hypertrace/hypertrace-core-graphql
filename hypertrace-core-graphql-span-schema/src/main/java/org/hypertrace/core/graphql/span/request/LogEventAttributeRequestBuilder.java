@@ -44,11 +44,11 @@ class LogEventAttributeRequestBuilder {
   Single<Set<AttributeRequest>> buildAttributeRequest(
       GraphQlRequestContext context, List<String> attributes) {
     return Observable.fromIterable(attributes)
+        .distinct()
         .flatMapSingle(
             attributeKey ->
                 this.attributeRequestBuilder.buildForKey(
                     context, HypertraceCoreAttributeScopeString.LOG_EVENT, attributeKey))
-        .distinct()
         .collect(Collectors.toUnmodifiableSet());
   }
 
