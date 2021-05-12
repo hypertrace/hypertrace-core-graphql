@@ -82,11 +82,10 @@ public class ExportSpan {
       }
     }
 
-    private static void setAttributes(
-        Span.Builder spanBuilder, Map<String, String> tags, List<String> excludeKeys) {
+    private static void setAttributes(Span.Builder spanBuilder, Map<String, String> tags) {
       List<KeyValue> attributes =
           tags.entrySet().stream()
-              .filter(e -> !excludeKeys.contains(e.getKey()))
+              .filter(e -> !SpanTagsKey.getExcludeKeys().contains(e.getKey()))
               .map(
                   e ->
                       KeyValue.newBuilder()
@@ -97,10 +96,9 @@ public class ExportSpan {
       spanBuilder.addAllAttributes(attributes);
     }
 
-    private static void setStatusCode(
-        Span.Builder spanBuilder, Map<String, String> tags, List<String> statusCodeKeys) {
+    private static void setStatusCode(Span.Builder spanBuilder, Map<String, String> tags) {
       int statusCode =
-          statusCodeKeys.stream()
+          SpanTagsKey.getStatusCodeKeys().stream()
               .filter(e -> tags.containsKey(e))
               .map(e -> Integer.parseInt(tags.get(e)))
               .findFirst()
@@ -108,7 +106,8 @@ public class ExportSpan {
       spanBuilder.setStatus(Status.newBuilder().setCode(StatusCode.forNumber(statusCode)).build());
     }
 
-    private static void setSpanKind(Span.Builder spanBuilder, String spanKind) {
+    private static void setSpanKind(Span.Builder spanBuilder, Map<String, String> tags) {
+      String spanKind = tags.get(SPAN_KIND);
       if (spanKind != null) {
         spanBuilder.setKind(
             SpanKind.valueOf(String.join("_", "SPAN_KIND", spanKind.toUpperCase())));
@@ -134,9 +133,9 @@ public class ExportSpan {
           span.attribute(SpanAttributes.TAGS) != null
               ? (Map<String, String>) span.attribute(SpanAttributes.TAGS)
               : Map.of();
-      setStatusCode(spanBuilder, tags, SpanTagsKey.getStatusCodeKeys());
-      setSpanKind(spanBuilder, tags.get(SPAN_KIND));
-      setAttributes(spanBuilder, tags, SpanTagsKey.getExcludeKeys());
+      setStatusCode(spanBuilder, tags);
+      setSpanKind(spanBuilder, tags);
+      setAttributes(spanBuilder, tags);
 
       resourceSpansBuilder.setResource(resourceBuilder.build());
       instrumentationLibrarySpansBuilder.addSpans(spanBuilder.build());
