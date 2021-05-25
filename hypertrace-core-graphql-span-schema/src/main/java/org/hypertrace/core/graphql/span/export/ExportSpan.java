@@ -133,7 +133,7 @@ public class ExportSpan {
                                 logEvent.attribute(LogEventAttributes.TIMESTAMP).toString()))
                         .toNanos();
                 eventBuilder.setTimeUnixNano(timeNanos);
-                
+
                 Map<String, String> logEventAttributes =
                     logEvent.attribute(LogEventAttributes.ATTRIBUTES) != null
                         ? (Map<String, String>) logEvent.attribute(LogEventAttributes.ATTRIBUTES)
