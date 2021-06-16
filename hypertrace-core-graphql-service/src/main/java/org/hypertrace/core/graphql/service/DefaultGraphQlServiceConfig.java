@@ -98,6 +98,11 @@ class DefaultGraphQlServiceConfig implements GraphQlServiceConfig {
     return this.gatewayServicePort;
   }
 
+  @Override
+  public String getRolesClaimName() {
+    return null;
+  }
+
   private <T> Optional<T> optionallyGet(Supplier<T> valueSupplier) {
     try {
       return Optional.ofNullable(valueSupplier.get());

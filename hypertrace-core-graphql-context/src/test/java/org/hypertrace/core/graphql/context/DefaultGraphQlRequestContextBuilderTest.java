@@ -10,10 +10,12 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.google.common.collect.ImmutableList;
 import com.google.inject.Injector;
 import graphql.schema.DataFetcher;
 import java.util.Collections;
@@ -134,5 +136,23 @@ class DefaultGraphQlRequestContextBuilderTest {
             "x-b3-parent-trace-id",
             "x-b3-parent-trace-id value"),
         this.requestContext.getTracingContextHeaders());
+  }
+
+  @Test
+  void returnsRolesIfPresentInJwt() {
+    String rolesClaim = "https://example.com/roles";
+    List<String> expectedRoles = ImmutableList.of("user", "admin");
+    List<String> actualRoles = this.requestContext.getRoles();
+    doReturn(rolesClaim).when(this.mockServiceConfig).getRolesClaimName();
+    doReturn("Bearer " + getJwtWithRoles()).when(this.mockRequest).getHeader("Authorization");
+    assertEquals(expectedRoles, actualRoles);
+  }
+
+  private String getJwtWithRoles() {
+    return "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2MjEzNjM1OTcsImV4cCI6" +
+        "MTY1Mjg5OTU5NywiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsIkdpdmVuTmFtZSI6IkpvaG5u" +
+        "eSIsIlN1cm5hbWUiOiJSb2NrZXQiLCJuYW1lIjoiSm9obm55IFJvY2tldCIsImVtYWlsIjoianJvY2tldEBleGFtcGxlLmNvbSIsInBpY3R1" +
+        "cmUiOiJ3d3cuZXhhbXBsZS5jb20iLCJodHRwczovL2V4YW1wbGUuY29tL3JvbGVzIjpbInVzZXIiLCJhZG1pbiJdfQ.PKWns1aii5HEOje-8" +
+        "vGwvlYcWYMi4LWgw9CUQlc0npM";
   }
 }

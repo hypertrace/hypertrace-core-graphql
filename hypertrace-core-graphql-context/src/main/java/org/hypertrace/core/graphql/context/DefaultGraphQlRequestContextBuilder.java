@@ -7,6 +7,7 @@ import graphql.kickstart.servlet.context.DefaultGraphQLServletContextBuilder;
 import graphql.kickstart.servlet.context.GraphQLServletContext;
 import graphql.schema.DataFetcher;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -79,6 +80,11 @@ class DefaultGraphQlRequestContextBuilder extends DefaultGraphQLServletContextBu
       HttpServletRequest request = this.servletContext.getHttpServletRequest();
       return Optional.ofNullable(request.getHeader(TENANT_ID_HEADER_KEY))
           .or(DefaultGraphQlRequestContextBuilder.this.serviceConfig::getDefaultTenantId);
+    }
+
+    @Override
+    public List<String> getRoles() {
+      return null;
     }
 
     @Override
