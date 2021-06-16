@@ -7,6 +7,7 @@ import graphql.kickstart.servlet.context.DefaultGraphQLServletContextBuilder;
 import graphql.kickstart.servlet.context.GraphQLServletContext;
 import graphql.schema.DataFetcher;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.dataloader.DataLoaderRegistry;
 import org.hypertrace.core.graphql.spi.config.GraphQlServiceConfig;
+import org.hypertrace.core.grpcutils.context.RequestContext;
 
 class DefaultGraphQlRequestContextBuilder extends DefaultGraphQLServletContextBuilder
     implements GraphQlRequestContextBuilder {
@@ -84,7 +86,12 @@ class DefaultGraphQlRequestContextBuilder extends DefaultGraphQLServletContextBu
 
     @Override
     public List<String> getRoles() {
-      return null;
+      return getAuthorizationHeader().map(authHeader -> {
+        String rolesClaimName = DefaultGraphQlRequestContextBuilder.this.serviceConfig.getRolesClaimName();
+        RequestContext requestContext = new RequestContext();
+        requestContext.add(AUTHORIZATION_HEADER_KEY.toLowerCase(), authHeader);
+        return requestContext.getRoles(rolesClaimName);
+      }).orElse(Collections.emptyList());
     }
 
     @Override

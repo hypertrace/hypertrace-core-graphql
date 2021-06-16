@@ -140,11 +140,11 @@ class DefaultGraphQlRequestContextBuilderTest {
 
   @Test
   void returnsRolesIfPresentInJwt() {
-    String rolesClaim = "https://example.com/roles";
+    String rolesClaimName = "https://example.com/roles";
     List<String> expectedRoles = ImmutableList.of("user", "admin");
-    List<String> actualRoles = this.requestContext.getRoles();
-    doReturn(rolesClaim).when(this.mockServiceConfig).getRolesClaimName();
+    doReturn(rolesClaimName).when(this.mockServiceConfig).getRolesClaimName();
     doReturn("Bearer " + getJwtWithRoles()).when(this.mockRequest).getHeader("Authorization");
+    List<String> actualRoles = this.requestContext.getRoles();
     assertEquals(expectedRoles, actualRoles);
   }
 
