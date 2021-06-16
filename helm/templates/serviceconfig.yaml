@@ -26,3 +26,5 @@ data:
       host = {{ .Values.serviceConfig.gatewayService.host }}
       port = {{ .Values.serviceConfig.gatewayService.port }}
     }
+
+    jwt.roles.claim.name = {{ .Values.serviceConfig.jwtRolesClaimName }}

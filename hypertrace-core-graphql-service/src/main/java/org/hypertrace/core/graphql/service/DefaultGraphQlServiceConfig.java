@@ -23,6 +23,8 @@ class DefaultGraphQlServiceConfig implements GraphQlServiceConfig {
   private static final String GATEWAY_SERVICE_HOST_PROPERTY = "gateway.service.host";
   private static final String GATEWAY_SERVICE_PORT_PROPERTY = "gateway.service.port";
 
+  private static final String JWT_ROLES_CLAIM_NAME = "jwt.roles.claim.name";
+
   private final String serviceName;
   private final int servicePort;
   private final String graphqlUrlPath;
@@ -33,6 +35,7 @@ class DefaultGraphQlServiceConfig implements GraphQlServiceConfig {
   private final int attributeServicePort;
   private final String gatewayServiceHost;
   private final int gatewayServicePort;
+  private final String rolesClaimName;
 
   DefaultGraphQlServiceConfig(Config untypedConfig) {
     this.serviceName = untypedConfig.getString(SERVICE_NAME_CONFIG);
@@ -46,6 +49,7 @@ class DefaultGraphQlServiceConfig implements GraphQlServiceConfig {
     this.attributeServicePort = untypedConfig.getInt(ATTRIBUTE_SERVICE_PORT_PROPERTY);
     this.gatewayServiceHost = untypedConfig.getString(GATEWAY_SERVICE_HOST_PROPERTY);
     this.gatewayServicePort = untypedConfig.getInt(GATEWAY_SERVICE_PORT_PROPERTY);
+    this.rolesClaimName = untypedConfig.getString(JWT_ROLES_CLAIM_NAME);
   }
 
   @Override
@@ -100,7 +104,7 @@ class DefaultGraphQlServiceConfig implements GraphQlServiceConfig {
 
   @Override
   public String getRolesClaimName() {
-    return null;
+    return rolesClaimName;
   }
 
   private <T> Optional<T> optionallyGet(Supplier<T> valueSupplier) {

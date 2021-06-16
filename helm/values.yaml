@@ -51,6 +51,7 @@ serviceConfig:
   gatewayService:
     host: gateway-service
     port: 50071
+  jwtRolesClaimName: "https://hypertrace.org/roles"
 logConfig:
   name: hypertrace-core-graphql-log-config
   rootLogger:
