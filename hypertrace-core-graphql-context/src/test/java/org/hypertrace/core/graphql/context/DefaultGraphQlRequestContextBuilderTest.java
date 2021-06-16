@@ -148,11 +148,60 @@ class DefaultGraphQlRequestContextBuilderTest {
     assertEquals(expectedRoles, actualRoles);
   }
 
+  @Test
+  void returnsEmptyRolesIfRolesClaimNameIsInvalid() {
+    String rolesClaimName = "invalidRolesClaim";
+    doReturn(rolesClaimName).when(this.mockServiceConfig).getRolesClaimName();
+    doReturn("Bearer " + getJwtWithRoles()).when(this.mockRequest).getHeader("Authorization");
+    List<String> actualRoles = this.requestContext.getRoles();
+    assertEquals(Collections.emptyList(), actualRoles);
+  }
+
+  @Test
+  void returnsEmptyRolesIfRolesClaimNameIsNull() {
+    doReturn(null).when(this.mockServiceConfig).getRolesClaimName();
+    doReturn("Bearer " + getJwtWithRoles()).when(this.mockRequest).getHeader("Authorization");
+    List<String> actualRoles = this.requestContext.getRoles();
+    assertEquals(Collections.emptyList(), actualRoles);
+  }
+
+  @Test
+  void returnsEmptyRolesIfClaimNotPresentInJwt() {
+    String rolesClaimName = "https://example.com/roles";
+    doReturn(rolesClaimName).when(this.mockServiceConfig).getRolesClaimName();
+    doReturn("Bearer " + getJwtWithOutRoles()).when(this.mockRequest).getHeader("Authorization");
+    List<String> actualRoles = this.requestContext.getRoles();
+    assertEquals(Collections.emptyList(), actualRoles);
+  }
+
+  @Test
+  void returnsEmptyRolesIfAuthHeaderNotPresent() {
+    doReturn(null).when(this.mockRequest).getHeader("Authorization");
+    List<String> actualRoles = this.requestContext.getRoles();
+    assertEquals(Collections.emptyList(), actualRoles);
+  }
+
+  @Test
+  void returnsEmptyRolesIfJwtIsInvalid() {
+    String rolesClaimName = "https://example.com/roles";
+    doReturn(rolesClaimName).when(this.mockServiceConfig).getRolesClaimName();
+    doReturn("Bearer ABC").when(this.mockRequest).getHeader("Authorization");
+    List<String> actualRoles = this.requestContext.getRoles();
+    assertEquals(Collections.emptyList(), actualRoles);
+  }
+
   private String getJwtWithRoles() {
     return "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2MjEzNjM1OTcsImV4cCI6" +
         "MTY1Mjg5OTU5NywiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsIkdpdmVuTmFtZSI6IkpvaG5u" +
         "eSIsIlN1cm5hbWUiOiJSb2NrZXQiLCJuYW1lIjoiSm9obm55IFJvY2tldCIsImVtYWlsIjoianJvY2tldEBleGFtcGxlLmNvbSIsInBpY3R1" +
         "cmUiOiJ3d3cuZXhhbXBsZS5jb20iLCJodHRwczovL2V4YW1wbGUuY29tL3JvbGVzIjpbInVzZXIiLCJhZG1pbiJdfQ.PKWns1aii5HEOje-8" +
         "vGwvlYcWYMi4LWgw9CUQlc0npM";
+  }
+
+  private String getJwtWithOutRoles() {
+    return "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2MjEzNjM1OTcsImV4cCI6" +
+        "MTY1Mjg5OTU5NywiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsIkdpdmVuTmFtZSI6IkpvaG5u" +
+        "eSIsIlN1cm5hbWUiOiJSb2NrZXQiLCJuYW1lIjoiSm9obm55IFJvY2tldCIsImVtYWlsIjoianJvY2tldEBleGFtcGxlLmNvbSIsInBpY3R1" +
+        "cmUiOiJ3d3cuZXhhbXBsZS5jb20ifQ.Ui1Z2RhiVe3tq6uJPgcyjsfDBdeOeINs_gXEHC6cdpU";
   }
 }
