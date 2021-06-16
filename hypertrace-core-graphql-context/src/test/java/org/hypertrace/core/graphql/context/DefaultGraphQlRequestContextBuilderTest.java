@@ -191,17 +191,17 @@ class DefaultGraphQlRequestContextBuilderTest {
   }
 
   private String getJwtWithRoles() {
-    return "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2MjEzNjM1OTcsImV4cCI6" +
-        "MTY1Mjg5OTU5NywiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsIkdpdmVuTmFtZSI6IkpvaG5u" +
-        "eSIsIlN1cm5hbWUiOiJSb2NrZXQiLCJuYW1lIjoiSm9obm55IFJvY2tldCIsImVtYWlsIjoianJvY2tldEBleGFtcGxlLmNvbSIsInBpY3R1" +
-        "cmUiOiJ3d3cuZXhhbXBsZS5jb20iLCJodHRwczovL2V4YW1wbGUuY29tL3JvbGVzIjpbInVzZXIiLCJhZG1pbiJdfQ.PKWns1aii5HEOje-8" +
-        "vGwvlYcWYMi4LWgw9CUQlc0npM";
+    return "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2MjEzNjM1OTcsImV4cCI6"
+        + "MTY1Mjg5OTU5NywiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsIkdpdmVuTmFtZSI6IkpvaG5u"
+        + "eSIsIlN1cm5hbWUiOiJSb2NrZXQiLCJuYW1lIjoiSm9obm55IFJvY2tldCIsImVtYWlsIjoianJvY2tldEBleGFtcGxlLmNvbSIsInBpY3R1"
+        + "cmUiOiJ3d3cuZXhhbXBsZS5jb20iLCJodHRwczovL2V4YW1wbGUuY29tL3JvbGVzIjpbInVzZXIiLCJhZG1pbiJdfQ.PKWns1aii5HEOje-8"
+        + "vGwvlYcWYMi4LWgw9CUQlc0npM";
   }
 
   private String getJwtWithOutRoles() {
-    return "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2MjEzNjM1OTcsImV4cCI6" +
-        "MTY1Mjg5OTU5NywiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsIkdpdmVuTmFtZSI6IkpvaG5u" +
-        "eSIsIlN1cm5hbWUiOiJSb2NrZXQiLCJuYW1lIjoiSm9obm55IFJvY2tldCIsImVtYWlsIjoianJvY2tldEBleGFtcGxlLmNvbSIsInBpY3R1" +
-        "cmUiOiJ3d3cuZXhhbXBsZS5jb20ifQ.Ui1Z2RhiVe3tq6uJPgcyjsfDBdeOeINs_gXEHC6cdpU";
+    return "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2MjEzNjM1OTcsImV4cCI6"
+        + "MTY1Mjg5OTU5NywiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsIkdpdmVuTmFtZSI6IkpvaG5u"
+        + "eSIsIlN1cm5hbWUiOiJSb2NrZXQiLCJuYW1lIjoiSm9obm55IFJvY2tldCIsImVtYWlsIjoianJvY2tldEBleGFtcGxlLmNvbSIsInBpY3R1"
+        + "cmUiOiJ3d3cuZXhhbXBsZS5jb20ifQ.Ui1Z2RhiVe3tq6uJPgcyjsfDBdeOeINs_gXEHC6cdpU";
   }
 }

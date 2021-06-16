@@ -2,7 +2,6 @@ package org.hypertrace.core.graphql.context;
 
 import graphql.kickstart.execution.context.GraphQLContext;
 import graphql.schema.DataFetcher;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
