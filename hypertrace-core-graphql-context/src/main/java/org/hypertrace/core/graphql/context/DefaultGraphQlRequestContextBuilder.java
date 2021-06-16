@@ -6,6 +6,8 @@ import graphql.kickstart.servlet.context.DefaultGraphQLServletContext;
 import graphql.kickstart.servlet.context.DefaultGraphQLServletContextBuilder;
 import graphql.kickstart.servlet.context.GraphQLServletContext;
 import graphql.schema.DataFetcher;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -88,6 +90,9 @@ class DefaultGraphQlRequestContextBuilder extends DefaultGraphQLServletContextBu
     public List<String> getRoles() {
       return getAuthorizationHeader().map(authHeader -> {
         String rolesClaimName = DefaultGraphQlRequestContextBuilder.this.serviceConfig.getRolesClaimName();
+        if (rolesClaimName == null || rolesClaimName.isEmpty()) {
+          return new ArrayList<String>();
+        }
         RequestContext requestContext = new RequestContext();
         requestContext.add(AUTHORIZATION_HEADER_KEY.toLowerCase(), authHeader);
         return requestContext.getRoles(rolesClaimName);
