@@ -19,11 +19,11 @@ import org.hypertrace.gateway.service.v1.log.events.LogEventsResponse;
 
 @Singleton
 class GatewayServiceLogEventDao implements LogEventDao {
-  private static final int DEFAULT_DEADLINE_SEC = 10;
   private final GatewayServiceFutureStub gatewayServiceStub;
   private final GrpcContextBuilder grpcContextBuilder;
   private final GatewayServiceLogEventsRequestBuilder requestBuilder;
   private final GatewayServiceLogEventsResponseConverter logEventConverter;
+  private final GraphQlServiceConfig serviceConfig;
 
   @Inject
   GatewayServiceLogEventDao(
@@ -36,11 +36,12 @@ class GatewayServiceLogEventDao implements LogEventDao {
     this.grpcContextBuilder = grpcContextBuilder;
     this.requestBuilder = requestBuilder;
     this.logEventConverter = logEventConverter;
+    this.serviceConfig = serviceConfig;
 
     this.gatewayServiceStub =
         GatewayServiceGrpc.newFutureStub(
-                channelRegistry.forAddress(
-                    serviceConfig.getGatewayServiceHost(), serviceConfig.getGatewayServicePort()))
+            channelRegistry.forAddress(
+                serviceConfig.getGatewayServiceHost(), serviceConfig.getGatewayServicePort()))
             .withCallCredentials(credentials);
   }
 
@@ -60,7 +61,8 @@ class GatewayServiceLogEventDao implements LogEventDao {
             .call(
                 () ->
                     this.gatewayServiceStub
-                        .withDeadlineAfter(DEFAULT_DEADLINE_SEC, SECONDS)
+                        .withDeadlineAfter(serviceConfig.getGatewayServiceRPCClientDeadline(),
+                            SECONDS)
                         .getLogEvents(request)));
   }
 }

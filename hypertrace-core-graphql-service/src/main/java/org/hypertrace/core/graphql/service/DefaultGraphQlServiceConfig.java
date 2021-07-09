@@ -22,6 +22,7 @@ class DefaultGraphQlServiceConfig implements GraphQlServiceConfig {
 
   private static final String GATEWAY_SERVICE_HOST_PROPERTY = "gateway.service.host";
   private static final String GATEWAY_SERVICE_PORT_PROPERTY = "gateway.service.port";
+  private static final String GATEWAY_SERVICE_RPC_CLIENT_DEADLINE = "gateway.service.deadline";
 
   private final String serviceName;
   private final int servicePort;
@@ -33,6 +34,7 @@ class DefaultGraphQlServiceConfig implements GraphQlServiceConfig {
   private final int attributeServicePort;
   private final String gatewayServiceHost;
   private final int gatewayServicePort;
+  private final int gatewayServiceClientDeadline;
 
   DefaultGraphQlServiceConfig(Config untypedConfig) {
     this.serviceName = untypedConfig.getString(SERVICE_NAME_CONFIG);
@@ -46,6 +48,7 @@ class DefaultGraphQlServiceConfig implements GraphQlServiceConfig {
     this.attributeServicePort = untypedConfig.getInt(ATTRIBUTE_SERVICE_PORT_PROPERTY);
     this.gatewayServiceHost = untypedConfig.getString(GATEWAY_SERVICE_HOST_PROPERTY);
     this.gatewayServicePort = untypedConfig.getInt(GATEWAY_SERVICE_PORT_PROPERTY);
+    gatewayServiceClientDeadline = untypedConfig.getInt(GATEWAY_SERVICE_RPC_CLIENT_DEADLINE);
   }
 
   @Override
@@ -96,6 +99,11 @@ class DefaultGraphQlServiceConfig implements GraphQlServiceConfig {
   @Override
   public int getGatewayServicePort() {
     return this.gatewayServicePort;
+  }
+
+  @Override
+  public int getGatewayServiceRPCClientDeadline() {
+    return gatewayServiceClientDeadline;
   }
 
   private <T> Optional<T> optionallyGet(Supplier<T> valueSupplier) {

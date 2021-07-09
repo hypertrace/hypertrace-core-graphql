@@ -23,4 +23,6 @@ public interface GraphQlServiceConfig {
   String getGatewayServiceHost();
 
   int getGatewayServicePort();
+
+  int getGatewayServiceRPCClientDeadline();
 }
