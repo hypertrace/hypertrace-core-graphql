@@ -1,6 +1,6 @@
 package org.hypertrace.core.graphql.trace.dao;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import io.grpc.CallCredentials;
 import io.reactivex.rxjava3.core.Single;
@@ -64,7 +64,7 @@ class GatewayServiceTraceDao implements TraceDao {
                 () ->
                     this.gatewayServiceStub
                         .withDeadlineAfter(
-                            serviceConfig.getGatewayServiceRPCClientDeadline(), SECONDS)
+                            serviceConfig.getGatewayServiceTimeout().toMillis(), MILLISECONDS)
                         .getTraces(request)));
   }
 }

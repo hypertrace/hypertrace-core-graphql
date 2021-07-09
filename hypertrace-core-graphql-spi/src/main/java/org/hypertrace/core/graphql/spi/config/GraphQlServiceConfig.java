@@ -1,5 +1,6 @@
 package org.hypertrace.core.graphql.spi.config;
 
+import java.time.Duration;
 import java.util.Optional;
 
 public interface GraphQlServiceConfig {
@@ -24,5 +25,5 @@ public interface GraphQlServiceConfig {
 
   int getGatewayServicePort();
 
-  int getGatewayServiceRPCClientDeadline();
+  Duration getGatewayServiceTimeout();
 }

@@ -1,6 +1,7 @@
 package org.hypertrace.core.graphql.service;
 
 import com.typesafe.config.Config;
+import java.time.Duration;
 import java.util.Optional;
 import java.util.function.Supplier;
 import org.hypertrace.core.graphql.spi.config.GraphQlServiceConfig;
@@ -22,7 +23,7 @@ class DefaultGraphQlServiceConfig implements GraphQlServiceConfig {
 
   private static final String GATEWAY_SERVICE_HOST_PROPERTY = "gateway.service.host";
   private static final String GATEWAY_SERVICE_PORT_PROPERTY = "gateway.service.port";
-  private static final String GATEWAY_SERVICE_RPC_CLIENT_DEADLINE = "gateway.service.deadline";
+  private static final String GATEWAY_SERVICE_CLIENT_TIMEOUT = "gateway.service.timeout";
 
   private final String serviceName;
   private final int servicePort;
@@ -34,7 +35,7 @@ class DefaultGraphQlServiceConfig implements GraphQlServiceConfig {
   private final int attributeServicePort;
   private final String gatewayServiceHost;
   private final int gatewayServicePort;
-  private final int gatewayServiceClientDeadline;
+  private final Duration gatewayServiceTimeout;
 
   DefaultGraphQlServiceConfig(Config untypedConfig) {
     this.serviceName = untypedConfig.getString(SERVICE_NAME_CONFIG);
@@ -48,7 +49,11 @@ class DefaultGraphQlServiceConfig implements GraphQlServiceConfig {
     this.attributeServicePort = untypedConfig.getInt(ATTRIBUTE_SERVICE_PORT_PROPERTY);
     this.gatewayServiceHost = untypedConfig.getString(GATEWAY_SERVICE_HOST_PROPERTY);
     this.gatewayServicePort = untypedConfig.getInt(GATEWAY_SERVICE_PORT_PROPERTY);
-    gatewayServiceClientDeadline = untypedConfig.getInt(GATEWAY_SERVICE_RPC_CLIENT_DEADLINE);
+    // fallback timeout: 10s
+    this.gatewayServiceTimeout =
+        untypedConfig.hasPath(GATEWAY_SERVICE_CLIENT_TIMEOUT)
+            ? untypedConfig.getDuration(GATEWAY_SERVICE_CLIENT_TIMEOUT)
+            : Duration.ofSeconds(10);
   }
 
   @Override
@@ -102,8 +107,8 @@ class DefaultGraphQlServiceConfig implements GraphQlServiceConfig {
   }
 
   @Override
-  public int getGatewayServiceRPCClientDeadline() {
-    return gatewayServiceClientDeadline;
+  public Duration getGatewayServiceTimeout() {
+    return gatewayServiceTimeout;
   }
 
   private <T> Optional<T> optionallyGet(Supplier<T> valueSupplier) {

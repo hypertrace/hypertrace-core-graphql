@@ -1,6 +1,6 @@
 package org.hypertrace.core.graphql.span.dao;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import io.reactivex.rxjava3.core.Single;
 import java.util.Map;
@@ -76,7 +76,7 @@ class SpanLogEventDao {
                 () ->
                     this.gatewayServiceStub
                         .withDeadlineAfter(
-                            serviceConfig.getGatewayServiceRPCClientDeadline(), SECONDS)
+                            serviceConfig.getGatewayServiceTimeout().toMillis(), MILLISECONDS)
                         .getLogEvents(request)));
   }
 }
