@@ -41,8 +41,8 @@ class GatewayServiceTraceDao implements TraceDao {
 
     this.gatewayServiceStub =
         GatewayServiceGrpc.newFutureStub(
-            channelRegistry.forAddress(
-                serviceConfig.getGatewayServiceHost(), serviceConfig.getGatewayServicePort()))
+                channelRegistry.forAddress(
+                    serviceConfig.getGatewayServiceHost(), serviceConfig.getGatewayServicePort()))
             .withCallCredentials(credentials);
   }
 
@@ -63,8 +63,8 @@ class GatewayServiceTraceDao implements TraceDao {
             .call(
                 () ->
                     this.gatewayServiceStub
-                        .withDeadlineAfter(serviceConfig.getGatewayServiceRPCClientDeadline(),
-                            SECONDS)
+                        .withDeadlineAfter(
+                            serviceConfig.getGatewayServiceRPCClientDeadline(), SECONDS)
                         .getTraces(request)));
   }
 }

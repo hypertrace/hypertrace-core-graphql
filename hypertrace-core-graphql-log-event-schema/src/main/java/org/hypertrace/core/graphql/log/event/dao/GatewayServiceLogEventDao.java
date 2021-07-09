@@ -40,8 +40,8 @@ class GatewayServiceLogEventDao implements LogEventDao {
 
     this.gatewayServiceStub =
         GatewayServiceGrpc.newFutureStub(
-            channelRegistry.forAddress(
-                serviceConfig.getGatewayServiceHost(), serviceConfig.getGatewayServicePort()))
+                channelRegistry.forAddress(
+                    serviceConfig.getGatewayServiceHost(), serviceConfig.getGatewayServicePort()))
             .withCallCredentials(credentials);
   }
 
@@ -61,8 +61,8 @@ class GatewayServiceLogEventDao implements LogEventDao {
             .call(
                 () ->
                     this.gatewayServiceStub
-                        .withDeadlineAfter(serviceConfig.getGatewayServiceRPCClientDeadline(),
-                            SECONDS)
+                        .withDeadlineAfter(
+                            serviceConfig.getGatewayServiceRPCClientDeadline(), SECONDS)
                         .getLogEvents(request)));
   }
 }

@@ -58,8 +58,8 @@ class GatewayServiceSpanDao implements SpanDao {
             .call(
                 () ->
                     this.gatewayServiceStub
-                        .withDeadlineAfter(serviceConfig.getGatewayServiceRPCClientDeadline(),
-                            SECONDS)
+                        .withDeadlineAfter(
+                            serviceConfig.getGatewayServiceRPCClientDeadline(), SECONDS)
                         .getSpans(request)));
   }
 }

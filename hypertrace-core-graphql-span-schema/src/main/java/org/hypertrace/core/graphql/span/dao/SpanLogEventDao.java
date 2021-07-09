@@ -37,6 +37,8 @@ class SpanLogEventDao {
   }
 
   /**
+   *
+   *
    * <ul>
    *   <li>1. Fetch log event attributes from {@code gqlRequest}
    *   <li>2. Build log event request using attribute and spanIds as filter
@@ -73,8 +75,8 @@ class SpanLogEventDao {
             .call(
                 () ->
                     this.gatewayServiceStub
-                        .withDeadlineAfter(serviceConfig.getGatewayServiceRPCClientDeadline(),
-                            SECONDS)
+                        .withDeadlineAfter(
+                            serviceConfig.getGatewayServiceRPCClientDeadline(), SECONDS)
                         .getLogEvents(request)));
   }
 }
