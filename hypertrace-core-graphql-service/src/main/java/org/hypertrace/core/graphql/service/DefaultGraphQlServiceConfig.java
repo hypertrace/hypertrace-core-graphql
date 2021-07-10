@@ -20,6 +20,7 @@ class DefaultGraphQlServiceConfig implements GraphQlServiceConfig {
 
   private static final String ATTRIBUTE_SERVICE_HOST_PROPERTY = "attribute.service.host";
   private static final String ATTRIBUTE_SERVICE_PORT_PROPERTY = "attribute.service.port";
+  private static final String ATTRIBUTE_SERVICE_CLIENT_TIMEOUT = "attribute.service.timeout";
 
   private static final String GATEWAY_SERVICE_HOST_PROPERTY = "gateway.service.host";
   private static final String GATEWAY_SERVICE_PORT_PROPERTY = "gateway.service.port";
@@ -33,6 +34,7 @@ class DefaultGraphQlServiceConfig implements GraphQlServiceConfig {
   private final int maxIoThreads;
   private final String attributeServiceHost;
   private final int attributeServicePort;
+  private final Duration attributeServiceTimeout;
   private final String gatewayServiceHost;
   private final int gatewayServicePort;
   private final Duration gatewayServiceTimeout;
@@ -47,6 +49,11 @@ class DefaultGraphQlServiceConfig implements GraphQlServiceConfig {
 
     this.attributeServiceHost = untypedConfig.getString(ATTRIBUTE_SERVICE_HOST_PROPERTY);
     this.attributeServicePort = untypedConfig.getInt(ATTRIBUTE_SERVICE_PORT_PROPERTY);
+    // fallback timeout: 10s
+    this.attributeServiceTimeout =
+        untypedConfig.hasPath(ATTRIBUTE_SERVICE_CLIENT_TIMEOUT)
+            ? untypedConfig.getDuration(ATTRIBUTE_SERVICE_CLIENT_TIMEOUT)
+            : Duration.ofSeconds(10);
     this.gatewayServiceHost = untypedConfig.getString(GATEWAY_SERVICE_HOST_PROPERTY);
     this.gatewayServicePort = untypedConfig.getInt(GATEWAY_SERVICE_PORT_PROPERTY);
     // fallback timeout: 10s
@@ -94,6 +101,11 @@ class DefaultGraphQlServiceConfig implements GraphQlServiceConfig {
   @Override
   public int getAttributeServicePort() {
     return this.attributeServicePort;
+  }
+
+  @Override
+  public Duration getAttributeServiceTimeout() {
+    return attributeServiceTimeout;
   }
 
   @Override
