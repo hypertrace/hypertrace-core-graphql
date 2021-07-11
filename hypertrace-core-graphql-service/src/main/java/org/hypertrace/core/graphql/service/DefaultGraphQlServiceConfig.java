@@ -8,6 +8,8 @@ import org.hypertrace.core.graphql.spi.config.GraphQlServiceConfig;
 
 class DefaultGraphQlServiceConfig implements GraphQlServiceConfig {
 
+  private static final Long DEFAULT_CLIENT_TIMEOUT_SECONDS = 10L;
+
   private static final String SERVICE_NAME_CONFIG = "service.name";
   private static final String SERVICE_PORT_CONFIG = "service.port";
 
@@ -49,18 +51,13 @@ class DefaultGraphQlServiceConfig implements GraphQlServiceConfig {
 
     this.attributeServiceHost = untypedConfig.getString(ATTRIBUTE_SERVICE_HOST_PROPERTY);
     this.attributeServicePort = untypedConfig.getInt(ATTRIBUTE_SERVICE_PORT_PROPERTY);
-    // fallback timeout: 10s
     this.attributeServiceTimeout =
-        untypedConfig.hasPath(ATTRIBUTE_SERVICE_CLIENT_TIMEOUT)
-            ? untypedConfig.getDuration(ATTRIBUTE_SERVICE_CLIENT_TIMEOUT)
-            : Duration.ofSeconds(10);
+        getTimeoutOrFallback(() -> untypedConfig.getDuration(ATTRIBUTE_SERVICE_CLIENT_TIMEOUT));
+
     this.gatewayServiceHost = untypedConfig.getString(GATEWAY_SERVICE_HOST_PROPERTY);
     this.gatewayServicePort = untypedConfig.getInt(GATEWAY_SERVICE_PORT_PROPERTY);
-    // fallback timeout: 10s
     this.gatewayServiceTimeout =
-        untypedConfig.hasPath(GATEWAY_SERVICE_CLIENT_TIMEOUT)
-            ? untypedConfig.getDuration(GATEWAY_SERVICE_CLIENT_TIMEOUT)
-            : Duration.ofSeconds(10);
+        getTimeoutOrFallback(() -> untypedConfig.getDuration(GATEWAY_SERVICE_CLIENT_TIMEOUT));
   }
 
   @Override
@@ -121,6 +118,14 @@ class DefaultGraphQlServiceConfig implements GraphQlServiceConfig {
   @Override
   public Duration getGatewayServiceTimeout() {
     return gatewayServiceTimeout;
+  }
+
+  private Duration getTimeoutOrFallback(Supplier<Duration> durationSupplier) {
+    try {
+      return durationSupplier.get();
+    } catch (Throwable unused) {
+      return Duration.ofSeconds(DEFAULT_CLIENT_TIMEOUT_SECONDS);
+    }
   }
 
   private <T> Optional<T> optionallyGet(Supplier<T> valueSupplier) {
