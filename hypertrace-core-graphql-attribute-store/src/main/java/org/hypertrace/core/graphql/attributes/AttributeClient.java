@@ -37,9 +37,9 @@ class AttributeClient {
 
     this.attributeServiceClient =
         newStub(
-            grpcChannelRegistry.forAddress(
-                serviceConfig.getAttributeServiceHost(),
-                serviceConfig.getAttributeServicePort()))
+                grpcChannelRegistry.forAddress(
+                    serviceConfig.getAttributeServiceHost(),
+                    serviceConfig.getAttributeServicePort()))
             .withCallCredentials(credentials);
   }
 
@@ -48,7 +48,8 @@ class AttributeClient {
         .<AttributeMetadata>stream(
             streamObserver ->
                 this.attributeServiceClient
-                    .withDeadlineAfter(serviceConfig.getAttributeServiceTimeout().toMillis(),
+                    .withDeadlineAfter(
+                        serviceConfig.getAttributeServiceTimeout().toMillis(),
                         TimeUnit.MILLISECONDS)
                     .findAll(Empty.getDefaultInstance(), streamObserver))
         .mapOptional(this.translator::translate);
