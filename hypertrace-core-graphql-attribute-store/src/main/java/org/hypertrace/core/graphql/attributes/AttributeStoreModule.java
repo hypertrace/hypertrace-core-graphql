@@ -3,7 +3,6 @@ package org.hypertrace.core.graphql.attributes;
 import com.google.inject.AbstractModule;
 import com.google.inject.Key;
 import com.google.inject.multibindings.Multibinder;
-import io.grpc.CallCredentials;
 import io.reactivex.rxjava3.core.Scheduler;
 import org.hypertrace.core.graphql.rx.BoundedIoScheduler;
 import org.hypertrace.core.graphql.spi.config.GraphQlServiceConfig;
