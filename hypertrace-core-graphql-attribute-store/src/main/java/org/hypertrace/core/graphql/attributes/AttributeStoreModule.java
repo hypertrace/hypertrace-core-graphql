@@ -19,7 +19,6 @@ public class AttributeStoreModule extends AbstractModule {
     Multibinder.newSetBinder(binder(), IdMappingLoader.class);
     requireBinding(GraphQlServiceConfig.class);
     requireBinding(GrpcContextBuilder.class);
-    requireBinding(CallCredentials.class);
     requireBinding(GrpcChannelRegistry.class);
     requireBinding(Key.get(Scheduler.class, BoundedIoScheduler.class));
   }

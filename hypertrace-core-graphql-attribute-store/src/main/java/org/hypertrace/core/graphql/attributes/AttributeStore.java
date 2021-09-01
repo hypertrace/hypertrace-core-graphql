@@ -11,9 +11,6 @@ public interface AttributeStore {
 
   Single<AttributeModel> get(GraphQlRequestContext context, String scope, String key);
 
-  Single<Map<String, AttributeModel>> get(
-      GraphQlRequestContext context, String scope, Collection<String> keys);
-
   Single<AttributeModel> getIdAttribute(GraphQlRequestContext context, String scope);
 
   Single<AttributeModel> getForeignIdAttribute(
