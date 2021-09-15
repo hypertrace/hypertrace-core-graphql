@@ -62,7 +62,7 @@ class CachingAttributeStore implements AttributeStore {
             .blockingGet();
     List<AttributeMetadata> filteredList = new ArrayList<>();
     for (AttributeMetadata attributeMetadata : unfilteredList) {
-      if (attributeMetadata.getInternal()) {
+      if (!attributeMetadata.getInternal()) {
         filteredList.add(attributeMetadata);
       }
     }

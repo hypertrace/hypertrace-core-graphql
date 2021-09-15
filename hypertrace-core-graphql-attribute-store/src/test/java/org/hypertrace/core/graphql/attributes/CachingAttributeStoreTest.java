@@ -56,7 +56,7 @@ class CachingAttributeStoreTest {
         AttributeMetadata.newBuilder()
             .setScopeString("SPAN")
             .setKey("id")
-            .setInternal(true)
+            .setInternal(false)
             .build();
 
     when(this.mockAttributeClient.get("SPAN", "id")).thenReturn(Single.just(spanIdResponse));
