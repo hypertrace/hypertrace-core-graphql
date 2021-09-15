@@ -53,7 +53,11 @@ class CachingAttributeStoreTest {
     AttributeModel spanIdAttribute =
         DefaultAttributeModel.builder().scope("SPAN").key("id").build();
     AttributeMetadata spanIdResponse =
-        AttributeMetadata.newBuilder().setScopeString("SPAN").setKey("id").build();
+        AttributeMetadata.newBuilder()
+            .setScopeString("SPAN")
+            .setKey("id")
+            .setInternal(true)
+            .build();
 
     when(this.mockAttributeClient.get("SPAN", "id")).thenReturn(Single.just(spanIdResponse));
     when(this.mockAttributeModeTranslator.translate(spanIdResponse))
