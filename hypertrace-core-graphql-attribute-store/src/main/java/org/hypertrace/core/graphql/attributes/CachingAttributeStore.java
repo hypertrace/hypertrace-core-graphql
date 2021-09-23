@@ -2,13 +2,12 @@ package org.hypertrace.core.graphql.attributes;
 
 import io.reactivex.rxjava3.core.Single;
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.hypertrace.core.attribute.service.cachingclient.CachingAttributeClient;
-import org.hypertrace.core.attribute.service.v1.AttributeMetadata;
+import org.hypertrace.core.attribute.service.v1.AttributeMetadataFilter;
 import org.hypertrace.core.graphql.context.GraphQlRequestContext;
 import org.hypertrace.core.graphql.spi.config.GraphQlServiceConfig;
 import org.hypertrace.core.graphql.utils.grpc.GrpcChannelRegistry;
@@ -38,6 +37,7 @@ class CachingAttributeStore implements AttributeStore {
                 channelRegistry.forAddress(
                     serviceConfig.getAttributeServiceHost(),
                     serviceConfig.getAttributeServicePort()))
+            .withAttributeFilter(AttributeMetadataFilter.newBuilder().setInternal(false).build())
             .withCacheExpiration(Duration.ofMinutes(5))
             .withMaximumCacheContexts(1000)
             .build());
@@ -56,19 +56,8 @@ class CachingAttributeStore implements AttributeStore {
 
   @Override
   public Single<List<AttributeModel>> getAll(GraphQlRequestContext requestContext) {
-    List<AttributeMetadata> unfilteredList =
-        GrpcRxExecutionContext.forContext(this.grpcContextBuilder.build(requestContext))
-            .wrapSingle(this.cachingAttributeClient::getAll)
-            .blockingGet();
-    List<AttributeMetadata> filteredList = new ArrayList<>();
-    for (AttributeMetadata attributeMetadata : unfilteredList) {
-      if (!attributeMetadata.getInternal()) {
-        filteredList.add(attributeMetadata);
-      }
-    }
-    Single<List<AttributeMetadata>> singleOfFilteredList = Single.just(filteredList);
-
-    return singleOfFilteredList
+    return GrpcRxExecutionContext.forContext(this.grpcContextBuilder.build(requestContext))
+        .wrapSingle(this.cachingAttributeClient::getAll)
         .flattenAsObservable(list -> list)
         .mapOptional(this.translator::translate)
         .toList();
