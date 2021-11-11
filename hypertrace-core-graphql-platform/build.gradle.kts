@@ -32,9 +32,6 @@ dependencies {
     api("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.12.3")
     api("org.apache.commons:commons-text:1.9")
     api("io.opentelemetry:opentelemetry-proto:1.1.0-alpha")
-    api("com.google.code.gson:gson:2.8.9") {
-      because("https://snyk.io/vuln/SNYK-JAVA-COMGOOGLECODEGSON-1730327")
-    }
 
     runtime("org.apache.logging.log4j:log4j-slf4j-impl:2.14.0")
     runtime("io.grpc:grpc-netty:1.42.0")
