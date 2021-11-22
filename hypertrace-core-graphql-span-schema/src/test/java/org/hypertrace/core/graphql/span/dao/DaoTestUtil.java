@@ -17,6 +17,7 @@ import org.hypertrace.core.graphql.common.request.AttributeRequest;
 import org.hypertrace.core.graphql.common.request.ResultSetRequest;
 import org.hypertrace.core.graphql.common.schema.arguments.TimeRangeArgument;
 import org.hypertrace.core.graphql.common.schema.attributes.AttributeScope;
+import org.hypertrace.core.graphql.common.schema.attributes.arguments.AttributeExpression;
 import org.hypertrace.core.graphql.common.schema.results.arguments.filter.FilterArgument;
 import org.hypertrace.core.graphql.common.schema.results.arguments.filter.FilterOperatorType;
 import org.hypertrace.core.graphql.common.schema.results.arguments.filter.FilterType;
@@ -47,7 +48,6 @@ class DaoTestUtil {
   @Value
   @Accessors(fluent = true)
   static class DefaultAttributeModel implements AttributeModel {
-
     String id;
     String scope;
     String key;
@@ -63,9 +63,9 @@ class DaoTestUtil {
   @Value
   @Accessors(fluent = true)
   static class NormalizedFilter implements FilterArgument {
-
     FilterType type = FilterType.ATTRIBUTE;
-    String key;
+    String key = null;
+    AttributeExpression keyExpression;
     FilterOperatorType operator;
     Object value;
     String idScope = null;

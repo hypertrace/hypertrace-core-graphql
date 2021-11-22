@@ -99,7 +99,11 @@ class DefaultResultSetRequestBuilder implements ResultSetRequestBuilder {
 
     return zip(
             this.attributeAssociator
-                .associateAttributes(context, requestScope, requestedOrders, OrderArgument::key)
+                .associateAttributes(
+                    context,
+                    requestScope,
+                    requestedOrders,
+                    arg -> arg.resolvedKeyExpression().key())
                 .collect(Collectors.toUnmodifiableList()),
             this.filterRequestBuilder.build(context, requestScope, requestedFilters),
             (orders, filters) ->

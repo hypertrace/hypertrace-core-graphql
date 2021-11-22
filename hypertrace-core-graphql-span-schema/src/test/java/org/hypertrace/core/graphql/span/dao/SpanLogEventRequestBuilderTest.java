@@ -34,6 +34,7 @@ import org.hypertrace.core.graphql.common.request.AttributeAssociation;
 import org.hypertrace.core.graphql.common.request.AttributeRequest;
 import org.hypertrace.core.graphql.common.request.AttributeRequestBuilder;
 import org.hypertrace.core.graphql.common.request.FilterRequestBuilder;
+import org.hypertrace.core.graphql.common.schema.attributes.arguments.AttributeExpression;
 import org.hypertrace.core.graphql.common.schema.results.arguments.filter.FilterArgument;
 import org.hypertrace.core.graphql.common.utils.Converter;
 import org.hypertrace.core.graphql.span.dao.DaoTestUtil.DefaultAttributeRequest;
@@ -111,7 +112,8 @@ class SpanLogEventRequestBuilderTest {
                       AttributeAssociation.of(
                           spanIdAttribute.attribute(),
                           new NormalizedFilter(
-                              spanIdAttribute.attribute().key(),
+                              AttributeExpression.forAttributeKey(
+                                  spanIdAttribute.attribute().key()),
                               filterArgument.operator(),
                               filterArgument.value()))));
             })

@@ -16,7 +16,7 @@ public interface AttributeQueryable {
   @GraphQLField
   @GraphQLName(ATTRIBUTE_FIELD_NAME)
   default Object attribute(
-      @GraphQLName(AttributeKeyArgument.ARGUMENT_NAME) @Nullable String key,
+      @Deprecated @GraphQLName(AttributeKeyArgument.ARGUMENT_NAME) @Nullable String key,
       @GraphQLName(AttributeExpression.ARGUMENT_NAME) @Nullable AttributeExpression expression) {
     return attribute(
         Optional.ofNullable(expression)

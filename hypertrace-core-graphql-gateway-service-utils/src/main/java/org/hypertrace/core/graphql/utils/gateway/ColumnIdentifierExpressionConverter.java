@@ -18,6 +18,7 @@ class ColumnIdentifierExpressionConverter implements Converter<AttributeModel, E
 
   @Override
   public Single<Expression> convert(AttributeModel attribute) {
+    // TODO: AttributeExpression support
     return this.columnIdentifierConverter
         .convert(attribute)
         .map(Expression.newBuilder()::setColumnIdentifier)

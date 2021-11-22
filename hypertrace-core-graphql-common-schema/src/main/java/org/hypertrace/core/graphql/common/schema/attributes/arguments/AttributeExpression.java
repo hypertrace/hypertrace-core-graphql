@@ -30,9 +30,9 @@ public class AttributeExpression {
   @JsonProperty(ATTRIBUTE_KEY)
   String key;
 
-  @GraphQLField
-  @GraphQLName(SUBPATH)
-  @JsonProperty(SUBPATH)
+  //  @GraphQLField
+  //  @GraphQLName(SUBPATH)
+  //  @JsonProperty(SUBPATH)
   Optional<String> subpath;
 
   public String asMapKey() {
