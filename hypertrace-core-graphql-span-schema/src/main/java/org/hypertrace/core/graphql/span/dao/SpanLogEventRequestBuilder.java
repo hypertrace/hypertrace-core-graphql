@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
+import lombok.Value;
 import lombok.experimental.Accessors;
 import org.hypertrace.core.graphql.attributes.AttributeStore;
 import org.hypertrace.core.graphql.atttributes.scopes.HypertraceCoreAttributeScopeString;
@@ -102,7 +103,7 @@ class SpanLogEventRequestBuilder {
         Set.of(new LogEventFilter(spanIds)));
   }
 
-  @lombok.Value
+  @Value
   @Accessors(fluent = true)
   private static class LogEventFilter implements FilterArgument {
 

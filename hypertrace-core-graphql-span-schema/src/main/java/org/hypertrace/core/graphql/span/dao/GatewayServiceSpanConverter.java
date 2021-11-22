@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import lombok.experimental.Accessors;
 import org.hypertrace.core.graphql.common.request.AttributeRequest;
+import org.hypertrace.core.graphql.common.schema.attributes.arguments.AttributeExpression;
 import org.hypertrace.core.graphql.common.utils.BiConverter;
 import org.hypertrace.core.graphql.log.event.schema.LogEvent;
 import org.hypertrace.core.graphql.log.event.schema.LogEventResultSet;
@@ -46,9 +47,7 @@ class GatewayServiceSpanConverter {
         .map(
             attrMap ->
                 new ConvertedSpan(
-                    attrMap
-                        .get(request.spanEventsRequest().idAttribute().attribute().key())
-                        .toString(),
+                    attrMap.get(request.spanEventsRequest().idAttribute().asMapKey()).toString(),
                     attrMap,
                     spanIdToLogEvents));
   }
@@ -61,8 +60,8 @@ class GatewayServiceSpanConverter {
     Map<String, List<LogEvent>> spanIdToLogEvents;
 
     @Override
-    public Object attribute(String key) {
-      return this.attributeValues.get(key);
+    public Object attribute(AttributeExpression attributeExpression) {
+      return this.attributeValues.get(attributeExpression.asMapKey());
     }
 
     @Override

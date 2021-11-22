@@ -4,6 +4,7 @@ import graphql.schema.DataFetchingFieldSelectionSet;
 import graphql.schema.SelectedField;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
+import java.util.Optional;
 import java.util.stream.Stream;
 import javax.inject.Inject;
 import lombok.Value;
@@ -11,6 +12,7 @@ import lombok.experimental.Accessors;
 import org.hypertrace.core.graphql.attributes.AttributeModel;
 import org.hypertrace.core.graphql.attributes.AttributeStore;
 import org.hypertrace.core.graphql.common.schema.attributes.AttributeQueryable;
+import org.hypertrace.core.graphql.common.schema.attributes.arguments.AttributeExpression;
 import org.hypertrace.core.graphql.common.schema.attributes.arguments.AttributeKeyArgument;
 import org.hypertrace.core.graphql.context.GraphQlRequestContext;
 import org.hypertrace.core.graphql.deserialization.ArgumentDeserializer;
@@ -44,8 +46,10 @@ class DefaultAttributeRequestBuilder implements AttributeRequestBuilder {
       String attributeScope,
       DataFetchingFieldSelectionSet attributeQueryableSelectionSet) {
     return Observable.fromStream(
-            this.getAttributeKeysForAttributeQueryableSelectionSet(attributeQueryableSelectionSet))
-        .flatMapSingle(key -> this.buildForKey(context, attributeScope, key))
+            this.getAttributeExpressionsForAttributeQueryableSelectionSet(
+                attributeQueryableSelectionSet))
+        .flatMapSingle(
+            expression -> this.buildForAttributeExpression(context, attributeScope, expression))
         .distinct();
   }
 
@@ -73,29 +77,38 @@ class DefaultAttributeRequestBuilder implements AttributeRequestBuilder {
   }
 
   @Override
-  public Single<AttributeRequest> buildForKey(
-      GraphQlRequestContext context, String requestScope, String attributeKey) {
+  public Single<AttributeRequest> buildForAttributeExpression(
+      GraphQlRequestContext context,
+      String attributeScope,
+      AttributeExpression attributeExpression) {
     return this.attributeStore
-        .get(context, requestScope, attributeKey)
-        .map(this::buildForAttribute);
+        .get(context, attributeScope, attributeExpression.key())
+        .map(
+            attributeModel ->
+                new DefaultAttributeRequest(attributeModel, attributeExpression.subpath()));
   }
 
   @Override
   public AttributeRequest buildForAttribute(AttributeModel attribute) {
-    return new DefaultAttributeRequest(attribute);
+    return new DefaultAttributeRequest(attribute, Optional.empty());
   }
 
-  private Stream<String> getAttributeKeysForAttributeQueryableSelectionSet(
+  private Stream<AttributeExpression> getAttributeExpressionsForAttributeQueryableSelectionSet(
       DataFetchingFieldSelectionSet selectionSet) {
     return this.selectionFinder
         .findSelections(
             selectionSet, SelectionQuery.namedChild(AttributeQueryable.ATTRIBUTE_FIELD_NAME))
-        .flatMap(this::getArgument);
+        .flatMap(this::resolveAttributeExpression);
   }
 
-  private Stream<String> getArgument(SelectedField attributeField) {
+  private Stream<AttributeExpression> resolveAttributeExpression(SelectedField attributeField) {
     return this.argumentDeserializer
-        .deserializePrimitive(attributeField.getArguments(), AttributeKeyArgument.class)
+        .deserializeObject(attributeField.getArguments(), AttributeExpression.class)
+        .or(
+            () ->
+                this.argumentDeserializer
+                    .deserializePrimitive(attributeField.getArguments(), AttributeKeyArgument.class)
+                    .map(AttributeExpression::forAttributeKey))
         .stream();
   }
 
@@ -103,10 +116,13 @@ class DefaultAttributeRequestBuilder implements AttributeRequestBuilder {
   @Accessors(fluent = true)
   static class DefaultAttributeRequest implements AttributeRequest {
     AttributeModel attribute;
+    Optional<String> subpath;
 
     @Override
     public String alias() {
-      return attribute.id();
+      return subpath()
+          .map(subpath -> String.format("%s.%s", this.attribute().id(), subpath))
+          .orElseGet(() -> this.attribute().id());
     }
   }
 }

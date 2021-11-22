@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import lombok.Value;
 import lombok.experimental.Accessors;
 import org.hypertrace.core.graphql.attributes.AttributeModel;
@@ -37,6 +38,7 @@ class BaseDaoTest {
   static class DefaultAttributeRequest implements AttributeRequest {
 
     AttributeModel attribute;
+    Optional<String> subpath;
 
     @Override
     public String alias() {
@@ -46,7 +48,7 @@ class BaseDaoTest {
 
   @Value
   @Accessors(fluent = true)
-  class DefaultAttributeModel implements AttributeModel {
+  static class DefaultAttributeModel implements AttributeModel {
 
     String id;
     String scope;
@@ -62,7 +64,7 @@ class BaseDaoTest {
 
   @Value
   @Accessors(fluent = true)
-  class DefaultTimeRange implements TimeRangeArgument {
+  static class DefaultTimeRange implements TimeRangeArgument {
 
     @JsonProperty(TIME_RANGE_ARGUMENT_START_TIME)
     Instant startTime;

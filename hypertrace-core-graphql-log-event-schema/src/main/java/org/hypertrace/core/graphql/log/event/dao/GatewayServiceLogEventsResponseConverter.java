@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import lombok.experimental.Accessors;
 import org.hypertrace.core.graphql.common.request.AttributeRequest;
+import org.hypertrace.core.graphql.common.schema.attributes.arguments.AttributeExpression;
 import org.hypertrace.core.graphql.common.utils.BiConverter;
 import org.hypertrace.core.graphql.log.event.request.LogEventRequest;
 import org.hypertrace.core.graphql.log.event.schema.LogEvent;
@@ -50,8 +51,8 @@ class GatewayServiceLogEventsResponseConverter {
     Map<String, Object> attributeValues;
 
     @Override
-    public Object attribute(String key) {
-      return this.attributeValues.get(key);
+    public Object attribute(AttributeExpression attributeExpression) {
+      return this.attributeValues.get(attributeExpression.asMapKey());
     }
   }
 

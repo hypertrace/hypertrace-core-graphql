@@ -6,7 +6,9 @@ import io.opentelemetry.proto.trace.v1.Span.SpanKind;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import lombok.Value;
 import lombok.experimental.Accessors;
+import org.hypertrace.core.graphql.common.schema.attributes.arguments.AttributeExpression;
 import org.hypertrace.core.graphql.log.event.schema.LogEvent;
 import org.hypertrace.core.graphql.log.event.schema.LogEventResultSet;
 import org.hypertrace.core.graphql.span.export.ExportSpan.Builder;
@@ -18,7 +20,7 @@ import org.junit.jupiter.api.Test;
 
 public class ExportSpanTest {
 
-  @lombok.Value
+  @Value
   @Accessors(fluent = true)
   static class ConvertedSpan implements Span {
     String id;
@@ -26,8 +28,8 @@ public class ExportSpanTest {
     Map<String, List<LogEvent>> spanIdToLogEvents;
 
     @Override
-    public Object attribute(String key) {
-      return this.attributeValues.get(key);
+    public Object attribute(AttributeExpression attributeExpression) {
+      return this.attributeValues.get(attributeExpression.asMapKey());
     }
 
     @Override
@@ -37,7 +39,7 @@ public class ExportSpanTest {
     }
   }
 
-  @lombok.Value
+  @Value
   @Accessors(fluent = true)
   static class ConvertedLogEventResultSet implements LogEventResultSet {
     List<LogEvent> results;
@@ -45,15 +47,15 @@ public class ExportSpanTest {
     long count;
   }
 
-  @lombok.Value
+  @Value
   @Accessors(fluent = true)
-  static class ConvertedLogEvent implements org.hypertrace.core.graphql.log.event.schema.LogEvent {
+  static class ConvertedLogEvent implements LogEvent {
 
     Map<String, Object> attributeValues;
 
     @Override
-    public Object attribute(String key) {
-      return this.attributeValues.get(key);
+    public Object attribute(AttributeExpression attributeExpression) {
+      return this.attributeValues.get(attributeExpression.asMapKey());
     }
   }
 

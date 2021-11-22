@@ -38,6 +38,6 @@ class AttributeMapConverter
     // Uses SimpleImmutableEntry to support null values
     return this.valueConverter
         .convert(response.get(attributeRequest.alias()), attributeRequest.attribute())
-        .map(value -> new SimpleImmutableEntry<>(attributeRequest.attribute().key(), value));
+        .map(value -> new SimpleImmutableEntry<>(attributeRequest.asMapKey(), value));
   }
 }

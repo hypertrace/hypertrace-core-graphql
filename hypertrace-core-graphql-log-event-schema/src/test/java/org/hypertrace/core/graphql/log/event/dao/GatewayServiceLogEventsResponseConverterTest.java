@@ -15,8 +15,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.hypertrace.core.graphql.attributes.AttributeModelType;
 import org.hypertrace.core.graphql.common.request.AttributeRequest;
+import org.hypertrace.core.graphql.common.schema.attributes.arguments.AttributeExpression;
 import org.hypertrace.core.graphql.common.utils.BiConverter;
 import org.hypertrace.core.graphql.log.event.schema.LogEventResultSet;
 import org.hypertrace.core.graphql.spi.config.GraphQlServiceConfig;
@@ -92,7 +94,8 @@ class GatewayServiceLogEventsResponseConverterTest extends BaseDaoTest {
                     false,
                     false,
                     Collections.emptyList(),
-                    false)),
+                    false),
+                Optional.empty()),
             new DefaultAttributeRequest(
                 new DefaultAttributeModel(
                     "timestamp",
@@ -104,7 +107,8 @@ class GatewayServiceLogEventsResponseConverterTest extends BaseDaoTest {
                     false,
                     false,
                     Collections.emptyList(),
-                    false)));
+                    false),
+                Optional.empty()));
     DefaultLogEventRequest defaultLogEventRequest =
         new DefaultLogEventRequest(
             null,
@@ -117,9 +121,17 @@ class GatewayServiceLogEventsResponseConverterTest extends BaseDaoTest {
     LogEventResultSet logEventResultSet =
         responseConverter.convert(defaultLogEventRequest, logEventsResponse).blockingGet();
     assertEquals(1, logEventResultSet.results().size());
-    assertEquals("trace1", logEventResultSet.results().get(0).attribute("traceId"));
+    assertEquals(
+        "trace1",
+        logEventResultSet
+            .results()
+            .get(0)
+            .attribute(AttributeExpression.forAttributeKey("traceId")));
     assertEquals(
         Instant.ofEpochSecond(0, Duration.ofMillis(startTime).toNanos()),
-        logEventResultSet.results().get(0).attribute("timestamp"));
+        logEventResultSet
+            .results()
+            .get(0)
+            .attribute(AttributeExpression.forAttributeKey("timestamp")));
   }
 }

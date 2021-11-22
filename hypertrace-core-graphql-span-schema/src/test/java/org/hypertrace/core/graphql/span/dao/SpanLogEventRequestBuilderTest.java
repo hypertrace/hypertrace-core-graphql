@@ -124,7 +124,7 @@ class SpanLogEventRequestBuilderTest {
     doAnswer(
             invocation -> {
               AttributeModel attributeModel = invocation.getArgument(0, AttributeModel.class);
-              return new DefaultAttributeRequest(attributeModel);
+              return new DefaultAttributeRequest(attributeModel, Optional.empty());
             })
         .when(attributeRequestBuilder)
         .buildForAttribute(any());

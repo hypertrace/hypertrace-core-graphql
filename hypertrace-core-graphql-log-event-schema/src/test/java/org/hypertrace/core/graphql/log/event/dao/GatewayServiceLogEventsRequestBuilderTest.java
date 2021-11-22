@@ -14,6 +14,7 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.hypertrace.core.graphql.attributes.AttributeModelType;
 import org.hypertrace.core.graphql.common.request.AttributeAssociation;
@@ -87,7 +88,8 @@ class GatewayServiceLogEventsRequestBuilderTest extends BaseDaoTest {
                     false,
                     false,
                     Collections.emptyList(),
-                    false)),
+                    false),
+                Optional.empty()),
             new DefaultAttributeRequest(
                 new DefaultAttributeModel(
                     "timestamp",
@@ -99,7 +101,8 @@ class GatewayServiceLogEventsRequestBuilderTest extends BaseDaoTest {
                     false,
                     false,
                     Collections.emptyList(),
-                    false)));
+                    false),
+                Optional.empty()));
     DefaultLogEventRequest defaultLogEventRequest =
         new DefaultLogEventRequest(
             null,

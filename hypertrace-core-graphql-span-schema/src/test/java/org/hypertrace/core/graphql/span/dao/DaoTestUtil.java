@@ -36,6 +36,7 @@ class DaoTestUtil {
   static class DefaultAttributeRequest implements AttributeRequest {
 
     AttributeModel attribute;
+    Optional<String> subpath;
 
     @Override
     public String alias() {
@@ -117,7 +118,8 @@ class DaoTestUtil {
               false,
               false,
               Collections.emptyList(),
-              false));
+              false),
+          Optional.empty());
 
   static AttributeRequest spanIdAttribute =
       new DefaultAttributeRequest(
@@ -131,7 +133,8 @@ class DaoTestUtil {
               false,
               false,
               Collections.emptyList(),
-              false));
+              false),
+          Optional.empty());
 
   static AttributeRequest attributesAttribute =
       new DefaultAttributeRequest(
@@ -145,7 +148,8 @@ class DaoTestUtil {
               false,
               false,
               Collections.emptyList(),
-              false));
+              false),
+          Optional.empty());
 
   static AttributeRequest eventIdAttribute =
       new DefaultAttributeRequest(
@@ -159,7 +163,8 @@ class DaoTestUtil {
               false,
               false,
               Collections.emptyList(),
-              false));
+              false),
+          Optional.empty());
 
   static SpansResponse spansResponse =
       SpansResponse.newBuilder()
