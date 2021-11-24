@@ -31,7 +31,7 @@ class SelectionExpressionSetConverter
 
   private Single<Expression> buildAliasedSelectionExpression(AttributeRequest attributeRequest) {
     return this.columnExpressionConverter
-        .convert(attributeRequest.attribute())
+        .convert(attributeRequest.attributeExpression())
         .map(Expression::toBuilder)
         .doOnSuccess(
             builder -> builder.getColumnIdentifierBuilder().setAlias(attributeRequest.alias()))

@@ -37,7 +37,9 @@ class AttributeMapConverter
       AttributeRequest attributeRequest, Map<String, Value> response) {
     // Uses SimpleImmutableEntry to support null values
     return this.valueConverter
-        .convert(response.get(attributeRequest.alias()), attributeRequest.attribute())
+        .convert(
+            response.get(attributeRequest.alias()),
+            attributeRequest.attributeExpression().attribute())
         .map(value -> new SimpleImmutableEntry<>(attributeRequest.asMapKey(), value));
   }
 }

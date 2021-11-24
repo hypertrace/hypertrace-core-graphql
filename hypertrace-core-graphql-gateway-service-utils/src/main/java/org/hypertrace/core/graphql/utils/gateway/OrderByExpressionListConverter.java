@@ -37,7 +37,9 @@ class OrderByExpressionListConverter
       AttributeAssociation<OrderArgument> orderArgument) {
     return zip(
         this.sortOrderConverter.convert(orderArgument.value().direction()),
-        this.columnExpressionConverter.convert(orderArgument.attribute()),
+        this.columnExpressionConverter.convert(
+            AttributeAssociation.of(
+                orderArgument.attribute(), orderArgument.value().resolvedKeyExpression())),
         (sortOrder, columnExpression) ->
             OrderByExpression.newBuilder()
                 .setOrder(sortOrder)

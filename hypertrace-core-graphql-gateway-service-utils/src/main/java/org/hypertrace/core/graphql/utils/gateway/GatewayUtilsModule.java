@@ -11,6 +11,7 @@ import java.util.Set;
 import org.hypertrace.core.graphql.attributes.AttributeModel;
 import org.hypertrace.core.graphql.common.request.AttributeAssociation;
 import org.hypertrace.core.graphql.common.request.AttributeRequest;
+import org.hypertrace.core.graphql.common.schema.attributes.arguments.AttributeExpression;
 import org.hypertrace.core.graphql.common.schema.results.arguments.filter.FilterArgument;
 import org.hypertrace.core.graphql.common.schema.results.arguments.order.OrderArgument;
 import org.hypertrace.core.graphql.common.schema.results.arguments.order.OrderDirection;
@@ -54,7 +55,8 @@ public class GatewayUtilsModule extends AbstractModule {
 
     bind(Key.get(new TypeLiteral<Converter<AttributeModel, ColumnIdentifier>>() {}))
         .to(ColumnIdentifierConverter.class);
-    bind(Key.get(new TypeLiteral<Converter<AttributeModel, Expression>>() {}))
+    bind(Key.get(
+            new TypeLiteral<Converter<AttributeAssociation<AttributeExpression>, Expression>>() {}))
         .to(ColumnIdentifierExpressionConverter.class);
 
     bind(Key.get(new TypeLiteral<Converter<Object, LiteralConstant>>() {}))

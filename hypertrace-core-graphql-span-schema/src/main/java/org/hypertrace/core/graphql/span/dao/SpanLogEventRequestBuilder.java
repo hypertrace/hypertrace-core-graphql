@@ -94,7 +94,7 @@ class SpanLogEventRequestBuilder {
                 spanEvent ->
                     spanEvent
                         .getAttributesMap()
-                        .get(gqlRequest.spanEventsRequest().idAttribute().attribute().id())
+                        .get(gqlRequest.spanEventsRequest().idAttribute().asMapKey())
                         .getString())
             .collect(Collectors.toList());
 

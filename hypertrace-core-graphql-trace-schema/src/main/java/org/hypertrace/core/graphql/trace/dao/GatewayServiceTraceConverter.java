@@ -43,7 +43,7 @@ public class GatewayServiceTraceConverter {
         .map(
             attrMap ->
                 new ConvertedTrace(
-                    attrMap.get(request.idAttribute().attribute().key()).toString(), attrMap));
+                    attrMap.get(request.idAttribute().asMapKey()).toString(), attrMap));
   }
 
   @lombok.Value

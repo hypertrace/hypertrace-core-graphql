@@ -36,12 +36,11 @@ class DaoTestUtil {
   @Accessors(fluent = true)
   static class DefaultAttributeRequest implements AttributeRequest {
 
-    AttributeModel attribute;
-    Optional<String> subpath;
+    AttributeAssociation<AttributeExpression> attributeExpression;
 
     @Override
     public String alias() {
-      return attribute.id();
+      return attributeExpression.value().asMapKey();
     }
   }
 
@@ -83,7 +82,6 @@ class DaoTestUtil {
   @Value
   @Accessors(fluent = true)
   static class DefaultResultSetRequest implements ResultSetRequest<OrderArgument> {
-
     GraphQlRequestContext context;
     Collection<AttributeRequest> attributes;
     TimeRangeArgument timeRange;
@@ -108,63 +106,67 @@ class DaoTestUtil {
 
   static AttributeRequest traceIdAttribute =
       new DefaultAttributeRequest(
-          new DefaultAttributeModel(
-              "traceId",
-              "LOG_EVENT",
-              "traceId",
-              "Trace Id",
-              AttributeModelType.STRING,
-              "",
-              false,
-              false,
-              Collections.emptyList(),
-              false),
-          Optional.empty());
+          AttributeAssociation.of(
+              new DefaultAttributeModel(
+                  "traceId",
+                  "LOG_EVENT",
+                  "traceId",
+                  "Trace Id",
+                  AttributeModelType.STRING,
+                  "",
+                  false,
+                  false,
+                  Collections.emptyList(),
+                  false),
+              AttributeExpression.forAttributeKey("traceId")));
 
   static AttributeRequest spanIdAttribute =
       new DefaultAttributeRequest(
-          new DefaultAttributeModel(
-              "spanId",
-              "LOG_EVENT",
-              "spanId",
-              "Span Id",
-              AttributeModelType.STRING,
-              "",
-              false,
-              false,
-              Collections.emptyList(),
-              false),
-          Optional.empty());
+          AttributeAssociation.of(
+              new DefaultAttributeModel(
+                  "spanId",
+                  "LOG_EVENT",
+                  "spanId",
+                  "Span Id",
+                  AttributeModelType.STRING,
+                  "",
+                  false,
+                  false,
+                  Collections.emptyList(),
+                  false),
+              AttributeExpression.forAttributeKey("spanId")));
 
   static AttributeRequest attributesAttribute =
       new DefaultAttributeRequest(
-          new DefaultAttributeModel(
-              "attributes",
-              "LOG_EVENT",
-              "attributes",
-              "Attributes",
-              AttributeModelType.STRING,
-              "",
-              false,
-              false,
-              Collections.emptyList(),
-              false),
-          Optional.empty());
+          AttributeAssociation.of(
+              new DefaultAttributeModel(
+                  "attributes",
+                  "LOG_EVENT",
+                  "attributes",
+                  "Attributes",
+                  AttributeModelType.STRING,
+                  "",
+                  false,
+                  false,
+                  Collections.emptyList(),
+                  false),
+              AttributeExpression.forAttributeKey("attributes")));
 
   static AttributeRequest eventIdAttribute =
       new DefaultAttributeRequest(
-          new DefaultAttributeModel(
-              "id",
-              "EVENT",
-              "id",
-              "Id",
-              AttributeModelType.STRING,
-              "",
-              false,
-              false,
-              Collections.emptyList(),
-              false),
-          Optional.empty());
+          AttributeAssociation.of(
+              new DefaultAttributeModel(
+                  "id",
+                  "EVENT",
+                  "id",
+                  "Id",
+                  AttributeModelType.STRING,
+                  "",
+                  false,
+                  false,
+                  Collections.emptyList(),
+                  false),
+              AttributeExpression.forAttributeKey("id")));
 
   static SpansResponse spansResponse =
       SpansResponse.newBuilder()

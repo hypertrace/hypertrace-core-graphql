@@ -55,7 +55,7 @@ class SpanLogEventResponseConverterTest {
         List.of(spanIdAttribute, traceIdAttribute, attributesAttribute);
 
     when(attributeStore.getForeignIdAttribute(any(), anyString(), anyString()))
-        .thenReturn(Single.just(spanIdAttribute.attribute()));
+        .thenReturn(Single.just(spanIdAttribute.attributeExpression().attribute()));
 
     doAnswer(
             invocation -> {
@@ -83,7 +83,7 @@ class SpanLogEventResponseConverterTest {
     Collection<AttributeRequest> attributeRequests = List.of(traceIdAttribute, attributesAttribute);
 
     when(attributeStore.getForeignIdAttribute(any(), anyString(), anyString()))
-        .thenReturn(Single.just(spanIdAttribute.attribute()));
+        .thenReturn(Single.just(spanIdAttribute.attributeExpression().attribute()));
 
     doAnswer(
             invocation -> {

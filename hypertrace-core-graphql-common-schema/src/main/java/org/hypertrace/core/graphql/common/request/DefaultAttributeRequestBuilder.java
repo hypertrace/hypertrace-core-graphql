@@ -4,7 +4,6 @@ import graphql.schema.DataFetchingFieldSelectionSet;
 import graphql.schema.SelectedField;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
-import java.util.Optional;
 import java.util.stream.Stream;
 import javax.inject.Inject;
 import lombok.Value;
@@ -14,6 +13,7 @@ import org.hypertrace.core.graphql.attributes.AttributeStore;
 import org.hypertrace.core.graphql.common.schema.attributes.AttributeQueryable;
 import org.hypertrace.core.graphql.common.schema.attributes.arguments.AttributeExpression;
 import org.hypertrace.core.graphql.common.schema.attributes.arguments.AttributeKeyArgument;
+import org.hypertrace.core.graphql.common.utils.attributes.AttributeAssociator;
 import org.hypertrace.core.graphql.context.GraphQlRequestContext;
 import org.hypertrace.core.graphql.deserialization.ArgumentDeserializer;
 import org.hypertrace.core.graphql.utils.schema.GraphQlSelectionFinder;
@@ -22,15 +22,18 @@ import org.hypertrace.core.graphql.utils.schema.SelectionQuery;
 class DefaultAttributeRequestBuilder implements AttributeRequestBuilder {
 
   private final AttributeStore attributeStore;
+  private final AttributeAssociator attributeAssociator;
   private final ArgumentDeserializer argumentDeserializer;
   private final GraphQlSelectionFinder selectionFinder;
 
   @Inject
   DefaultAttributeRequestBuilder(
       AttributeStore attributeStore,
+      AttributeAssociator attributeAssociator,
       ArgumentDeserializer argumentDeserializer,
       GraphQlSelectionFinder selectionFinder) {
     this.attributeStore = attributeStore;
+    this.attributeAssociator = attributeAssociator;
     this.argumentDeserializer = argumentDeserializer;
     this.selectionFinder = selectionFinder;
   }
@@ -81,16 +84,15 @@ class DefaultAttributeRequestBuilder implements AttributeRequestBuilder {
       GraphQlRequestContext context,
       String attributeScope,
       AttributeExpression attributeExpression) {
-    return this.attributeStore
-        .get(context, attributeScope, attributeExpression.key())
-        .map(
-            attributeModel ->
-                new DefaultAttributeRequest(attributeModel, attributeExpression.subpath()));
+    return this.attributeAssociator
+        .associateAttribute(context, attributeScope, attributeExpression, attributeExpression.key())
+        .map(DefaultAttributeRequest::new);
   }
 
   @Override
   public AttributeRequest buildForAttribute(AttributeModel attribute) {
-    return new DefaultAttributeRequest(attribute, Optional.empty());
+    return new DefaultAttributeRequest(
+        AttributeAssociation.of(attribute, AttributeExpression.forAttributeKey(attribute.key())));
   }
 
   private Stream<AttributeExpression> getAttributeExpressionsForAttributeQueryableSelectionSet(
@@ -115,14 +117,11 @@ class DefaultAttributeRequestBuilder implements AttributeRequestBuilder {
   @Value
   @Accessors(fluent = true)
   static class DefaultAttributeRequest implements AttributeRequest {
-    AttributeModel attribute;
-    Optional<String> subpath;
+    AttributeAssociation<AttributeExpression> attributeExpression;
 
     @Override
     public String alias() {
-      return subpath()
-          .map(subpath -> String.format("%s.%s", this.attribute().id(), subpath))
-          .orElseGet(() -> this.attribute().id());
+      return attributeExpression.value().asMapKey();
     }
   }
 }

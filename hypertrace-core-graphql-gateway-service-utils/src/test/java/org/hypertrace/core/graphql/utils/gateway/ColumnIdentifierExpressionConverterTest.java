@@ -1,11 +1,13 @@
 package org.hypertrace.core.graphql.utils.gateway;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import io.reactivex.rxjava3.core.Single;
 import org.hypertrace.core.graphql.attributes.AttributeModel;
+import org.hypertrace.core.graphql.common.request.AttributeAssociation;
+import org.hypertrace.core.graphql.common.schema.attributes.arguments.AttributeExpression;
 import org.hypertrace.gateway.service.v1.common.ColumnIdentifier;
 import org.hypertrace.gateway.service.v1.common.Expression;
 import org.junit.jupiter.api.Test;
@@ -25,11 +27,15 @@ class ColumnIdentifierExpressionConverterTest {
     ColumnIdentifierExpressionConverter columnIdentifierExpressionConverter =
         new ColumnIdentifierExpressionConverter(this.mockColumnIdentifierConverter);
 
-    when(this.mockColumnIdentifierConverter.convert(any()))
+    when(this.mockColumnIdentifierConverter.convert(eq(mockAttribute)))
         .thenReturn(Single.just(expectedColumnIdentifier));
 
     assertEquals(
         Expression.newBuilder().setColumnIdentifier(expectedColumnIdentifier).build(),
-        columnIdentifierExpressionConverter.convert(this.mockAttribute).blockingGet());
+        columnIdentifierExpressionConverter
+            .convert(
+                AttributeAssociation.of(
+                    this.mockAttribute, AttributeExpression.forAttributeKey("key")))
+            .blockingGet());
   }
 }

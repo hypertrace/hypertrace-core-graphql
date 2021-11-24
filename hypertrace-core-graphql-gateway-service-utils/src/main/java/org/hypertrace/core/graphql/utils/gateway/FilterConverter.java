@@ -49,7 +49,8 @@ class FilterConverter
 
   private Single<Filter> buildFilter(AttributeAssociation<FilterArgument> filter) {
     return zip(
-        this.columnIdentifierExpressionConverter.convert(filter.attribute()),
+        this.columnIdentifierExpressionConverter.convert(
+            AttributeAssociation.of(filter.attribute(), filter.value().keyExpression())),
         this.operatorConverter.convert(filter.value().operator()),
         this.literalConstantExpressionConverter.convert(filter.value().value()),
         (key, operator, value) ->

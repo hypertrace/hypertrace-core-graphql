@@ -110,10 +110,10 @@ class SpanLogEventRequestBuilderTest {
               return Single.just(
                   List.of(
                       AttributeAssociation.of(
-                          spanIdAttribute.attribute(),
+                          spanIdAttribute.attributeExpression().attribute(),
                           new NormalizedFilter(
                               AttributeExpression.forAttributeKey(
-                                  spanIdAttribute.attribute().key()),
+                                  spanIdAttribute.attributeExpression().value().key()),
                               filterArgument.operator(),
                               filterArgument.value()))));
             })
@@ -121,12 +121,14 @@ class SpanLogEventRequestBuilderTest {
         .build(any(), any(), anyCollection());
 
     when(attributeStore.getForeignIdAttribute(any(), anyString(), anyString()))
-        .thenReturn(Single.just(spanIdAttribute.attribute()));
+        .thenReturn(Single.just(spanIdAttribute.attributeExpression().attribute()));
 
     doAnswer(
             invocation -> {
               AttributeModel attributeModel = invocation.getArgument(0, AttributeModel.class);
-              return new DefaultAttributeRequest(attributeModel, Optional.empty());
+              return new DefaultAttributeRequest(
+                  AttributeAssociation.of(
+                      attributeModel, AttributeExpression.forAttributeKey(attributeModel.key())));
             })
         .when(attributeRequestBuilder)
         .buildForAttribute(any());

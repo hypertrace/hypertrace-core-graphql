@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import lombok.Value;
 import lombok.experimental.Accessors;
 import org.hypertrace.core.graphql.attributes.AttributeModel;
@@ -13,6 +12,7 @@ import org.hypertrace.core.graphql.attributes.AttributeModelType;
 import org.hypertrace.core.graphql.common.request.AttributeAssociation;
 import org.hypertrace.core.graphql.common.request.AttributeRequest;
 import org.hypertrace.core.graphql.common.schema.arguments.TimeRangeArgument;
+import org.hypertrace.core.graphql.common.schema.attributes.arguments.AttributeExpression;
 import org.hypertrace.core.graphql.common.schema.results.arguments.filter.FilterArgument;
 import org.hypertrace.core.graphql.common.schema.results.arguments.order.OrderArgument;
 import org.hypertrace.core.graphql.context.GraphQlRequestContext;
@@ -37,12 +37,11 @@ class BaseDaoTest {
   @Accessors(fluent = true)
   static class DefaultAttributeRequest implements AttributeRequest {
 
-    AttributeModel attribute;
-    Optional<String> subpath;
+    AttributeAssociation<AttributeExpression> attributeExpression;
 
     @Override
     public String alias() {
-      return attribute.id();
+      return attributeExpression().value().asMapKey();
     }
   }
 
