@@ -33,7 +33,9 @@ public class GatewayUtilsModule extends AbstractModule {
     bind(Key.get(
             new TypeLiteral<
                 BiConverter<
-                    Collection<AttributeRequest>, Map<String, Value>, Map<String, Object>>>() {}))
+                    Collection<AttributeRequest>,
+                    Map<String, Value>,
+                    Map<AttributeExpression, Object>>>() {}))
         .to(AttributeMapConverter.class);
 
     bind(Key.get(new TypeLiteral<Converter<Value, Object>>() {})).to(UnwrappedValueConverter.class);

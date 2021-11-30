@@ -21,13 +21,15 @@ import org.hypertrace.gateway.service.v1.span.SpansResponse;
 
 class SpanLogEventResponseConverter {
 
-  private final BiConverter<Collection<AttributeRequest>, Map<String, Value>, Map<String, Object>>
+  private final BiConverter<
+          Collection<AttributeRequest>, Map<String, Value>, Map<AttributeExpression, Object>>
       attributeMapConverter;
   private final AttributeStore attributeStore;
 
   @Inject
   SpanLogEventResponseConverter(
-      BiConverter<Collection<AttributeRequest>, Map<String, Value>, Map<String, Object>>
+      BiConverter<
+              Collection<AttributeRequest>, Map<String, Value>, Map<AttributeExpression, Object>>
           attributeMapConverter,
       AttributeStore attributeStore) {
     this.attributeMapConverter = attributeMapConverter;
@@ -90,11 +92,11 @@ class SpanLogEventResponseConverter {
   private static class ConvertedLogEvent
       implements org.hypertrace.core.graphql.log.event.schema.LogEvent {
 
-    Map<String, Object> attributeValues;
+    Map<AttributeExpression, Object> attributeValues;
 
     @Override
     public Object attribute(AttributeExpression attributeExpression) {
-      return this.attributeValues.get(attributeExpression.asMapKey());
+      return this.attributeValues.get(attributeExpression);
     }
   }
 }

@@ -18,12 +18,14 @@ import org.hypertrace.gateway.service.v1.log.events.LogEventsResponse;
 
 class GatewayServiceLogEventsResponseConverter {
 
-  private final BiConverter<Collection<AttributeRequest>, Map<String, Value>, Map<String, Object>>
+  private final BiConverter<
+          Collection<AttributeRequest>, Map<String, Value>, Map<AttributeExpression, Object>>
       attributeMapConverter;
 
   @Inject
   GatewayServiceLogEventsResponseConverter(
-      BiConverter<Collection<AttributeRequest>, Map<String, Value>, Map<String, Object>>
+      BiConverter<
+              Collection<AttributeRequest>, Map<String, Value>, Map<AttributeExpression, Object>>
           attributeMapConverter) {
     this.attributeMapConverter = attributeMapConverter;
   }
@@ -48,11 +50,11 @@ class GatewayServiceLogEventsResponseConverter {
   @lombok.Value
   @Accessors(fluent = true)
   private static class ConvertedLogEvent implements LogEvent {
-    Map<String, Object> attributeValues;
+    Map<AttributeExpression, Object> attributeValues;
 
     @Override
     public Object attribute(AttributeExpression attributeExpression) {
-      return this.attributeValues.get(attributeExpression.asMapKey());
+      return this.attributeValues.get(attributeExpression);
     }
   }
 

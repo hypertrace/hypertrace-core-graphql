@@ -21,12 +21,14 @@ import org.hypertrace.gateway.service.v1.span.SpanEvent;
 
 class GatewayServiceSpanConverter {
 
-  private final BiConverter<Collection<AttributeRequest>, Map<String, Value>, Map<String, Object>>
+  private final BiConverter<
+          Collection<AttributeRequest>, Map<String, Value>, Map<AttributeExpression, Object>>
       attributeMapConverter;
 
   @Inject
   GatewayServiceSpanConverter(
-      BiConverter<Collection<AttributeRequest>, Map<String, Value>, Map<String, Object>>
+      BiConverter<
+              Collection<AttributeRequest>, Map<String, Value>, Map<AttributeExpression, Object>>
           attributeMapConverter) {
     this.attributeMapConverter = attributeMapConverter;
   }
@@ -47,7 +49,10 @@ class GatewayServiceSpanConverter {
         .map(
             attrMap ->
                 new ConvertedSpan(
-                    attrMap.get(request.spanEventsRequest().idAttribute().asMapKey()).toString(),
+                    attrMap
+                        .get(
+                            request.spanEventsRequest().idAttribute().attributeExpression().value())
+                        .toString(),
                     attrMap,
                     spanIdToLogEvents));
   }
@@ -56,12 +61,12 @@ class GatewayServiceSpanConverter {
   @Accessors(fluent = true)
   private static class ConvertedSpan implements Span {
     String id;
-    Map<String, Object> attributeValues;
+    Map<AttributeExpression, Object> attributeValues;
     Map<String, List<LogEvent>> spanIdToLogEvents;
 
     @Override
     public Object attribute(AttributeExpression attributeExpression) {
-      return this.attributeValues.get(attributeExpression.asMapKey());
+      return this.attributeValues.get(attributeExpression);
     }
 
     @Override

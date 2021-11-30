@@ -118,10 +118,5 @@ class DefaultAttributeRequestBuilder implements AttributeRequestBuilder {
   @Accessors(fluent = true)
   static class DefaultAttributeRequest implements AttributeRequest {
     AttributeAssociation<AttributeExpression> attributeExpression;
-
-    @Override
-    public String alias() {
-      return attributeExpression.value().asMapKey();
-    }
   }
 }

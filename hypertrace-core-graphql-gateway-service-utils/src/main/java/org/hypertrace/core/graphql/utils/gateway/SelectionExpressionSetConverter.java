@@ -34,7 +34,7 @@ class SelectionExpressionSetConverter
         .convert(attributeRequest.attributeExpression())
         .map(Expression::toBuilder)
         .doOnSuccess(
-            builder -> builder.getColumnIdentifierBuilder().setAlias(attributeRequest.alias()))
+            builder -> builder.getColumnIdentifierBuilder().setAlias(attributeRequest.asMapKey()))
         .map(Builder::build);
   }
 }

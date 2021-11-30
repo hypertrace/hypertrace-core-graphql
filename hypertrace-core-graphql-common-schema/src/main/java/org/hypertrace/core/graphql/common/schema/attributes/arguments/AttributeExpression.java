@@ -35,7 +35,7 @@ public class AttributeExpression {
   //  @JsonProperty(SUBPATH)
   Optional<String> subpath;
 
-  public String asMapKey() {
+  public String asAlias() {
     return subpath()
         .map(subpath -> String.format("%s.%s", this.key(), subpath))
         .orElseGet(this::key);

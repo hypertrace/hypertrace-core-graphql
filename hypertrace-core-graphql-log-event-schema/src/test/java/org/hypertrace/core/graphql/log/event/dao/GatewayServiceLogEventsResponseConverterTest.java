@@ -48,7 +48,7 @@ class GatewayServiceLogEventsResponseConverterTest extends BaseDaoTest {
                 bind(GrpcChannelRegistry.class).toInstance(mock(GrpcChannelRegistry.class));
               }
             });
-    BiConverter<Collection<AttributeRequest>, Map<String, Value>, Map<String, Object>>
+    BiConverter<Collection<AttributeRequest>, Map<String, Value>, Map<AttributeExpression, Object>>
         attributeMapConverter =
             injector.getInstance(
                 Key.get(
@@ -56,7 +56,7 @@ class GatewayServiceLogEventsResponseConverterTest extends BaseDaoTest {
                         BiConverter<
                             Collection<AttributeRequest>,
                             Map<String, Value>,
-                            Map<String, Object>>>() {}));
+                            Map<AttributeExpression, Object>>>() {}));
     responseConverter = new GatewayServiceLogEventsResponseConverter(attributeMapConverter);
   }
 
