@@ -8,11 +8,7 @@ import graphql.language.StringValue;
 import graphql.schema.GraphQLScalarType;
 import java.lang.reflect.AnnotatedType;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.chrono.ChronoLocalDateTime;
 import org.hypertrace.core.graphql.common.schema.typefunctions.DateTimeScalar;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,11 +40,6 @@ class DateTimeScalarTest {
   @Test
   void canDetermineIfConvertible() {
     assertTrue(this.dateTimeFunction.canBuildType(Instant.class, this.mockAnnotatedType));
-    assertTrue(this.dateTimeFunction.canBuildType(OffsetDateTime.class, this.mockAnnotatedType));
-    assertTrue(this.dateTimeFunction.canBuildType(LocalDateTime.class, this.mockAnnotatedType));
-    assertTrue(
-        this.dateTimeFunction.canBuildType(ChronoLocalDateTime.class, this.mockAnnotatedType));
-    assertTrue(this.dateTimeFunction.canBuildType(ZonedDateTime.class, this.mockAnnotatedType));
   }
 
   @Test

@@ -11,44 +11,44 @@ import graphql.schema.CoercingSerializeException;
 import graphql.schema.GraphQLScalarType;
 import java.lang.reflect.AnnotatedType;
 import java.time.DateTimeException;
-import java.time.Instant;
+import java.time.OffsetTime;
 import java.time.temporal.TemporalAccessor;
 import java.util.function.Function;
 
-public class DateTimeScalar implements TypeFunction {
+public class OffsetTimeScalar implements TypeFunction {
 
-  private static final GraphQLScalarType DATE_TIME_SCALAR =
+  private static final GraphQLScalarType OFFSET_TIME_SCALAR =
       GraphQLScalarType.newScalar()
-          .name("DateTime")
-          .description("An ISO-8601 formatted DateTime Scalar")
+          .name("OffsetTime")
+          .description("An ISO-8601 formatted OffsetTime Scalar")
           .coercing(
-              new Coercing<Instant, String>() {
+              new Coercing<OffsetTime, String>() {
                 @Override
                 public String serialize(Object fetcherResult) throws CoercingSerializeException {
-                  return toInstant(fetcherResult, CoercingSerializeException::new).toString();
+                  return toOffsetTime(fetcherResult, CoercingSerializeException::new).toString();
                 }
 
                 @Override
-                public Instant parseValue(Object input) throws CoercingParseValueException {
-                  return toInstant(input, CoercingParseValueException::new);
+                public OffsetTime parseValue(Object input) throws CoercingParseValueException {
+                  return toOffsetTime(input, CoercingParseValueException::new);
                 }
 
                 @Override
-                public Instant parseLiteral(Object input) throws CoercingParseLiteralException {
-                  return toInstant(input, CoercingParseLiteralException::new);
+                public OffsetTime parseLiteral(Object input) throws CoercingParseLiteralException {
+                  return toOffsetTime(input, CoercingParseLiteralException::new);
                 }
 
-                private <E extends GraphqlErrorException> Instant toInstant(
+                private <E extends GraphqlErrorException> OffsetTime toOffsetTime(
                     Object instantInput, Function<Exception, E> errorWrapper) throws E {
                   try {
                     if (instantInput instanceof TemporalAccessor) {
-                      return Instant.from((TemporalAccessor) instantInput);
+                      return OffsetTime.from((TemporalAccessor) instantInput);
                     }
                     if (instantInput instanceof CharSequence) {
-                      return Instant.parse((CharSequence) instantInput);
+                      return OffsetTime.parse((CharSequence) instantInput);
                     }
                     if (instantInput instanceof StringValue) {
-                      return Instant.parse(((StringValue) instantInput).getValue());
+                      return OffsetTime.parse(((StringValue) instantInput).getValue());
                     }
                   } catch (DateTimeException exception) {
                     throw errorWrapper.apply(exception);
@@ -56,7 +56,7 @@ public class DateTimeScalar implements TypeFunction {
                   throw errorWrapper.apply(
                       new DateTimeException(
                           String.format(
-                              "Cannot convert provided format '%s' to Instant",
+                              "Cannot convert provided format '%s' to OffsetTime",
                               instantInput.getClass().getCanonicalName())));
                 }
               })
@@ -64,7 +64,7 @@ public class DateTimeScalar implements TypeFunction {
 
   @Override
   public boolean canBuildType(Class<?> aClass, AnnotatedType annotatedType) {
-    return Instant.class.isAssignableFrom(aClass);
+    return OffsetTime.class.isAssignableFrom(aClass);
   }
 
   @Override
@@ -73,6 +73,6 @@ public class DateTimeScalar implements TypeFunction {
       Class<?> aClass,
       AnnotatedType annotatedType,
       ProcessingElementsContainer container) {
-    return DATE_TIME_SCALAR;
+    return OFFSET_TIME_SCALAR;
   }
 }
