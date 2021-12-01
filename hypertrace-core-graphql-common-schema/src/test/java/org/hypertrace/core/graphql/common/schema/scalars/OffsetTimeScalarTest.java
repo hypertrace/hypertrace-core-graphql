@@ -1,20 +1,20 @@
 package org.hypertrace.core.graphql.common.schema.scalars;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import graphql.annotations.processor.ProcessingElementsContainer;
 import graphql.language.StringValue;
 import graphql.schema.GraphQLScalarType;
+import java.lang.reflect.AnnotatedType;
+import java.time.OffsetTime;
+import java.time.ZoneOffset;
 import org.hypertrace.core.graphql.common.schema.typefunctions.OffsetTimeScalar;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import java.lang.reflect.AnnotatedType;
-import java.time.OffsetTime;
-import java.time.ZoneOffset;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 class OffsetTimeScalarTest {

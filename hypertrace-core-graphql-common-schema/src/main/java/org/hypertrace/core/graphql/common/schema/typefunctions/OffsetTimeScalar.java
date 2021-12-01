@@ -39,16 +39,16 @@ public class OffsetTimeScalar implements TypeFunction {
                 }
 
                 private <E extends GraphqlErrorException> OffsetTime toOffsetTime(
-                    Object instantInput, Function<Exception, E> errorWrapper) throws E {
+                    Object offsetInput, Function<Exception, E> errorWrapper) throws E {
                   try {
-                    if (instantInput instanceof TemporalAccessor) {
-                      return OffsetTime.from((TemporalAccessor) instantInput);
+                    if (offsetInput instanceof TemporalAccessor) {
+                      return OffsetTime.from((TemporalAccessor) offsetInput);
                     }
-                    if (instantInput instanceof CharSequence) {
-                      return OffsetTime.parse((CharSequence) instantInput);
+                    if (offsetInput instanceof CharSequence) {
+                      return OffsetTime.parse((CharSequence) offsetInput);
                     }
-                    if (instantInput instanceof StringValue) {
-                      return OffsetTime.parse(((StringValue) instantInput).getValue());
+                    if (offsetInput instanceof StringValue) {
+                      return OffsetTime.parse(((StringValue) offsetInput).getValue());
                     }
                   } catch (DateTimeException exception) {
                     throw errorWrapper.apply(exception);
@@ -57,7 +57,7 @@ public class OffsetTimeScalar implements TypeFunction {
                       new DateTimeException(
                           String.format(
                               "Cannot convert provided format '%s' to OffsetTime",
-                              instantInput.getClass().getCanonicalName())));
+                              offsetInput.getClass().getCanonicalName())));
                 }
               })
           .build();
