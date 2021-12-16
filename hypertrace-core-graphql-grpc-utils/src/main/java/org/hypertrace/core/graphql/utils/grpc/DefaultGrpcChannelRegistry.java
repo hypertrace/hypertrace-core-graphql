@@ -1,9 +1,11 @@
 package org.hypertrace.core.graphql.utils.grpc;
 
+import io.grpc.Channel;
 import io.grpc.ManagedChannel;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.hypertrace.core.graphql.spi.lifecycle.GraphQlServiceLifecycle;
+import org.hypertrace.core.grpcutils.client.GrpcChannelConfig;
 
 @Singleton
 class DefaultGrpcChannelRegistry implements GrpcChannelRegistry {
@@ -19,5 +21,10 @@ class DefaultGrpcChannelRegistry implements GrpcChannelRegistry {
   @Override
   public ManagedChannel forAddress(String host, int port) {
     return this.delegate.forPlaintextAddress(host, port);
+  }
+
+  @Override
+  public Channel forAddress(String host, int port, GrpcChannelConfig config) {
+    return this.delegate.forPlaintextAddress(host, port, config);
   }
 }
