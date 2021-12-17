@@ -59,7 +59,7 @@ public class GatewayUtilsModule extends AbstractModule {
         .to(ColumnIdentifierConverter.class);
     bind(Key.get(
             new TypeLiteral<Converter<AttributeAssociation<AttributeExpression>, Expression>>() {}))
-        .to(ColumnIdentifierExpressionConverter.class);
+        .to(AttributeExpressionConverter.class);
 
     bind(Key.get(new TypeLiteral<Converter<Object, LiteralConstant>>() {}))
         .to(LiteralConstantConverter.class);

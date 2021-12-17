@@ -24,5 +24,5 @@ public interface AttributeQueryable {
   }
 
   // Once callers are migrated off using the string, we'll remove it and use this api only
-  Object attribute(AttributeExpression expression);
+  Object attribute(@GraphQLName(AttributeExpression.ARGUMENT_NAME) AttributeExpression expression);
 }

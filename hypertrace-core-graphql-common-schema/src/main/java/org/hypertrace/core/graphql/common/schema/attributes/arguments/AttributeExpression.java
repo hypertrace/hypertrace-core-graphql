@@ -1,20 +1,18 @@
 package org.hypertrace.core.graphql.common.schema.attributes.arguments;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import graphql.annotations.annotationTypes.GraphQLConstructor;
 import graphql.annotations.annotationTypes.GraphQLField;
 import graphql.annotations.annotationTypes.GraphQLName;
 import graphql.annotations.annotationTypes.GraphQLNonNull;
 import java.util.Optional;
 import javax.annotation.Nonnull;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.Value;
 import lombok.experimental.Accessors;
 
 @Value
 @Accessors(fluent = true)
-@NoArgsConstructor(force = true, access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @GraphQLName(AttributeExpression.TYPE_NAME)
 public class AttributeExpression {
@@ -30,10 +28,21 @@ public class AttributeExpression {
   @JsonProperty(ATTRIBUTE_KEY)
   String key;
 
-  //  @GraphQLField
-  //  @GraphQLName(SUBPATH)
-  //  @JsonProperty(SUBPATH)
+  @GraphQLField
+  @GraphQLName(SUBPATH)
+  @JsonProperty(SUBPATH)
   Optional<String> subpath;
+
+  @GraphQLConstructor
+  public AttributeExpression(@GraphQLName(ATTRIBUTE_KEY) String key) {
+    this.key = key;
+    this.subpath = Optional.empty();
+  }
+
+  private AttributeExpression() {
+    this.key = null;
+    this.subpath = Optional.empty();
+  }
 
   public String asAlias() {
     return subpath()
@@ -42,6 +51,6 @@ public class AttributeExpression {
   }
 
   public static AttributeExpression forAttributeKey(@Nonnull String key) {
-    return new AttributeExpression(key, Optional.empty());
+    return new AttributeExpression(key);
   }
 }
