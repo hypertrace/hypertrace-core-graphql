@@ -27,22 +27,18 @@ dependencies {
     api("io.grpc:grpc-core:1.42.0")
     api("io.grpc:grpc-stub:1.42.0")
     api("io.grpc:grpc-context:1.42.0")
-    api("com.fasterxml.jackson.core:jackson-databind:2.12.3")
-    api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.3")
-    api("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.12.3")
+    api("com.fasterxml.jackson.core:jackson-databind:2.12.6")
+    api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.6")
+    api("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.12.6")
     api("org.apache.commons:commons-text:1.9")
     api("io.opentelemetry:opentelemetry-proto:1.1.0-alpha")
     api("com.google.code.gson:gson:2.8.9") {
       because("https://snyk.io/vuln/SNYK-JAVA-COMGOOGLECODEGSON-1730327")
     }
 
-    runtime("org.apache.logging.log4j:log4j-slf4j-impl:2.14.0")
+    runtime("org.apache.logging.log4j:log4j-slf4j-impl:2.17.1")
     runtime("io.grpc:grpc-netty:1.42.0")
-    runtime("io.netty:netty-codec-http2:4.1.68.Final") {
-      because("https://snyk.io/vuln/SNYK-JAVA-IONETTY-1083991")
-    }
-    runtime("io.netty:netty-handler-proxy:4.1.68.Final") {
-      because("https://snyk.io/vuln/SNYK-JAVA-IONETTY-1083991")
-    }
+    runtime("io.netty:netty-codec-http2:4.1.71.Final")
+    runtime("io.netty:netty-handler-proxy:4.1.71.Final")
   }
 }
