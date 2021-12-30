@@ -7,13 +7,13 @@ import graphql.annotations.annotationTypes.GraphQLName;
 import graphql.annotations.annotationTypes.GraphQLNonNull;
 import java.util.Optional;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Value;
 import lombok.experimental.Accessors;
 
 @Value
 @Accessors(fluent = true)
-@AllArgsConstructor
 @GraphQLName(AttributeExpression.TYPE_NAME)
 public class AttributeExpression {
   public static final String ARGUMENT_NAME = "expression";
@@ -34,9 +34,10 @@ public class AttributeExpression {
   Optional<String> subpath;
 
   @GraphQLConstructor
-  public AttributeExpression(@GraphQLName(ATTRIBUTE_KEY) String key) {
+  public AttributeExpression(
+      @GraphQLName(ATTRIBUTE_KEY) String key, @GraphQLName(SUBPATH) @Nullable String subpath) {
     this.key = key;
-    this.subpath = Optional.empty();
+    this.subpath = Optional.ofNullable(subpath);
   }
 
   private AttributeExpression() {
@@ -51,6 +52,6 @@ public class AttributeExpression {
   }
 
   public static AttributeExpression forAttributeKey(@Nonnull String key) {
-    return new AttributeExpression(key);
+    return new AttributeExpression(key, null);
   }
 }

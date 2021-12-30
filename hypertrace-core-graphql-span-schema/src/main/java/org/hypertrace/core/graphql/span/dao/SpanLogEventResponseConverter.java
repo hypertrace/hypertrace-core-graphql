@@ -7,10 +7,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import lombok.experimental.Accessors;
-import org.hypertrace.core.graphql.attributes.AttributeModel;
 import org.hypertrace.core.graphql.attributes.AttributeStore;
 import org.hypertrace.core.graphql.atttributes.scopes.HypertraceCoreAttributeScopeString;
 import org.hypertrace.core.graphql.common.request.AttributeRequest;
+import org.hypertrace.core.graphql.common.request.AttributeRequestBuilder;
 import org.hypertrace.core.graphql.common.schema.attributes.arguments.AttributeExpression;
 import org.hypertrace.core.graphql.common.utils.BiConverter;
 import org.hypertrace.core.graphql.context.GraphQlRequestContext;
@@ -25,15 +25,18 @@ class SpanLogEventResponseConverter {
           Collection<AttributeRequest>, Map<String, Value>, Map<AttributeExpression, Object>>
       attributeMapConverter;
   private final AttributeStore attributeStore;
+  private final AttributeRequestBuilder attributeRequestBuilder;
 
   @Inject
   SpanLogEventResponseConverter(
       BiConverter<
               Collection<AttributeRequest>, Map<String, Value>, Map<AttributeExpression, Object>>
           attributeMapConverter,
-      AttributeStore attributeStore) {
+      AttributeStore attributeStore,
+      AttributeRequestBuilder attributeRequestBuilder) {
     this.attributeMapConverter = attributeMapConverter;
     this.attributeStore = attributeStore;
+    this.attributeRequestBuilder = attributeRequestBuilder;
   }
 
   Single<SpanLogEventsResponse> buildResponse(
@@ -46,19 +49,21 @@ class SpanLogEventResponseConverter {
             graphQlRequestContext,
             HypertraceCoreAttributeScopeString.LOG_EVENT,
             HypertraceCoreAttributeScopeString.SPAN)
+        .map(this.attributeRequestBuilder::buildForAttribute)
         .flatMap(
-            spanId -> buildResponse(spanId, attributeRequests, spansResponse, logEventsResponse));
+            spanIdRequest ->
+                buildResponse(spanIdRequest, attributeRequests, spansResponse, logEventsResponse));
   }
 
   private Single<SpanLogEventsResponse> buildResponse(
-      AttributeModel foreignIdAttribute,
+      AttributeRequest foreignIdAttributeRequest,
       Collection<AttributeRequest> attributeRequests,
       SpansResponse spansResponse,
       LogEventsResponse logEventsResponse) {
     return Observable.fromIterable(logEventsResponse.getLogEventsList())
         .concatMapSingle(
             logEventsResponseVar ->
-                this.convert(foreignIdAttribute, attributeRequests, logEventsResponseVar))
+                this.convert(foreignIdAttributeRequest, attributeRequests, logEventsResponseVar))
         .collect(
             Collectors.groupingBy(
                 SpanLogEventPair::spanId,
@@ -68,7 +73,7 @@ class SpanLogEventResponseConverter {
   }
 
   private Single<SpanLogEventPair> convert(
-      AttributeModel foreignIdAttribute,
+      AttributeRequest foreignIdAttributeRequest,
       Collection<AttributeRequest> request,
       org.hypertrace.gateway.service.v1.log.events.LogEvent logEvent) {
     return this.attributeMapConverter
@@ -76,7 +81,10 @@ class SpanLogEventResponseConverter {
         .map(
             attributeMap ->
                 new SpanLogEventPair(
-                    logEvent.getAttributesMap().get(foreignIdAttribute.id()).getString(),
+                    logEvent
+                        .getAttributesMap()
+                        .get(foreignIdAttributeRequest.asMapKey())
+                        .getString(),
                     new ConvertedLogEvent(attributeMap)));
   }
 
