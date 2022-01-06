@@ -8,7 +8,6 @@ import graphql.annotations.annotationTypes.GraphQLNonNull;
 import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import lombok.AllArgsConstructor;
 import lombok.Value;
 import lombok.experimental.Accessors;
 

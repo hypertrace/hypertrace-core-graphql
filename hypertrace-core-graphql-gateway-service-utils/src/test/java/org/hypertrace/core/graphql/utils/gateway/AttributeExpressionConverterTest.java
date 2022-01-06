@@ -3,7 +3,6 @@ package org.hypertrace.core.graphql.utils.gateway;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-import java.util.Optional;
 import org.hypertrace.core.graphql.attributes.AttributeModel;
 import org.hypertrace.core.graphql.common.request.AttributeAssociation;
 import org.hypertrace.core.graphql.common.schema.attributes.arguments.AttributeExpression;
@@ -34,7 +33,7 @@ class AttributeExpressionConverterTest {
         attributeExpressionConverter
             .convert(
                 AttributeAssociation.of(
-                    this.mockAttribute, new AttributeExpression("tags", Optional.of("spantag"))))
+                    this.mockAttribute, new AttributeExpression("tags", "spantag")))
             .blockingGet());
   }
 

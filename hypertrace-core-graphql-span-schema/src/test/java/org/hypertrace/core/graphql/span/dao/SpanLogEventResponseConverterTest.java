@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.hypertrace.core.graphql.attributes.AttributeStore;
 import org.hypertrace.core.graphql.common.request.AttributeRequest;
+import org.hypertrace.core.graphql.common.request.AttributeRequestBuilder;
 import org.hypertrace.core.graphql.common.schema.attributes.arguments.AttributeExpression;
 import org.hypertrace.core.graphql.common.utils.BiConverter;
 import org.hypertrace.core.graphql.context.GraphQlRequestContext;
@@ -40,13 +41,15 @@ class SpanLogEventResponseConverterTest {
 
   @Mock AttributeStore attributeStore;
   @Mock GraphQlRequestContext requestContext;
+  @Mock AttributeRequestBuilder attributeRequestBuilder;
 
   private SpanLogEventResponseConverter spanLogEventResponseConverter;
 
   @BeforeEach
   void beforeEach() {
     spanLogEventResponseConverter =
-        new SpanLogEventResponseConverter(attributeMapConverter, attributeStore);
+        new SpanLogEventResponseConverter(
+            attributeMapConverter, attributeStore, attributeRequestBuilder);
   }
 
   @Test
@@ -56,6 +59,9 @@ class SpanLogEventResponseConverterTest {
 
     when(attributeStore.getForeignIdAttribute(any(), anyString(), anyString()))
         .thenReturn(Single.just(spanIdAttribute.attributeExpression().attribute()));
+    when(attributeRequestBuilder.buildForAttribute(
+            spanIdAttribute.attributeExpression().attribute()))
+        .thenReturn(spanIdAttribute);
 
     doAnswer(
             invocation -> {
@@ -86,6 +92,9 @@ class SpanLogEventResponseConverterTest {
 
     when(attributeStore.getForeignIdAttribute(any(), anyString(), anyString()))
         .thenReturn(Single.just(spanIdAttribute.attributeExpression().attribute()));
+    when(attributeRequestBuilder.buildForAttribute(
+            spanIdAttribute.attributeExpression().attribute()))
+        .thenReturn(spanIdAttribute);
 
     doAnswer(
             invocation -> {

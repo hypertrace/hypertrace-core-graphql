@@ -46,7 +46,6 @@ import org.hypertrace.core.graphql.span.request.SpanRequest;
 import org.hypertrace.core.graphql.spi.config.GraphQlServiceConfig;
 import org.hypertrace.core.graphql.utils.gateway.GatewayUtilsModule;
 import org.hypertrace.core.graphql.utils.grpc.GrpcChannelRegistry;
-import org.hypertrace.gateway.service.v1.common.ColumnIdentifier;
 import org.hypertrace.gateway.service.v1.common.Expression;
 import org.hypertrace.gateway.service.v1.common.Filter;
 import org.hypertrace.gateway.service.v1.common.LiteralConstant;
@@ -168,7 +167,7 @@ class SpanLogEventRequestBuilderTest {
                     .setOperator(AND)
                     .addChildFilter(
                         Filter.newBuilder()
-                            .setLhs(buildUnaliasedSelection("spanId"))
+                            .setLhs(buildAliasedSelection("spanId"))
                             .setOperator(IN)
                             .setRhs(buildStringList("span1", "span2", "span3"))))
             .build();
@@ -208,7 +207,7 @@ class SpanLogEventRequestBuilderTest {
                     .setOperator(AND)
                     .addChildFilter(
                         Filter.newBuilder()
-                            .setLhs(buildUnaliasedSelection("spanId"))
+                            .setLhs(buildAliasedSelection("spanId"))
                             .setOperator(IN)
                             .setRhs(buildStringList("span1", "span2", "span3"))))
             .build();
@@ -219,13 +218,10 @@ class SpanLogEventRequestBuilderTest {
 
   Expression buildAliasedSelection(String name) {
     return Expression.newBuilder()
-        .setColumnIdentifier(ColumnIdentifier.newBuilder().setColumnName(name).setAlias(name))
-        .build();
-  }
-
-  Expression buildUnaliasedSelection(String name) {
-    return Expression.newBuilder()
-        .setColumnIdentifier(ColumnIdentifier.newBuilder().setColumnName(name))
+        .setAttributeExpression(
+            org.hypertrace.gateway.service.v1.common.AttributeExpression.newBuilder()
+                .setAttributeId(name)
+                .setAlias(name))
         .build();
   }
 
