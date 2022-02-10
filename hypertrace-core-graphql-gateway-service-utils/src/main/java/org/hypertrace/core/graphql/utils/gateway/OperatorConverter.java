@@ -6,7 +6,7 @@ import org.hypertrace.core.graphql.common.schema.results.arguments.filter.Filter
 import org.hypertrace.core.graphql.common.utils.Converter;
 import org.hypertrace.gateway.service.v1.common.Operator;
 
-public class OperatorConverter implements Converter<FilterOperatorType, Operator> {
+class OperatorConverter implements Converter<FilterOperatorType, Operator> {
 
   @Override
   public Single<Operator> convert(FilterOperatorType filterOperatorType) {
