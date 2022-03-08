@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.dataloader.DataLoaderRegistry;
 import org.hypertrace.core.graphql.spi.config.GraphQlServiceConfig;
+import org.hypertrace.core.grpcutils.context.RequestContext;
 
 class DefaultGraphQlRequestContextBuilder extends DefaultGraphQLServletContextBuilder
     implements GraphQlRequestContextBuilder {
@@ -39,6 +40,22 @@ class DefaultGraphQlRequestContextBuilder extends DefaultGraphQLServletContextBu
   @Override
   public GraphQlRequestContext build(HttpServletRequest request, HttpServletResponse response) {
     return new DefaultGraphQlRequestContext(request, response);
+  }
+
+  @Override
+  public RequestContext build(final HttpServletRequest httpServletRequest) {
+    final DefaultGraphQlRequestContext graphQlRequestContext =
+        new DefaultGraphQlRequestContext(httpServletRequest, null);
+    final RequestContext requestContext = new RequestContext();
+    graphQlRequestContext
+        .getTenantId()
+        .ifPresent(tenantId -> requestContext.add(TENANT_ID_HEADER_KEY, tenantId));
+    graphQlRequestContext
+        .getAuthorizationHeader()
+        .ifPresent(
+            authHeader -> requestContext.add(AUTHORIZATION_HEADER_KEY.toLowerCase(), authHeader));
+
+    return requestContext;
   }
 
   private final class DefaultGraphQlRequestContext implements GraphQlRequestContext {

@@ -11,6 +11,7 @@ dependencies {
 
   implementation(project(":hypertrace-core-graphql-spi"))
   implementation("com.google.guava:guava")
+  implementation("org.hypertrace.core.grpcutils:grpc-context-utils")
 
   testImplementation("org.junit.jupiter:junit-jupiter")
   testImplementation("org.mockito:mockito-core")
