@@ -30,7 +30,7 @@ dependencies {
     api("io.grpc:grpc-core:1.43.1")
     api("io.grpc:grpc-stub:1.43.1")
     api("io.grpc:grpc-context:1.43.1")
-    api("com.fasterxml.jackson.core:jackson-databind:2.12.6")
+    api("com.fasterxml.jackson.core:jackson-databind:2.13.1")
     api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.6")
     api("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.12.6")
     api("org.apache.commons:commons-text:1.9")
