@@ -33,7 +33,8 @@ class LiteralConstantConverter implements Converter<Object, LiteralConstant> {
         .map(Builder::build);
   }
 
-  private Value convertValue(Optional<Object> optionalObject) {
+  private Value convertValue(
+      @SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<Object> optionalObject) {
     if (optionalObject.isEmpty()) {
       return Value.getDefaultInstance();
     }
@@ -43,31 +44,51 @@ class LiteralConstantConverter implements Converter<Object, LiteralConstant> {
 
     switch (valueType) {
       case LONG:
-        return valueBuilder.setLong(convertToLong(object)).build();
+        return valueBuilder.setLong(((Number) object).longValue()).build();
 
       case DOUBLE:
-        return valueBuilder.setDouble(convertToDouble(object)).build();
+        return valueBuilder.setDouble(((Number) object).doubleValue()).build();
 
       case BOOL:
-        return valueBuilder.setBoolean(convertToBoolean(object)).build();
+        return valueBuilder.setBoolean((Boolean) object).build();
 
       case TIMESTAMP:
-        return valueBuilder.setTimestamp(convertToTimestamp(object)).build();
+        return valueBuilder
+            .setTimestamp(Instant.from((TemporalAccessor) object).toEpochMilli())
+            .build();
 
       case BOOLEAN_ARRAY:
-        return valueBuilder.addAllBooleanArray(convertToBooleanCollection(object)).build();
+        return valueBuilder
+            .addAllBooleanArray(
+                ((Collection<?>) object)
+                    .stream().map(obj -> (Boolean) obj).collect(toUnmodifiableList()))
+            .build();
 
       case LONG_ARRAY:
-        return valueBuilder.addAllLongArray(convertToLongCollection(object)).build();
+        return valueBuilder
+            .addAllLongArray(
+                ((Collection<?>) object)
+                    .stream().map(obj -> ((Number) obj).longValue()).collect(toUnmodifiableList()))
+            .build();
 
       case DOUBLE_ARRAY:
-        return valueBuilder.addAllDoubleArray(convertToDoubleCollection(object)).build();
+        return valueBuilder
+            .addAllDoubleArray(
+                ((Collection<?>) object)
+                    .stream()
+                        .map(obj -> ((Number) obj).doubleValue())
+                        .collect(toUnmodifiableList()))
+            .build();
 
       case STRING_ARRAY:
-        return valueBuilder.addAllStringArray(convertToStringCollection(object)).build();
+        return valueBuilder
+            .addAllStringArray(
+                ((Collection<?>) object)
+                    .stream().map(String::valueOf).collect(toUnmodifiableList()))
+            .build();
     }
 
-    return valueBuilder.setString(convertToString(object)).build();
+    return valueBuilder.setString(String.valueOf(object)).build();
   }
 
   private boolean assignableToAnyOfClasses(Class<?> classToCheck, Class<?>... classesAllowed) {
@@ -119,44 +140,5 @@ class LiteralConstantConverter implements Converter<Object, LiteralConstant> {
     }
 
     return STRING_ARRAY;
-  }
-
-  private long convertToLong(final Object object) {
-    return ((Number) object).longValue();
-  }
-
-  private double convertToDouble(final Object object) {
-    return ((Number) object).doubleValue();
-  }
-
-  private boolean convertToBoolean(final Object object) {
-    return (Boolean) object;
-  }
-
-  private String convertToString(final Object object) {
-    return String.valueOf(object);
-  }
-
-  private long convertToTimestamp(final Object object) {
-    return Instant.from((TemporalAccessor) object).toEpochMilli();
-  }
-
-  private Collection<Long> convertToLongCollection(final Object object) {
-    return ((Collection<?>) object).stream().map(this::convertToLong).collect(toUnmodifiableList());
-  }
-
-  private Collection<Double> convertToDoubleCollection(final Object object) {
-    return ((Collection<?>) object)
-        .stream().map(this::convertToDouble).collect(toUnmodifiableList());
-  }
-
-  private Collection<Boolean> convertToBooleanCollection(final Object object) {
-    return ((Collection<?>) object)
-        .stream().map(this::convertToBoolean).collect(toUnmodifiableList());
-  }
-
-  private Collection<String> convertToStringCollection(final Object object) {
-    return ((Collection<?>) object)
-        .stream().map(this::convertToString).collect(toUnmodifiableList());
   }
 }
