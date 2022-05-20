@@ -6,5 +6,9 @@ ignore:
     - '*':
         reason: No replacement available
         expires: 2022-07-31T00:00:00.000Z
+  SNYK-JAVA-IONETTY-2812456:
+    - '*':
+        reason: No replacement available
+        expires: 2023-05-31T00:00:00.000Z
 patch: {}
 
