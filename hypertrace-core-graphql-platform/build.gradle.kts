@@ -41,7 +41,7 @@ dependencies {
 
     runtime("org.apache.logging.log4j:log4j-slf4j-impl:2.17.1")
     runtime("io.grpc:grpc-netty:1.45.1")
-    runtime("io.netty:netty-codec-http2:4.1.71.Final")
-    runtime("io.netty:netty-handler-proxy:4.1.71.Final")
+    runtime("io.netty:netty-codec-http2:4.1.77.Final")
+    runtime("io.netty:netty-handler-proxy:4.1.77.Final")
   }
 }
