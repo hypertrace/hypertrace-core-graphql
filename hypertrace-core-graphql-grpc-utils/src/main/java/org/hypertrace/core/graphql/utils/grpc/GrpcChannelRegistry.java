@@ -1,7 +1,6 @@
 package org.hypertrace.core.graphql.utils.grpc;
 
 import io.grpc.Channel;
-import io.grpc.ManagedChannel;
 import org.hypertrace.core.grpcutils.client.GrpcChannelConfig;
 
 public interface GrpcChannelRegistry {
