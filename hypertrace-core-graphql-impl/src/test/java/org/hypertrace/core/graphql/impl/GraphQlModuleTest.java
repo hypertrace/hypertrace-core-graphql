@@ -17,9 +17,7 @@ public class GraphQlModuleTest {
         () ->
             Guice.createInjector(
                     new GraphQlModule(
-                        mock(GraphQlServiceConfig.class),
-                        mock(GraphQlServiceLifecycle.class),
-                        mock(GrpcChannelRegistry.class)))
+                        mock(GraphQlServiceConfig.class), mock(GraphQlServiceLifecycle.class)))
                 .getAllBindings());
   }
 }
