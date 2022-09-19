@@ -29,8 +29,8 @@ class AttributeModelMetricAggregationTypeConverter
         return Single.just(AttributeModelMetricAggregationType.PERCENTILE);
       case DISTINCTCOUNT:
         return Single.just(AttributeModelMetricAggregationType.DISTINCT_COUNT);
-      case DISTINCT:
-        return Single.just(AttributeModelMetricAggregationType.DISTINCT);
+      case DISTINCT_ARRAY:
+        return Single.just(AttributeModelMetricAggregationType.DISTINCT_ARRAY);
       default:
         return Single.error(
             new UnknownFormatConversionException(

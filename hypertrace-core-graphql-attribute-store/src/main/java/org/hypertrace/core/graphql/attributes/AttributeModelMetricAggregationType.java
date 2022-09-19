@@ -9,5 +9,5 @@ public enum AttributeModelMetricAggregationType {
   AVGRATE,
   PERCENTILE,
   DISTINCT_COUNT,
-  DISTINCT
+  DISTINCT_ARRAY
 }

@@ -12,7 +12,7 @@ public enum MetricAggregationType {
   AVGRATE,
   PERCENTILE,
   DISTINCTCOUNT,
-  DISTINCT;
+  DISTINCT_ARRAY;
 
   public static final String TYPE_NAME = "MetricAggregationType";
 }
