@@ -34,7 +34,7 @@ dependencies {
     api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.4")
     api("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.13.4")
     api("com.fasterxml.jackson:jackson-bom:2.13.4")
-    api("org.apache.commons:commons-text:1.9")
+    api("org.apache.commons:commons-text:1.10.0")
     api("io.opentelemetry:opentelemetry-proto:1.1.0-alpha")
 
     runtime("org.apache.logging.log4j:log4j-slf4j-impl:2.17.2")
