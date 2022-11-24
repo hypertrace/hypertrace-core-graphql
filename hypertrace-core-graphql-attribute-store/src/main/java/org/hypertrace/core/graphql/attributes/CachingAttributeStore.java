@@ -36,7 +36,7 @@ class CachingAttributeStore implements AttributeStore {
                 channelRegistry.forAddress(
                     serviceConfig.getAttributeServiceHost(),
                     serviceConfig.getAttributeServicePort()))
-            .withCacheExpiration(Duration.ofMinutes(1))
+            .withCacheExpiration(Duration.ofMinutes(3))
             .withMaximumCacheContexts(1000)
             .build());
   }
