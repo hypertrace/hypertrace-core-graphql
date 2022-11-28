@@ -1,5 +1,6 @@
 package org.hypertrace.core.graphql.attributes;
 
+import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Single;
 import java.util.List;
 import org.hypertrace.core.graphql.context.GraphQlRequestContext;
@@ -13,4 +14,6 @@ public interface AttributeStore {
 
   Single<AttributeModel> getForeignIdAttribute(
       GraphQlRequestContext context, String scope, String foreignScope);
+
+  Completable create(final GraphQlRequestContext context, final List<AttributeModel> attributes);
 }

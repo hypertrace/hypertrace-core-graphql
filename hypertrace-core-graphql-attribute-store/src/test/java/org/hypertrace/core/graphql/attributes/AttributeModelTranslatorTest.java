@@ -57,6 +57,7 @@ class AttributeModelTranslatorTest {
   @Test
   void canTranslateAttributeModel() {
     assertEquals(Optional.of(this.expectedModel), this.translator.translate(this.metadata));
+    assertEquals(Optional.of(this.metadata), this.translator.translate(this.expectedModel));
   }
 
   @Test
@@ -66,6 +67,7 @@ class AttributeModelTranslatorTest {
     DefaultAttributeModel expectedMetricModel =
         this.expectedModel.toBuilder().onlySupportsAggregation(true).build();
     assertEquals(Optional.of(expectedMetricModel), this.translator.translate(metricMetadata));
+    assertEquals(Optional.of(metricMetadata), this.translator.translate(expectedMetricModel));
   }
 
   @Test
@@ -87,6 +89,7 @@ class AttributeModelTranslatorTest {
             .setKey("key")
             .setDisplayName("display name")
             .setValueKind(AttributeKind.TYPE_STRING_ARRAY)
+            .setType(AttributeType.ATTRIBUTE)
             .setUnit("unit")
             .setOnlyAggregationsAllowed(false)
             .addAllSupportedAggregations(
@@ -113,5 +116,6 @@ class AttributeModelTranslatorTest {
             .build();
 
     assertEquals(Optional.of(this.expectedModel), this.translator.translate(this.metadata));
+    assertEquals(Optional.of(this.metadata), this.translator.translate(this.expectedModel));
   }
 }
