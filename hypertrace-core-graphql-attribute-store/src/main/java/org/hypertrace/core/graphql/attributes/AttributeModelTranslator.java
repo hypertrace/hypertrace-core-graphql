@@ -80,31 +80,22 @@ public class AttributeModelTranslator {
     }
   }
 
-  public Optional<AttributeMetadata> translate(final AttributeModel attributeMetadata) {
-    try {
-      return Optional.of(
-          AttributeMetadata.newBuilder()
-              .setId(attributeMetadata.id())
-              .setScopeString(attributeMetadata.scope())
-              .setKey(attributeMetadata.key())
-              .setDisplayName(attributeMetadata.displayName())
-              .setValueKind(this.convertType(attributeMetadata.type()))
-              .setUnit(attributeMetadata.units())
-              .setOnlyAggregationsAllowed(attributeMetadata.onlySupportsGrouping())
-              .setType(
-                  attributeMetadata.onlySupportsAggregation()
-                      ? AttributeType.METRIC
-                      : AttributeType.ATTRIBUTE)
-              .addAllSupportedAggregations(
-                  this.convertMetricAggregationTypes(
-                      attributeMetadata.supportedMetricAggregationTypes()))
-              .setGroupable(attributeMetadata.groupable())
-              .setCustom(attributeMetadata.isCustom())
-              .build());
-    } catch (final Exception e) {
-      LOGGER.warn("Dropping attribute {} : {}", attributeMetadata.id(), e.getMessage());
-      return Optional.empty();
-    }
+  public AttributeMetadata translate(final AttributeModel attributeMetadata) {
+    return AttributeMetadata.newBuilder()
+        .setScopeString(attributeMetadata.scope())
+        .setKey(attributeMetadata.key())
+        .setDisplayName(attributeMetadata.displayName())
+        .setValueKind(this.convertType(attributeMetadata.type()))
+        .setUnit(attributeMetadata.units())
+        .setOnlyAggregationsAllowed(attributeMetadata.onlySupportsGrouping())
+        .setType(
+            attributeMetadata.onlySupportsAggregation()
+                ? AttributeType.METRIC
+                : AttributeType.ATTRIBUTE)
+        .addAllSupportedAggregations(
+            this.convertMetricAggregationTypes(attributeMetadata.supportedMetricAggregationTypes()))
+        .setGroupable(attributeMetadata.groupable())
+        .build();
   }
 
   public AttributeKind convertType(AttributeModelType type) {

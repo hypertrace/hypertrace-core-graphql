@@ -7,7 +7,6 @@ import io.reactivex.rxjava3.core.Single;
 import java.time.Duration;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.hypertrace.core.attribute.service.cachingclient.CachingAttributeClient;
@@ -93,10 +92,7 @@ class CachingAttributeStore implements AttributeStore {
   public Completable create(
       final GraphQlRequestContext context, final List<AttributeModel> attributes) {
     final List<AttributeMetadata> metadataList =
-        attributes.stream()
-            .map(translator::translate)
-            .flatMap(Optional::stream)
-            .collect(toUnmodifiableList());
+        attributes.stream().map(translator::translate).collect(toUnmodifiableList());
     return GrpcRxExecutionContext.forContext(this.grpcContextBuilder.build(context))
         .run(() -> cachingAttributeClient.create(metadataList));
   }
