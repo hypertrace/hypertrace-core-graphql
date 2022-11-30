@@ -18,6 +18,7 @@ import org.hypertrace.core.attribute.service.cachingclient.CachingAttributeClien
 import org.hypertrace.core.attribute.service.v1.AttributeMetadata;
 import org.hypertrace.core.graphql.context.GraphQlRequestContext;
 import org.hypertrace.core.graphql.utils.grpc.GrpcContextBuilder;
+import org.hypertrace.core.grpcutils.context.RequestContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -122,7 +123,9 @@ class CachingAttributeStoreTest {
 
   @Test
   void testCreate() {
+    final RequestContext requestContext = RequestContext.forTenantId("some-tenant");
     final Completable mockCompletable = mock(Completable.class);
+    when(mockGrpcContextBuilder.build(mockContext)).thenReturn(requestContext);
     when(mockAttributeClient.create(emptyList())).thenReturn(mockCompletable);
 
     final Completable result = attributeStore.create(mockContext, emptyList());

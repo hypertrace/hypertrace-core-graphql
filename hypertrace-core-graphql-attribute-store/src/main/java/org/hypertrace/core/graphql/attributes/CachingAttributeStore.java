@@ -89,9 +89,9 @@ class CachingAttributeStore implements AttributeStore {
   @Override
   public Completable create(
       final GraphQlRequestContext context, final List<AttributeMetadata> attributes) {
-    return GrpcRxExecutionContext.forContext(this.grpcContextBuilder.build(context))
-        .call(() -> cachingAttributeClient.create(attributes))
-        .blockingGet();
+    return this.grpcContextBuilder
+        .build(context)
+        .call(() -> cachingAttributeClient.create(attributes));
   }
 
   private Single<String> getForeignIdKey(

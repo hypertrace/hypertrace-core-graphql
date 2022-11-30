@@ -87,7 +87,6 @@ class AttributeModelTranslatorTest {
             .setKey("key")
             .setDisplayName("display name")
             .setValueKind(AttributeKind.TYPE_STRING_ARRAY)
-            .setType(AttributeType.ATTRIBUTE)
             .setUnit("unit")
             .setOnlyAggregationsAllowed(false)
             .addAllSupportedAggregations(
