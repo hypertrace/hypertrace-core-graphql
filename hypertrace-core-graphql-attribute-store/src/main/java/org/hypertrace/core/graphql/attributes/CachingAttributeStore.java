@@ -1,7 +1,5 @@
 package org.hypertrace.core.graphql.attributes;
 
-import static java.util.stream.Collectors.toUnmodifiableList;
-
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Single;
 import java.time.Duration;
@@ -90,11 +88,10 @@ class CachingAttributeStore implements AttributeStore {
 
   @Override
   public Completable create(
-      final GraphQlRequestContext context, final List<AttributeModel> attributes) {
-    final List<AttributeMetadata> metadataList =
-        attributes.stream().map(translator::translate).collect(toUnmodifiableList());
+      final GraphQlRequestContext context, final List<AttributeMetadata> attributes) {
     return GrpcRxExecutionContext.forContext(this.grpcContextBuilder.build(context))
-        .run(() -> cachingAttributeClient.create(metadataList));
+        .call(() -> cachingAttributeClient.create(attributes))
+        .blockingGet();
   }
 
   private Single<String> getForeignIdKey(

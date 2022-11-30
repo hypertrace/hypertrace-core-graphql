@@ -1,16 +1,16 @@
 package org.hypertrace.core.graphql.attributes;
 
+import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Single;
-import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -122,9 +122,10 @@ class CachingAttributeStoreTest {
 
   @Test
   void testCreate() {
-    final Completable result = attributeStore.create(mockContext, Collections.emptyList());
-    assertNotNull(result);
-    result.blockingAwait();
-    verify(mockAttributeClient).create(Collections.emptyList());
+    final Completable mockCompletable = mock(Completable.class);
+    when(mockAttributeClient.create(emptyList())).thenReturn(mockCompletable);
+
+    final Completable result = attributeStore.create(mockContext, emptyList());
+    assertSame(mockCompletable, result);
   }
 }

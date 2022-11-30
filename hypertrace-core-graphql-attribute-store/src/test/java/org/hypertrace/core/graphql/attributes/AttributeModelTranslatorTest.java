@@ -15,7 +15,6 @@ class AttributeModelTranslatorTest {
 
   private AttributeModelTranslator translator;
   private AttributeMetadata metadata;
-  private AttributeMetadata expectedMetadata;
   private DefaultAttributeModel expectedModel;
 
   @BeforeEach
@@ -34,19 +33,6 @@ class AttributeModelTranslatorTest {
             .addAllSupportedAggregations(List.of(AggregateFunction.SUM, AggregateFunction.AVG))
             .setGroupable(true)
             .setCustom(true)
-            .build();
-
-    this.expectedMetadata =
-        AttributeMetadata.newBuilder()
-            .setScopeString("TRACE")
-            .setKey("key")
-            .setDisplayName("display name")
-            .setValueKind(AttributeKind.TYPE_STRING)
-            .setType(AttributeType.ATTRIBUTE)
-            .setUnit("unit")
-            .setOnlyAggregationsAllowed(true)
-            .addAllSupportedAggregations(List.of(AggregateFunction.SUM, AggregateFunction.AVG))
-            .setGroupable(true)
             .build();
 
     this.expectedModel =
@@ -71,7 +57,6 @@ class AttributeModelTranslatorTest {
   @Test
   void canTranslateAttributeModel() {
     assertEquals(Optional.of(this.expectedModel), this.translator.translate(this.metadata));
-    assertEquals(this.expectedMetadata, this.translator.translate(this.expectedModel));
   }
 
   @Test
@@ -81,10 +66,6 @@ class AttributeModelTranslatorTest {
     DefaultAttributeModel expectedMetricModel =
         this.expectedModel.toBuilder().onlySupportsAggregation(true).build();
     assertEquals(Optional.of(expectedMetricModel), this.translator.translate(metricMetadata));
-
-    AttributeMetadata expectedMetricMetadata =
-        this.expectedMetadata.toBuilder().setType(AttributeType.METRIC).build();
-    assertEquals(expectedMetricMetadata, this.translator.translate(expectedMetricModel));
   }
 
   @Test
@@ -115,20 +96,6 @@ class AttributeModelTranslatorTest {
             .setCustom(false)
             .build();
 
-    this.expectedMetadata =
-        AttributeMetadata.newBuilder()
-            .setScopeString("TRACE")
-            .setKey("key")
-            .setDisplayName("display name")
-            .setValueKind(AttributeKind.TYPE_STRING_ARRAY)
-            .setType(AttributeType.ATTRIBUTE)
-            .setUnit("unit")
-            .setOnlyAggregationsAllowed(false)
-            .addAllSupportedAggregations(
-                List.of(AggregateFunction.DISTINCT_COUNT, AggregateFunction.AVGRATE))
-            .setGroupable(false)
-            .build();
-
     this.expectedModel =
         DefaultAttributeModel.builder()
             .id("id")
@@ -147,6 +114,5 @@ class AttributeModelTranslatorTest {
             .build();
 
     assertEquals(Optional.of(this.expectedModel), this.translator.translate(this.metadata));
-    assertEquals(this.expectedMetadata, this.translator.translate(this.expectedModel));
   }
 }

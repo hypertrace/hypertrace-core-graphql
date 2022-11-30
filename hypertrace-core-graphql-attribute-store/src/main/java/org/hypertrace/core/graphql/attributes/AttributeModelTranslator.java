@@ -1,14 +1,5 @@
 package org.hypertrace.core.graphql.attributes;
 
-import static org.hypertrace.core.attribute.service.v1.AggregateFunction.AVG;
-import static org.hypertrace.core.attribute.service.v1.AggregateFunction.AVGRATE;
-import static org.hypertrace.core.attribute.service.v1.AggregateFunction.COUNT;
-import static org.hypertrace.core.attribute.service.v1.AggregateFunction.DISTINCT_ARRAY;
-import static org.hypertrace.core.attribute.service.v1.AggregateFunction.DISTINCT_COUNT;
-import static org.hypertrace.core.attribute.service.v1.AggregateFunction.MAX;
-import static org.hypertrace.core.attribute.service.v1.AggregateFunction.MIN;
-import static org.hypertrace.core.attribute.service.v1.AggregateFunction.PERCENTILE;
-import static org.hypertrace.core.attribute.service.v1.AggregateFunction.SUM;
 import static org.hypertrace.core.attribute.service.v1.AttributeKind.TYPE_BOOL;
 import static org.hypertrace.core.attribute.service.v1.AttributeKind.TYPE_DOUBLE;
 import static org.hypertrace.core.attribute.service.v1.AttributeKind.TYPE_INT64;
@@ -42,20 +33,6 @@ public class AttributeModelTranslator {
           .put(TYPE_STRING_ARRAY, AttributeModelType.STRING_ARRAY)
           .build();
 
-  private static final ImmutableBiMap<AggregateFunction, AttributeModelMetricAggregationType>
-      AGGREGATION_TYPE_MAPPING =
-          ImmutableBiMap.<AggregateFunction, AttributeModelMetricAggregationType>builder()
-              .put(COUNT, AttributeModelMetricAggregationType.COUNT)
-              .put(AVG, AttributeModelMetricAggregationType.AVG)
-              .put(SUM, AttributeModelMetricAggregationType.SUM)
-              .put(MIN, AttributeModelMetricAggregationType.MIN)
-              .put(MAX, AttributeModelMetricAggregationType.MAX)
-              .put(AVGRATE, AttributeModelMetricAggregationType.AVGRATE)
-              .put(PERCENTILE, AttributeModelMetricAggregationType.PERCENTILE)
-              .put(DISTINCT_COUNT, AttributeModelMetricAggregationType.DISTINCT_COUNT)
-              .put(DISTINCT_ARRAY, AttributeModelMetricAggregationType.DISTINCT_ARRAY)
-              .build();
-
   public Optional<AttributeModel> translate(AttributeMetadata attributeMetadata) {
     try {
       return Optional.of(
@@ -69,7 +46,7 @@ public class AttributeModelTranslator {
               .onlySupportsGrouping(attributeMetadata.getOnlyAggregationsAllowed())
               .onlySupportsAggregation(attributeMetadata.getType().equals(AttributeType.METRIC))
               .supportedMetricAggregationTypes(
-                  this.convertMetricAggregationFunctions(
+                  this.convertMetricAggregationTypes(
                       attributeMetadata.getSupportedAggregationsList()))
               .groupable(attributeMetadata.getGroupable())
               .isCustom(attributeMetadata.getCustom())
@@ -80,24 +57,7 @@ public class AttributeModelTranslator {
     }
   }
 
-  public AttributeMetadata translate(final AttributeModel attributeMetadata) {
-    return AttributeMetadata.newBuilder()
-        .setScopeString(attributeMetadata.scope())
-        .setKey(attributeMetadata.key())
-        .setDisplayName(attributeMetadata.displayName())
-        .setValueKind(this.convertType(attributeMetadata.type()))
-        .setUnit(attributeMetadata.units())
-        .setOnlyAggregationsAllowed(attributeMetadata.onlySupportsGrouping())
-        .setType(
-            attributeMetadata.onlySupportsAggregation()
-                ? AttributeType.METRIC
-                : AttributeType.ATTRIBUTE)
-        .addAllSupportedAggregations(
-            this.convertMetricAggregationTypes(attributeMetadata.supportedMetricAggregationTypes()))
-        .setGroupable(attributeMetadata.groupable())
-        .build();
-  }
-
+  @SuppressWarnings("unused")
   public AttributeKind convertType(AttributeModelType type) {
     return Optional.ofNullable(TYPE_MAPPING.inverse().get(type))
         .orElseThrow(
@@ -106,15 +66,8 @@ public class AttributeModelTranslator {
                     String.format("Unrecognized attribute type %s", type.name())));
   }
 
-  private List<AttributeModelMetricAggregationType> convertMetricAggregationFunctions(
+  private List<AttributeModelMetricAggregationType> convertMetricAggregationTypes(
       List<AggregateFunction> aggregationTypes) {
-    return aggregationTypes.stream()
-        .map(this::convertMetricAggregationType)
-        .collect(Collectors.toUnmodifiableList());
-  }
-
-  private List<AggregateFunction> convertMetricAggregationTypes(
-      List<AttributeModelMetricAggregationType> aggregationTypes) {
     return aggregationTypes.stream()
         .map(this::convertMetricAggregationType)
         .collect(Collectors.toUnmodifiableList());
@@ -122,20 +75,31 @@ public class AttributeModelTranslator {
 
   private AttributeModelMetricAggregationType convertMetricAggregationType(
       AggregateFunction aggregateFunction) {
-    return Optional.ofNullable(AGGREGATION_TYPE_MAPPING.get(aggregateFunction))
-        .orElseThrow(
-            () ->
-                new UnknownFormatConversionException(
-                    String.format("Unrecognized aggregate function %s", aggregateFunction.name())));
-  }
-
-  private AggregateFunction convertMetricAggregationType(
-      AttributeModelMetricAggregationType aggregationType) {
-    return Optional.ofNullable(AGGREGATION_TYPE_MAPPING.inverse().get(aggregationType))
-        .orElseThrow(
-            () ->
-                new UnknownFormatConversionException(
-                    String.format("Unrecognized aggregate type %s", aggregationType.name())));
+    switch (aggregateFunction) {
+      case COUNT:
+        return AttributeModelMetricAggregationType.COUNT;
+      case AVG:
+        return AttributeModelMetricAggregationType.AVG;
+      case SUM:
+        return AttributeModelMetricAggregationType.SUM;
+      case MIN:
+        return AttributeModelMetricAggregationType.MIN;
+      case MAX:
+        return AttributeModelMetricAggregationType.MAX;
+      case AVGRATE:
+        return AttributeModelMetricAggregationType.AVGRATE;
+      case PERCENTILE:
+        return AttributeModelMetricAggregationType.PERCENTILE;
+      case DISTINCT_COUNT:
+        return AttributeModelMetricAggregationType.DISTINCT_COUNT;
+      case DISTINCT_ARRAY:
+        return AttributeModelMetricAggregationType.DISTINCT_ARRAY;
+      case AGG_UNDEFINED:
+      case UNRECOGNIZED:
+      default:
+        throw new UnknownFormatConversionException(
+            String.format("Unrecognized aggregate function %s", aggregateFunction.name()));
+    }
   }
 
   private AttributeModelType convertType(AttributeKind kind) {
