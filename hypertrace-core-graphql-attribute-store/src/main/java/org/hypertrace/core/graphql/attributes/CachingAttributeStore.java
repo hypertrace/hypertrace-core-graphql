@@ -1,14 +1,20 @@
 package org.hypertrace.core.graphql.attributes;
 
+import static java.util.Collections.unmodifiableList;
+
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Single;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.hypertrace.core.attribute.service.cachingclient.CachingAttributeClient;
 import org.hypertrace.core.attribute.service.v1.AttributeMetadata;
+import org.hypertrace.core.attribute.service.v1.AttributeMetadataFilter;
+import org.hypertrace.core.attribute.service.v1.Update;
 import org.hypertrace.core.graphql.context.GraphQlRequestContext;
 import org.hypertrace.core.graphql.spi.config.GraphQlServiceConfig;
 import org.hypertrace.core.graphql.utils.grpc.GrpcChannelRegistry;
@@ -94,6 +100,30 @@ class CachingAttributeStore implements AttributeStore {
         .call(() -> cachingAttributeClient.create(attributes));
   }
 
+  @Override
+  public Completable delete(final GraphQlRequestContext context, final AttributeFilter filter) {
+    return this.grpcContextBuilder
+        .build(context)
+        .call(() -> cachingAttributeClient.delete(buildFilter(filter)));
+  }
+
+  @Override
+  public Single<AttributeModel> update(
+      final GraphQlRequestContext context,
+      final AttributeFilter filter,
+      final AttributeUpdate update) {
+    final Single<AttributeModel> metadataSingle = get(context, filter.scope(), filter.key());
+    return metadataSingle.flatMap(
+        metadata ->
+            this.grpcContextBuilder
+                .build(context)
+                .call(() -> cachingAttributeClient.update(metadata.id(), buildUpdates(update)))
+                .mapOptional(translator::translate)
+                .switchIfEmpty(
+                    Single.error(
+                        this.buildErrorForMissingAttribute(filter.scope(), filter.key()))));
+  }
+
   private Single<String> getForeignIdKey(
       GraphQlRequestContext context, String scope, String foreignScope) {
     return this.idLookup
@@ -124,5 +154,23 @@ class CachingAttributeStore implements AttributeStore {
   private NoSuchElementException buildErrorForMissingIdMapping(String scope) {
     return new NoSuchElementException(
         String.format("No id attribute registered for scope '%s'", scope));
+  }
+
+  private AttributeMetadataFilter buildFilter(final AttributeFilter filter) {
+    return AttributeMetadataFilter.newBuilder()
+        .addKey(filter.key())
+        .addScopeString(filter.scope())
+        .build();
+  }
+
+  private List<Update> buildUpdates(final AttributeUpdate update) {
+    final List<Update> updates = new ArrayList<>();
+
+    if (Objects.nonNull(update.displayName())) {
+      updates.add(
+          Update.newBuilder().setDisplayName(Objects.requireNonNull(update.displayName())).build());
+    }
+
+    return unmodifiableList(updates);
   }
 }
