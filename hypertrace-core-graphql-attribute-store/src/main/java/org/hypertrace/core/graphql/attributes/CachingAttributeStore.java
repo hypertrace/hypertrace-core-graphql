@@ -96,18 +96,20 @@ class CachingAttributeStore implements AttributeStore {
   }
 
   @Override
-  public Completable delete(final GraphQlRequestContext context, final AttributeIdentifier filter) {
+  public Completable delete(
+      final GraphQlRequestContext context, final AttributeIdentifier identifier) {
     return this.grpcContextBuilder
         .build(context)
-        .call(() -> cachingAttributeClient.delete(buildFilter(filter)));
+        .call(() -> cachingAttributeClient.delete(buildFilter(identifier)));
   }
 
   @Override
   public Single<AttributeModel> update(
       final GraphQlRequestContext context,
-      final AttributeIdentifier filter,
+      final AttributeIdentifier identifier,
       final AttributeUpdate update) {
-    final Single<AttributeModel> metadataSingle = get(context, filter.scope(), filter.key());
+    final Single<AttributeModel> metadataSingle =
+        get(context, identifier.scope(), identifier.key());
     return metadataSingle.flatMap(
         metadata ->
             this.grpcContextBuilder
@@ -116,7 +118,7 @@ class CachingAttributeStore implements AttributeStore {
                 .mapOptional(translator::translate)
                 .switchIfEmpty(
                     Single.error(
-                        this.buildErrorForMissingAttribute(filter.scope(), filter.key()))));
+                        this.buildErrorForMissingAttribute(identifier.scope(), identifier.key()))));
   }
 
   private Single<String> getForeignIdKey(

@@ -18,10 +18,10 @@ public interface AttributeStore {
 
   Completable create(final GraphQlRequestContext context, final List<AttributeMetadata> attributes);
 
-  Completable delete(final GraphQlRequestContext context, final AttributeIdentifier filter);
+  Completable delete(final GraphQlRequestContext context, final AttributeIdentifier identifier);
 
   Single<AttributeModel> update(
       final GraphQlRequestContext context,
-      final AttributeIdentifier filter,
+      final AttributeIdentifier identifier,
       final AttributeUpdate update);
 }
