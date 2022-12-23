@@ -78,9 +78,6 @@ class CachingAttributeStore implements AttributeStore {
 
   @Override
   public Single<AttributeModel> getIdAttribute(GraphQlRequestContext context, String scope) {
-    if (scope.equals(DOMAIN)) {
-      return this.idLookup.idKey(context, scope).defaultIfEmpty(ID);
-    }
     return this.getIdKey(context, scope).flatMap(key -> this.get(context, scope, key));
   }
 
@@ -134,6 +131,10 @@ class CachingAttributeStore implements AttributeStore {
   }
 
   private Single<String> getIdKey(GraphQlRequestContext context, String scope) {
+    if (scope.equals(DOMAIN)) {
+      return this.idLookup.idKey(context, scope).defaultIfEmpty(ID);
+    }
+
     return this.idLookup
         .idKey(context, scope)
         .switchIfEmpty(Single.error(this.buildErrorForMissingIdMapping(scope)));
