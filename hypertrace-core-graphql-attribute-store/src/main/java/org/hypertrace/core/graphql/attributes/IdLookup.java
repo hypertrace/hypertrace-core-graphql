@@ -60,6 +60,8 @@ class IdLookup {
         .flatMap(
             idMappingLoader ->
                 idMappingLoader.loadMappings(key.getContext()).subscribeOn(this.boundedIoScheduler))
+        // This is added to have distinct values while building the
+        // immutable table in case of having duplicate id definitions
         .distinct()
         .collect(
             ImmutableTable.toImmutableTable(
