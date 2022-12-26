@@ -60,6 +60,7 @@ class IdLookup {
         .flatMap(
             idMappingLoader ->
                 idMappingLoader.loadMappings(key.getContext()).subscribeOn(this.boundedIoScheduler))
+        .distinct()
         .collect(
             ImmutableTable.toImmutableTable(
                 IdMapping::containingScope, IdMapping::foreignScope, IdMapping::idAttribute))

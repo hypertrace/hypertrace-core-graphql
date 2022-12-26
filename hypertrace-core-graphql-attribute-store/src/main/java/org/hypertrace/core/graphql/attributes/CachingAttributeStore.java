@@ -18,8 +18,6 @@ import org.hypertrace.core.grpcutils.client.rx.GrpcRxExecutionContext;
 
 @Singleton
 class CachingAttributeStore implements AttributeStore {
-  private static final String DOMAIN = "DOMAIN";
-  private static final String ID = "id";
   private final CachingAttributeClient cachingAttributeClient;
   private final IdLookup idLookup;
   private final GrpcContextBuilder grpcContextBuilder;
@@ -131,10 +129,6 @@ class CachingAttributeStore implements AttributeStore {
   }
 
   private Single<String> getIdKey(GraphQlRequestContext context, String scope) {
-    if (scope.equals(DOMAIN)) {
-      return this.idLookup.idKey(context, scope).defaultIfEmpty(ID);
-    }
-
     return this.idLookup
         .idKey(context, scope)
         .switchIfEmpty(Single.error(this.buildErrorForMissingIdMapping(scope)));
