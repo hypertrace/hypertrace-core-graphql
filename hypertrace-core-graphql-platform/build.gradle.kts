@@ -10,6 +10,7 @@ val attributeServiceVersion: String = "0.14.14"
 
 dependencies {
   api(platform("io.grpc:grpc-bom:1.56.0"))
+  api(platform("com.fasterxml.jackson:jackson-bom:2.15.2"))
   constraints {
 
     api("org.hypertrace.core.grpcutils:grpc-context-utils:0.12.0")
@@ -36,7 +37,6 @@ dependencies {
     api("com.fasterxml.jackson.core:jackson-databind")
     api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     api("com.fasterxml.jackson.datatype:jackson-datatype-jdk8")
-    api("com.fasterxml.jackson:jackson-bom:2.15.2")
     api("org.apache.commons:commons-text:1.10.0")
     api("io.opentelemetry:opentelemetry-proto:1.1.0-alpha")
 
