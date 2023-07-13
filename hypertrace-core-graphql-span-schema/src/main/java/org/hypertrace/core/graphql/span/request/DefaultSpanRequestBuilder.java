@@ -74,6 +74,9 @@ class DefaultSpanRequestBuilder implements SpanRequestBuilder {
             context, HypertraceCoreAttributeScopeString.SPAN, arguments, spanAttributeExpressions),
         logEventAttributeRequestBuilder.buildAttributeRequest(context, logAttributeExpressions),
         (resultSetRequest, logEventAttributeRequest) ->
+            // This build method is utilized in the exportSpans API, which does not accept the total
+            // parameter as an argument. Ref {@link ExportSpanResult}.
+            // So, we explicitly set fetchTotal to false.
             new DefaultSpanRequest(context, resultSetRequest, logEventAttributeRequest, false));
   }
 
