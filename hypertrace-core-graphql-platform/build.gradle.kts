@@ -9,7 +9,7 @@ javaPlatform {
 val attributeServiceVersion: String = "0.14.14"
 
 dependencies {
-  api(platform("io.grpc:grpc-bom:1.58.0"))
+  api(platform("io.grpc:grpc-bom:1.57.2"))
   api(platform("com.fasterxml.jackson:jackson-bom:2.15.2"))
   constraints {
 
