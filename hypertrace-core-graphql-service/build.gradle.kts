@@ -1,8 +1,8 @@
 plugins {
   java
   application
-  id("org.hypertrace.docker-java-application-plugin")
-  id("org.hypertrace.docker-publish-plugin")
+  alias(commonLibs.plugins.hypertrace.docker.application)
+  alias(commonLibs.plugins.hypertrace.docker.publish)
 }
 
 dependencies {

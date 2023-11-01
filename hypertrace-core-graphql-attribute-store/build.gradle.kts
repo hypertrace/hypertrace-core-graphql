@@ -1,7 +1,7 @@
 plugins {
   `java-library`
   jacoco
-  id("org.hypertrace.jacoco-report-plugin")
+  alias(commonLibs.plugins.hypertrace.jacoco)
 }
 
 dependencies {
