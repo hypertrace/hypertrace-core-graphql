@@ -5,6 +5,6 @@ plugins {
 dependencies {
   api("io.reactivex.rxjava3:rxjava")
   api("com.google.inject:guice")
-  implementation(project(":hypertrace-core-graphql-spi"))
+  implementation(projects.hypertraceCoreGraphqlSpi)
   implementation("com.google.guava:guava")
 }

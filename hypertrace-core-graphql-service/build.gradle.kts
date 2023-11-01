@@ -12,8 +12,8 @@ dependencies {
   implementation("org.slf4j:slf4j-api")
 
   implementation("com.graphql-java-kickstart:graphql-java-servlet")
-  implementation(project(":hypertrace-core-graphql-impl"))
-  implementation(project(":hypertrace-core-graphql-spi"))
+  implementation(projects.hypertraceCoreGraphqlImpl)
+  implementation(projects.hypertraceCoreGraphqlSpi)
 
   runtimeOnly("org.apache.logging.log4j:log4j-slf4j-impl")
   runtimeOnly("io.grpc:grpc-netty")

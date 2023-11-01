@@ -7,10 +7,10 @@ plugins {
 dependencies {
   api("com.google.inject:guice")
   api("org.hypertrace.gateway.service:gateway-service-api")
-  api(project(":hypertrace-core-graphql-attribute-store"))
+  api(projects.hypertraceCoreGraphqlAttributeStore)
   api("io.reactivex.rxjava3:rxjava")
-  api(project(":hypertrace-core-graphql-common-schema"))
-  implementation(project(":hypertrace-core-graphql-grpc-utils"))
+  api(projects.hypertraceCoreGraphqlCommonSchema)
+  implementation(projects.hypertraceCoreGraphqlGrpcUtils)
 
   testImplementation("org.junit.jupiter:junit-jupiter")
   testImplementation("org.mockito:mockito-core")

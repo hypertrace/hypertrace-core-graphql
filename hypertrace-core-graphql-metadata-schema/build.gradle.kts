@@ -7,7 +7,7 @@ plugins {
 dependencies {
   api("com.google.inject:guice")
   api("com.graphql-java:graphql-java")
-  api(project(":hypertrace-core-graphql-spi"))
+  api(projects.hypertraceCoreGraphqlSpi)
   api("io.github.graphql-java:graphql-java-annotations")
 
   annotationProcessor("org.projectlombok:lombok")
@@ -15,9 +15,9 @@ dependencies {
 
   implementation("org.slf4j:slf4j-api")
   implementation("io.reactivex.rxjava3:rxjava")
-  implementation(project(":hypertrace-core-graphql-context"))
-  implementation(project(":hypertrace-core-graphql-common-schema"))
-  implementation(project(":hypertrace-core-graphql-attribute-store"))
+  implementation(projects.hypertraceCoreGraphqlContext)
+  implementation(projects.hypertraceCoreGraphqlCommonSchema)
+  implementation(projects.hypertraceCoreGraphqlAttributeStore)
 
   testImplementation("org.junit.jupiter:junit-jupiter")
   testImplementation("org.mockito:mockito-core")

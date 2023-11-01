@@ -9,7 +9,7 @@ dependencies {
   api("com.graphql-java:graphql-java")
   api("com.graphql-java-kickstart:graphql-java-servlet")
 
-  implementation(project(":hypertrace-core-graphql-spi"))
+  implementation(projects.hypertraceCoreGraphqlSpi)
   implementation("com.google.guava:guava")
 
   annotationProcessor("org.projectlombok:lombok")

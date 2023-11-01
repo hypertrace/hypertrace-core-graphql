@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
   api("com.google.inject:guice")
-  api(project(":hypertrace-core-graphql-common-schema"))
+  api(projects.hypertraceCoreGraphqlCommonSchema)
 
   testAnnotationProcessor("org.projectlombok:lombok")
   testCompileOnly("org.projectlombok:lombok")
