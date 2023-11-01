@@ -3,20 +3,20 @@ plugins {
 }
 
 dependencies {
-  api("com.google.inject:guice")
-  api("com.graphql-java:graphql-java")
+  api(commonLibs.guice)
+  api(commonLibs.graphql.java)
   api(projects.hypertraceCoreGraphqlSpi)
-  api("io.github.graphql-java:graphql-java-annotations")
+  api(localLibs.graphql.annotations)
 
-  annotationProcessor("org.projectlombok:lombok")
-  compileOnly("org.projectlombok:lombok")
+  annotationProcessor(commonLibs.lombok)
+  compileOnly(commonLibs.lombok)
 
   compileOnly(projects.hypertraceCoreGraphqlAttributeScopeConstants)
 
-  implementation("org.slf4j:slf4j-api")
-  implementation("io.reactivex.rxjava3:rxjava")
-  implementation("org.hypertrace.gateway.service:gateway-service-api")
-  implementation("com.google.protobuf:protobuf-java-util")
+  implementation(commonLibs.slf4j2.api)
+  implementation(commonLibs.rxjava3)
+  implementation(commonLibs.hypertrace.gatewayservice.api)
+  implementation(commonLibs.protobuf.javautil)
 
   implementation(projects.hypertraceCoreGraphqlContext)
   implementation(projects.hypertraceCoreGraphqlGrpcUtils)
@@ -25,14 +25,14 @@ dependencies {
   implementation(projects.hypertraceCoreGraphqlDeserialization)
   implementation(projects.hypertraceCoreGraphqlSchemaUtils)
 
-  testImplementation("org.junit.jupiter:junit-jupiter")
-  testImplementation("com.fasterxml.jackson.core:jackson-databind")
+  testImplementation(commonLibs.junit.jupiter)
+  testImplementation(commonLibs.jackson.databind)
   testImplementation(projects.hypertraceCoreGraphqlGatewayServiceUtils)
-  testImplementation("org.mockito:mockito-core")
-  testImplementation("org.mockito:mockito-junit-jupiter")
+  testImplementation(commonLibs.mockito.core)
+  testImplementation(commonLibs.mockito.junit)
 
-  testAnnotationProcessor("org.projectlombok:lombok")
-  testCompileOnly("org.projectlombok:lombok")
+  testAnnotationProcessor(commonLibs.lombok)
+  testCompileOnly(commonLibs.lombok)
 }
 
 tasks.test {

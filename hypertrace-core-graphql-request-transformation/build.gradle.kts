@@ -5,13 +5,13 @@ plugins {
 }
 
 dependencies {
-  api("com.google.inject:guice")
+  api(commonLibs.guice)
   api(projects.hypertraceCoreGraphqlCommonSchema)
 
-  testAnnotationProcessor("org.projectlombok:lombok")
-  testCompileOnly("org.projectlombok:lombok")
-  testImplementation("org.junit.jupiter:junit-jupiter")
-  testImplementation("org.mockito:mockito-core")
+  testAnnotationProcessor(commonLibs.lombok)
+  testCompileOnly(commonLibs.lombok)
+  testImplementation(commonLibs.junit.jupiter)
+  testImplementation(commonLibs.mockito.core)
 }
 
 tasks.test {

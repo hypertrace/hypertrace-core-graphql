@@ -6,8 +6,8 @@ plugins {
 
 dependencies {
   api(projects.hypertraceCoreGraphqlSpi)
-  api("com.graphql-java-kickstart:graphql-java-servlet")
-  api("org.hypertrace.core.grpcutils:grpc-client-utils")
+  api(localLibs.graphql.servlet)
+  api(commonLibs.hypertrace.grpcutils.client)
 
   implementation(projects.hypertraceCoreGraphqlSchemaRegistry)
   implementation(projects.hypertraceCoreGraphqlContext)
@@ -25,12 +25,12 @@ dependencies {
   implementation(projects.hypertraceCoreGraphqlLogEventSchema)
   implementation(projects.hypertraceCoreGraphqlRequestTransformation)
 
-  implementation("org.slf4j:slf4j-api")
-  implementation("com.google.inject:guice")
+  implementation(commonLibs.slf4j2.api)
+  implementation(commonLibs.guice)
 
-  testImplementation("org.junit.jupiter:junit-jupiter")
-  testImplementation("org.mockito:mockito-core")
-  testImplementation("org.mockito:mockito-junit-jupiter")
+  testImplementation(commonLibs.junit.jupiter)
+  testImplementation(commonLibs.mockito.core)
+  testImplementation(commonLibs.mockito.junit)
 }
 
 tasks.test {

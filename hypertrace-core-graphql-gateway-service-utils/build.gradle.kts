@@ -5,16 +5,16 @@ plugins {
 }
 
 dependencies {
-  api("com.google.inject:guice")
-  api("org.hypertrace.gateway.service:gateway-service-api")
+  api(commonLibs.guice)
+  api(commonLibs.hypertrace.gatewayservice.api)
   api(projects.hypertraceCoreGraphqlAttributeStore)
-  api("io.reactivex.rxjava3:rxjava")
+  api(commonLibs.rxjava3)
   api(projects.hypertraceCoreGraphqlCommonSchema)
   implementation(projects.hypertraceCoreGraphqlGrpcUtils)
 
-  testImplementation("org.junit.jupiter:junit-jupiter")
-  testImplementation("org.mockito:mockito-core")
-  testImplementation("org.mockito:mockito-junit-jupiter")
+  testImplementation(commonLibs.junit.jupiter)
+  testImplementation(commonLibs.mockito.core)
+  testImplementation(commonLibs.mockito.junit)
 }
 
 tasks.test {

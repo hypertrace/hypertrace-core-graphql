@@ -5,15 +5,15 @@ plugins {
 }
 
 dependencies {
-  api("com.google.inject:guice")
-  api("com.graphql-java:graphql-java")
+  api(commonLibs.guice)
+  api(commonLibs.graphql.java)
 
-  annotationProcessor("org.projectlombok:lombok")
-  compileOnly("org.projectlombok:lombok")
+  annotationProcessor(commonLibs.lombok)
+  compileOnly(commonLibs.lombok)
 
-  testImplementation("org.junit.jupiter:junit-jupiter")
-  testImplementation("org.mockito:mockito-core")
-  testImplementation("org.mockito:mockito-junit-jupiter")
+  testImplementation(commonLibs.junit.jupiter)
+  testImplementation(commonLibs.mockito.core)
+  testImplementation(commonLibs.mockito.junit)
 }
 
 tasks.test {

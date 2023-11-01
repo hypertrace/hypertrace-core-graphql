@@ -16,7 +16,7 @@ plugins {
 }
 
 configure<DependencyPluginSettingExtension> {
-  catalogVersion.set("0.2.9")
+  catalogVersion.set("0.2.10")
 }
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
@@ -38,7 +38,5 @@ include(":hypertrace-core-graphql-trace-schema")
 include(":hypertrace-core-graphql-attribute-scope")
 include(":hypertrace-core-graphql-attribute-scope-constants")
 include(":hypertrace-core-graphql-rx-utils")
-include(":hypertrace-core-graphql-platform")
-include(":hypertrace-core-graphql-test-platform")
 include(":hypertrace-core-graphql-log-event-schema")
 include(":hypertrace-core-graphql-request-transformation")
