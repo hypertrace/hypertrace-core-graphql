@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 import org.hypertrace.core.graphql.common.schema.arguments.TimeRangeArgument;
 import org.hypertrace.core.graphql.common.schema.attributes.arguments.AttributeExpression;
 import org.hypertrace.core.graphql.common.schema.results.arguments.filter.FilterArgument;
+import org.hypertrace.core.graphql.common.schema.results.arguments.filter.LogicalFilterOperator;
 import org.hypertrace.core.graphql.common.schema.results.arguments.order.OrderArgument;
 import org.hypertrace.core.graphql.context.GraphQlRequestContext;
 
@@ -35,6 +36,7 @@ public interface ResultSetRequestBuilder {
       int offset,
       TimeRangeArgument timeRange,
       List<AttributeAssociation<O>> orderArguments,
+      LogicalFilterOperator logicalFilterOperator,
       Collection<AttributeAssociation<FilterArgument>> filterArguments,
       Stream<SelectedField> attributeQueryableFields,
       Optional<String> spaceId);

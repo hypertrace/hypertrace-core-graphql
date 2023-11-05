@@ -36,6 +36,7 @@ import org.hypertrace.core.graphql.common.request.AttributeRequestBuilder;
 import org.hypertrace.core.graphql.common.request.FilterRequestBuilder;
 import org.hypertrace.core.graphql.common.schema.attributes.arguments.AttributeExpression;
 import org.hypertrace.core.graphql.common.schema.results.arguments.filter.FilterArgument;
+import org.hypertrace.core.graphql.common.schema.results.arguments.filter.LogicalFilterOperator;
 import org.hypertrace.core.graphql.common.utils.Converter;
 import org.hypertrace.core.graphql.span.dao.DaoTestUtil.DefaultAttributeRequest;
 import org.hypertrace.core.graphql.span.dao.DaoTestUtil.DefaultResultSetRequest;
@@ -150,6 +151,7 @@ class SpanLogEventRequestBuilderTest {
             0,
             0,
             List.of(),
+            LogicalFilterOperator.AND,
             Collections.emptyList(),
             Optional.empty());
     SpanRequest spanRequest =
@@ -192,6 +194,7 @@ class SpanLogEventRequestBuilderTest {
             0,
             0,
             List.of(),
+            LogicalFilterOperator.AND,
             Collections.emptyList(),
             Optional.empty());
     SpanRequest spanRequest =
