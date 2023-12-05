@@ -14,7 +14,6 @@ dependencies {
   implementation(projects.hypertraceCoreGraphqlSpi)
 
   runtimeOnly(commonLibs.log4j.slf4j2.impl)
-  runtimeOnly(commonLibs.grpc.netty)
 }
 
 application {
