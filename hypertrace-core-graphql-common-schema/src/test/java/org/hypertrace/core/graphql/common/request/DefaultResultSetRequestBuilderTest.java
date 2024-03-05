@@ -17,6 +17,7 @@ import java.util.stream.Stream;
 import org.hypertrace.core.graphql.attributes.AttributeModel;
 import org.hypertrace.core.graphql.common.schema.arguments.TimeRangeArgument;
 import org.hypertrace.core.graphql.common.schema.results.arguments.filter.FilterArgument;
+import org.hypertrace.core.graphql.common.schema.results.arguments.filter.LogicalFilterOperatorArgument;
 import org.hypertrace.core.graphql.common.schema.results.arguments.order.OrderArgument;
 import org.hypertrace.core.graphql.common.schema.results.arguments.page.LimitArgument;
 import org.hypertrace.core.graphql.common.schema.results.arguments.page.OffsetArgument;
@@ -94,6 +95,9 @@ class DefaultResultSetRequestBuilderTest {
         .thenReturn(Optional.of(List.of(this.mockFilterArgument)));
     when(this.mockArgumentDeserializer.deserializePrimitive(any(), eq(SpaceArgument.class)))
         .thenReturn(Optional.of(this.mockSpace));
+    when(this.mockArgumentDeserializer.deserializePrimitive(
+            any(), eq(LogicalFilterOperatorArgument.class)))
+        .thenReturn(Optional.empty());
 
     ResultSetRequest<OrderArgument> request =
         this.requestBuilder

@@ -22,6 +22,8 @@ import org.hypertrace.core.graphql.common.request.FilterRequestBuilder;
 import org.hypertrace.core.graphql.common.schema.arguments.TimeRangeArgument;
 import org.hypertrace.core.graphql.common.schema.results.ResultSet;
 import org.hypertrace.core.graphql.common.schema.results.arguments.filter.FilterArgument;
+import org.hypertrace.core.graphql.common.schema.results.arguments.filter.LogicalFilterOperator;
+import org.hypertrace.core.graphql.common.schema.results.arguments.filter.LogicalFilterOperatorArgument;
 import org.hypertrace.core.graphql.common.schema.results.arguments.order.OrderArgument;
 import org.hypertrace.core.graphql.common.schema.results.arguments.page.LimitArgument;
 import org.hypertrace.core.graphql.common.schema.results.arguments.page.OffsetArgument;
@@ -94,6 +96,11 @@ public class DefaultLogEventRequestBuilder implements LogEventRequestBuilder {
             .deserializeObjectList(arguments, orderArgumentClass)
             .orElse(Collections.emptyList());
 
+    LogicalFilterOperator filterOperator =
+        this.argumentDeserializer
+            .deserializePrimitive(arguments, LogicalFilterOperatorArgument.class)
+            .orElse(LogicalFilterOperator.AND);
+
     List<FilterArgument> requestedFilters =
         this.argumentDeserializer
             .deserializeObjectList(arguments, FilterArgument.class)
@@ -115,7 +122,14 @@ public class DefaultLogEventRequestBuilder implements LogEventRequestBuilder {
             (attributeRequests, orders, filters) ->
                 Single.just(
                     new DefaultLogEventRequest(
-                        context, attributeRequests, timeRange, limit, offset, orders, filters)))
+                        context,
+                        attributeRequests,
+                        timeRange,
+                        limit,
+                        offset,
+                        orders,
+                        filterOperator,
+                        filters)))
         .flatMap(single -> single);
   }
 
@@ -135,6 +149,7 @@ public class DefaultLogEventRequestBuilder implements LogEventRequestBuilder {
     int limit;
     int offset;
     List<AttributeAssociation<OrderArgument>> orderArguments;
+    LogicalFilterOperator logicalFilterOperator;
     Collection<AttributeAssociation<FilterArgument>> filterArguments;
   }
 }

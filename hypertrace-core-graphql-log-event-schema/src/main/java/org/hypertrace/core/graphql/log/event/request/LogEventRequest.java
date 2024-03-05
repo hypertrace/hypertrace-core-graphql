@@ -7,6 +7,7 @@ import org.hypertrace.core.graphql.common.request.AttributeRequest;
 import org.hypertrace.core.graphql.common.request.ContextualRequest;
 import org.hypertrace.core.graphql.common.schema.arguments.TimeRangeArgument;
 import org.hypertrace.core.graphql.common.schema.results.arguments.filter.FilterArgument;
+import org.hypertrace.core.graphql.common.schema.results.arguments.filter.LogicalFilterOperator;
 import org.hypertrace.core.graphql.common.schema.results.arguments.order.OrderArgument;
 
 public interface LogEventRequest extends ContextualRequest {
@@ -20,6 +21,8 @@ public interface LogEventRequest extends ContextualRequest {
   int offset();
 
   List<AttributeAssociation<OrderArgument>> orderArguments();
+
+  LogicalFilterOperator logicalFilterOperator();
 
   Collection<AttributeAssociation<FilterArgument>> filterArguments();
 }

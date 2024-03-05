@@ -7,6 +7,8 @@ import graphql.annotations.annotationTypes.GraphQLNonNull;
 import java.util.List;
 import org.hypertrace.core.graphql.common.schema.arguments.TimeRangeArgument;
 import org.hypertrace.core.graphql.common.schema.results.arguments.filter.FilterArgument;
+import org.hypertrace.core.graphql.common.schema.results.arguments.filter.LogicalFilterOperator;
+import org.hypertrace.core.graphql.common.schema.results.arguments.filter.LogicalFilterOperatorArgument;
 import org.hypertrace.core.graphql.common.schema.results.arguments.order.OrderArgument;
 import org.hypertrace.core.graphql.common.schema.results.arguments.page.LimitArgument;
 import org.hypertrace.core.graphql.common.schema.results.arguments.page.OffsetArgument;
@@ -21,6 +23,8 @@ public interface LogEventSchema {
   @GraphQLDataFetcher(LogEventFetcher.class)
   LogEventResultSet logEvents(
       @GraphQLName(TimeRangeArgument.ARGUMENT_NAME) @GraphQLNonNull TimeRangeArgument between,
+      @GraphQLName(LogicalFilterOperatorArgument.ARGUMENT_NAME)
+          LogicalFilterOperator logicalFilterOperator,
       @GraphQLName(FilterArgument.ARGUMENT_NAME) List<FilterArgument> filterBy,
       @GraphQLName(OrderArgument.ARGUMENT_NAME) List<OrderArgument> orderBy,
       @GraphQLName(LimitArgument.ARGUMENT_NAME) int limit,

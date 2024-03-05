@@ -19,6 +19,7 @@ import org.hypertrace.core.graphql.attributes.AttributeModelType;
 import org.hypertrace.core.graphql.common.request.AttributeAssociation;
 import org.hypertrace.core.graphql.common.request.AttributeRequest;
 import org.hypertrace.core.graphql.common.schema.attributes.arguments.AttributeExpression;
+import org.hypertrace.core.graphql.common.schema.results.arguments.filter.LogicalFilterOperator;
 import org.hypertrace.core.graphql.common.utils.BiConverter;
 import org.hypertrace.core.graphql.log.event.schema.LogEventResultSet;
 import org.hypertrace.core.graphql.spi.config.GraphQlServiceConfig;
@@ -121,6 +122,7 @@ class GatewayServiceLogEventsResponseConverterTest extends BaseDaoTest {
             0,
             0,
             List.of(),
+            LogicalFilterOperator.AND,
             Collections.emptyList());
     LogEventResultSet logEventResultSet =
         responseConverter.convert(defaultLogEventRequest, logEventsResponse).blockingGet();

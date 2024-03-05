@@ -9,12 +9,16 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import org.hypertrace.core.graphql.common.request.AttributeAssociation;
 import org.hypertrace.core.graphql.common.schema.results.arguments.filter.FilterArgument;
+import org.hypertrace.core.graphql.common.schema.results.arguments.filter.LogicalFilterOperator;
+import org.hypertrace.core.graphql.common.utils.BiConverter;
 import org.hypertrace.core.graphql.common.utils.Converter;
 import org.hypertrace.gateway.service.v1.common.Filter;
 import org.hypertrace.gateway.service.v1.common.Operator;
 
 class FilterConverter
-    implements Converter<Collection<AttributeAssociation<FilterArgument>>, Filter> {
+    implements Converter<Collection<AttributeAssociation<FilterArgument>>, Filter>,
+        BiConverter<
+            Collection<AttributeAssociation<FilterArgument>>, LogicalFilterOperator, Filter> {
 
   private final AttributeExpressionConverter attributeExpressionConverter;
   private final OperatorConverter operatorConverter;
@@ -32,6 +36,12 @@ class FilterConverter
 
   @Override
   public Single<Filter> convert(Collection<AttributeAssociation<FilterArgument>> filters) {
+    return this.convert(filters, LogicalFilterOperator.AND);
+  }
+
+  @Override
+  public Single<Filter> convert(
+      Collection<AttributeAssociation<FilterArgument>> filters, LogicalFilterOperator operator) {
     if (filters.isEmpty()) {
       return Single.just(Filter.getDefaultInstance());
     }
@@ -42,9 +52,19 @@ class FilterConverter
         .map(
             filterList ->
                 Filter.newBuilder()
-                    .setOperator(Operator.AND)
+                    .setOperator(this.convertLogicalOperator(operator))
                     .addAllChildFilter(filterList)
                     .build());
+  }
+
+  private Operator convertLogicalOperator(LogicalFilterOperator logicalFilterOperator) {
+    switch (logicalFilterOperator) {
+      case OR:
+        return Operator.OR;
+      case AND:
+      default:
+        return Operator.AND;
+    }
   }
 
   private Single<Filter> buildFilter(AttributeAssociation<FilterArgument> filter) {

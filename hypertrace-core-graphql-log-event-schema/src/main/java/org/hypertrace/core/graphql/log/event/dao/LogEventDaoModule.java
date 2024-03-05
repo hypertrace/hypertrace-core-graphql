@@ -12,6 +12,7 @@ import org.hypertrace.core.graphql.common.request.AttributeAssociation;
 import org.hypertrace.core.graphql.common.request.AttributeRequest;
 import org.hypertrace.core.graphql.common.schema.attributes.arguments.AttributeExpression;
 import org.hypertrace.core.graphql.common.schema.results.arguments.filter.FilterArgument;
+import org.hypertrace.core.graphql.common.schema.results.arguments.filter.LogicalFilterOperator;
 import org.hypertrace.core.graphql.common.schema.results.arguments.order.OrderArgument;
 import org.hypertrace.core.graphql.common.utils.BiConverter;
 import org.hypertrace.core.graphql.common.utils.Converter;
@@ -46,7 +47,10 @@ public class LogEventDaoModule extends AbstractModule {
     requireBinding(
         Key.get(
             new TypeLiteral<
-                Converter<Collection<AttributeAssociation<FilterArgument>>, Filter>>() {}));
+                BiConverter<
+                    Collection<AttributeAssociation<FilterArgument>>,
+                    LogicalFilterOperator,
+                    Filter>>() {}));
 
     requireBinding(
         Key.get(
