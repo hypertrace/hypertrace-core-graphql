@@ -89,9 +89,9 @@ class CachingAttributeStore implements AttributeStore {
   @Override
   public Single<AttributeModel> getAttributeById(
       GraphQlRequestContext context, String attributeId) {
-    return GrpcRxExecutionContext.forContext(this.grpcContextBuilder.build(context))
-        .wrapSingle(() -> this.cachingAttributeClient.get(attributeId))
-        .toMaybe()
+    return grpcContextBuilder
+        .build(context)
+        .call(() -> cachingAttributeClient.get(attributeId))
         .mapOptional(this.translator::translate)
         .switchIfEmpty(Single.error(this.buildErrorForMissingAttributeId(attributeId)));
   }
