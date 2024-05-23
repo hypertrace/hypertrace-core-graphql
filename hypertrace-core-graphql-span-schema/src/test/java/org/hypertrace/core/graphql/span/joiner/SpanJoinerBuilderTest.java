@@ -13,6 +13,7 @@ import static org.mockito.Mockito.when;
 import graphql.schema.DataFetchingFieldSelectionSet;
 import graphql.schema.SelectedField;
 import io.reactivex.rxjava3.core.Single;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -74,13 +75,12 @@ public class SpanJoinerBuilderTest {
   void fetchSpans() {
     Span span1 = new TestSpan(FIRST_SPAN_ID);
     Span span2 = new TestSpan(SECOND_SPAN_ID);
-    TestJoinSource joinSource1 = new TestJoinSource(FIRST_SPAN_ID);
-    TestJoinSource joinSource2 = new TestJoinSource(SECOND_SPAN_ID);
-    Map<TestJoinSource, Span> expected =
-        Map.ofEntries(entry(joinSource1, span1), entry(joinSource2, span2));
+    TestJoinSource joinSource1 = new TestJoinSource(List.of(FIRST_SPAN_ID));
+    TestJoinSource joinSource2 = new TestJoinSource(List.of(SECOND_SPAN_ID));
+    Map<TestJoinSource, Collection<Span>> expected =
+        Map.ofEntries(entry(joinSource1, List.of(span1)), entry(joinSource2, List.of(span2)));
     List<TestJoinSource> joinSources = List.of(joinSource1, joinSource2);
-    mockRequestedSelectionFields(
-        List.of(mock(SelectedField.class), mock(SelectedField.class)), "pathToSpan");
+    mockRequestedSelectionFields(List.of(mock(SelectedField.class), mock(SelectedField.class)));
     mockRequestBuilding();
     mockResult(List.of(span1, span2));
     SpanJoiner joiner =
@@ -91,8 +91,10 @@ public class SpanJoinerBuilderTest {
                 this.mockSelectionSet,
                 List.of("pathToSpan"))
             .blockingGet();
-    assertEquals(
-        expected, joiner.joinSpans(joinSources, new TestJoinSourceIdGetter()).blockingGet());
+    Map<TestJoinSource, Collection<Span>> actual =
+        joiner.joinSpans(joinSources, new TestJoinSourceIdGetter()).blockingGet();
+    assertEquals(expected.get(joinSource1), actual.get(joinSource1));
+    assertEquals(expected.get(joinSource2), actual.get(joinSource2));
   }
 
   private void mockRequestBuilding() {
@@ -112,10 +114,10 @@ public class SpanJoinerBuilderTest {
         .thenReturn(Single.just(mockResultSetRequest));
   }
 
-  private void mockRequestedSelectionFields(List<SelectedField> selectedFields, String location) {
+  private void mockRequestedSelectionFields(List<SelectedField> selectedFields) {
     when(mockSelectionFinder.findSelections(
             mockSelectionSet,
-            SelectionQuery.builder().selectionPath(List.of(location, "span")).build()))
+            SelectionQuery.builder().selectionPath(List.of("pathToSpan", "spans")).build()))
         .thenReturn(selectedFields.stream());
   }
 
@@ -126,16 +128,16 @@ public class SpanJoinerBuilderTest {
 
   @Value
   private static class TestJoinSource {
-    String spanId;
+    List<String> spanIds;
   }
 
   private static class TestJoinSourceIdGetter implements SpanIdGetter<TestJoinSource> {
     @Override
-    public Single<String> getSpanId(TestJoinSource source) {
-      if (source.getSpanId() == null || source.getSpanId().isEmpty()) {
+    public Single<Collection<String>> getSpanIds(TestJoinSource source) {
+      if (source.getSpanIds() == null || source.getSpanIds().isEmpty()) {
         return Single.error(new IllegalArgumentException("Empty spanId"));
       }
-      return Single.just(source.getSpanId());
+      return Single.just(source.getSpanIds());
     }
   }
 
