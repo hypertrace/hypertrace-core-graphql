@@ -2,6 +2,7 @@ package org.hypertrace.core.graphql.span.joiner;
 
 import static com.google.common.collect.ImmutableList.copyOf;
 import static com.google.common.collect.Iterables.concat;
+import static java.util.Collections.unmodifiableMap;
 import static org.hypertrace.core.graphql.atttributes.scopes.HypertraceCoreAttributeScopeString.SPAN;
 import static org.hypertrace.core.graphql.span.joiner.SpanJoin.SPANS_KEY;
 
@@ -9,8 +10,10 @@ import graphql.schema.DataFetchingFieldSelectionSet;
 import graphql.schema.SelectedField;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -106,20 +109,18 @@ public class DefaultSpanJoinerBuilder implements SpanJoinerBuilder {
 
     private <T> Map<T, Collection<Span>> buildSourceToSpansMap(
         Map<T, Collection<String>> sourceToSpanIdsMap, Map<String, Span> spanIdToSpanMap) {
-      return sourceToSpanIdsMap.entrySet().stream()
-          .collect(
-              Collectors.toUnmodifiableMap(
-                  Entry::getKey,
-                  entry -> buildSpansCollectionForEachSource(entry.getValue(), spanIdToSpanMap)));
-    }
-
-    private Collection<Span> buildSpansCollectionForEachSource(
-        Collection<String> spanIds, Map<String, Span> spanIdToSpanMap) {
-      return spanIds.stream()
-          .filter(spanIdToSpanMap::containsKey)
-          .distinct()
-          .map(spanIdToSpanMap::get)
-          .collect(Collectors.toUnmodifiableList());
+      Map<T, Collection<Span>> sourceToSpansMap = new HashMap<>();
+      for (Entry<T, Collection<String>> entry : sourceToSpanIdsMap.entrySet()) {
+        List<Span> spans = new ArrayList<>();
+        for (String spanId : entry.getValue()) {
+          if (spanIdToSpanMap.containsKey(spanId)) {
+            spans.add(spanIdToSpanMap.get(spanId));
+          }
+        }
+        sourceToSpansMap.put(
+            entry.getKey(), spans.stream().distinct().collect(Collectors.toUnmodifiableList()));
+      }
+      return unmodifiableMap(sourceToSpansMap);
     }
 
     private Map<String, Span> buildSpanIdToSpanMap(SpanResultSet resultSet) {
