@@ -1,4 +1,4 @@
-package org.hypertrace.core.graphql.span.joiner;
+package org.hypertrace.core.graphql.span.joiner.single.span;
 
 import static java.util.Collections.emptyList;
 import static java.util.Map.entry;
@@ -30,7 +30,8 @@ import org.hypertrace.core.graphql.common.schema.results.arguments.order.OrderAr
 import org.hypertrace.core.graphql.context.GraphQlRequestContext;
 import org.hypertrace.core.graphql.log.event.schema.LogEventResultSet;
 import org.hypertrace.core.graphql.span.dao.SpanDao;
-import org.hypertrace.core.graphql.span.joiner.SpanJoiner.SpanIdGetter;
+import org.hypertrace.core.graphql.span.joiner.SourceToSpansProvider;
+import org.hypertrace.core.graphql.span.joiner.single.span.SpanJoiner.SpanIdGetter;
 import org.hypertrace.core.graphql.span.request.SpanRequest;
 import org.hypertrace.core.graphql.span.schema.Span;
 import org.hypertrace.core.graphql.span.schema.SpanResultSet;
@@ -64,10 +65,9 @@ public class SpanJoinerBuilderTest {
   void setup() {
     spanJoinerBuilder =
         new DefaultSpanJoinerBuilder(
-            mockSpanDao,
             mockSelectionFinder,
-            mockResultSetRequestBuilder,
-            mockFilterRequestBuilder);
+            new SourceToSpansProvider(
+                mockSpanDao, mockResultSetRequestBuilder, mockFilterRequestBuilder));
   }
 
   @Test
@@ -79,8 +79,7 @@ public class SpanJoinerBuilderTest {
     Map<TestJoinSource, Span> expected =
         Map.ofEntries(entry(joinSource1, span1), entry(joinSource2, span2));
     List<TestJoinSource> joinSources = List.of(joinSource1, joinSource2);
-    mockRequestedSelectionFields(
-        List.of(mock(SelectedField.class), mock(SelectedField.class)), "pathToSpan");
+    mockRequestedSelectionFields(List.of(mock(SelectedField.class), mock(SelectedField.class)));
     mockRequestBuilding();
     mockResult(List.of(span1, span2));
     SpanJoiner joiner =
@@ -112,10 +111,10 @@ public class SpanJoinerBuilderTest {
         .thenReturn(Single.just(mockResultSetRequest));
   }
 
-  private void mockRequestedSelectionFields(List<SelectedField> selectedFields, String location) {
+  private void mockRequestedSelectionFields(List<SelectedField> selectedFields) {
     when(mockSelectionFinder.findSelections(
             mockSelectionSet,
-            SelectionQuery.builder().selectionPath(List.of(location, "span")).build()))
+            SelectionQuery.builder().selectionPath(List.of("pathToSpan", "span")).build()))
         .thenReturn(selectedFields.stream());
   }
 

@@ -1,4 +1,4 @@
-package org.hypertrace.core.graphql.span.joiner;
+package org.hypertrace.core.graphql.span.joiner.single.span;
 
 import graphql.schema.DataFetchingFieldSelectionSet;
 import io.reactivex.rxjava3.core.Single;
