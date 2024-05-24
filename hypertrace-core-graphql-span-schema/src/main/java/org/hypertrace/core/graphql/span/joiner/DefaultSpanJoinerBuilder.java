@@ -2,18 +2,15 @@ package org.hypertrace.core.graphql.span.joiner;
 
 import static com.google.common.collect.ImmutableList.copyOf;
 import static com.google.common.collect.Iterables.concat;
-import static java.util.Collections.unmodifiableMap;
 import static org.hypertrace.core.graphql.atttributes.scopes.HypertraceCoreAttributeScopeString.SPAN;
-import static org.hypertrace.core.graphql.span.joiner.SpanJoin.SPANS_KEY;
+import static org.hypertrace.core.graphql.span.joiner.SpanJoin.SPAN_KEY;
 
 import graphql.schema.DataFetchingFieldSelectionSet;
 import graphql.schema.SelectedField;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -80,7 +77,7 @@ public class DefaultSpanJoinerBuilder implements SpanJoinerBuilder {
 
   private List<SelectedField> getSelections(
       DataFetchingFieldSelectionSet selectionSet, List<String> pathToSpanJoin) {
-    List<String> fullPath = copyOf(concat(pathToSpanJoin, List.of(SPANS_KEY)));
+    List<String> fullPath = copyOf(concat(pathToSpanJoin, List.of(SPAN_KEY)));
     return selectionFinder
         .findSelections(selectionSet, SelectionQuery.builder().selectionPath(fullPath).build())
         .collect(Collectors.toUnmodifiableList());
@@ -94,33 +91,25 @@ public class DefaultSpanJoinerBuilder implements SpanJoinerBuilder {
     private final List<SelectedField> selectedFields;
 
     @Override
-    public <T> Single<Map<T, Collection<Span>>> joinSpans(
+    public <T> Single<Map<T, Span>> joinSpans(
         Collection<T> joinSources, SpanIdGetter<T> spanIdGetter) {
       return this.buildSourceToIdMap(joinSources, spanIdGetter).flatMap(this::joinSpans);
     }
 
-    private <T> Single<Map<T, Collection<Span>>> joinSpans(
-        Map<T, Collection<String>> sourceToSpanIdsMap) {
-      return this.buildSpanRequest(sourceToSpanIdsMap)
+    private <T> Single<Map<T, Span>> joinSpans(Map<T, String> sourceToSpanIdMap) {
+      return this.buildSpanRequest(sourceToSpanIdMap)
           .flatMap(spanDao::getSpans)
           .map(this::buildSpanIdToSpanMap)
-          .map(spanIdToSpanMap -> buildSourceToSpansMap(sourceToSpanIdsMap, spanIdToSpanMap));
+          .map(spanIdToSpanMap -> buildSourceToSpanMap(sourceToSpanIdMap, spanIdToSpanMap));
     }
 
-    private <T> Map<T, Collection<Span>> buildSourceToSpansMap(
-        Map<T, Collection<String>> sourceToSpanIdsMap, Map<String, Span> spanIdToSpanMap) {
-      Map<T, Collection<Span>> sourceToSpansMap = new HashMap<>();
-      for (Entry<T, Collection<String>> entry : sourceToSpanIdsMap.entrySet()) {
-        List<Span> spans = new ArrayList<>();
-        for (String spanId : entry.getValue()) {
-          if (spanIdToSpanMap.containsKey(spanId)) {
-            spans.add(spanIdToSpanMap.get(spanId));
-          }
-        }
-        sourceToSpansMap.put(
-            entry.getKey(), spans.stream().distinct().collect(Collectors.toUnmodifiableList()));
-      }
-      return unmodifiableMap(sourceToSpansMap);
+    private <T> Map<T, Span> buildSourceToSpanMap(
+        Map<T, String> sourceToSpanIdMap, Map<String, Span> spanIdToSpanMap) {
+      return sourceToSpanIdMap.entrySet().stream()
+          .filter(entry -> spanIdToSpanMap.containsKey(entry.getValue()))
+          .collect(
+              Collectors.toUnmodifiableMap(
+                  Entry::getKey, entry -> spanIdToSpanMap.get(entry.getValue())));
     }
 
     private Map<String, Span> buildSpanIdToSpanMap(SpanResultSet resultSet) {
@@ -128,11 +117,8 @@ public class DefaultSpanJoinerBuilder implements SpanJoinerBuilder {
           .collect(Collectors.toUnmodifiableMap(Identifiable::id, Function.identity()));
     }
 
-    private <T> Single<SpanRequest> buildSpanRequest(Map<T, Collection<String>> sourceToSpanIdMap) {
-      Set<String> spanIds =
-          sourceToSpanIdMap.values().stream()
-              .flatMap(Collection::stream)
-              .collect(Collectors.toUnmodifiableSet());
+    private <T> Single<SpanRequest> buildSpanRequest(Map<T, String> sourceToSpanIdMap) {
+      Collection<String> spanIds = sourceToSpanIdMap.values();
       return buildSpanIdsFilter(spanIds)
           .flatMap(filterArguments -> buildSpanRequest(spanIds.size(), filterArguments));
     }
@@ -158,16 +144,16 @@ public class DefaultSpanJoinerBuilder implements SpanJoinerBuilder {
       return filterRequestBuilder.build(context, SPAN, Set.of(new SpanIdFilter(spanIds)));
     }
 
-    private <T> Single<Map<T, Collection<String>>> buildSourceToIdMap(
+    private <T> Single<Map<T, String>> buildSourceToIdMap(
         Collection<T> joinSources, SpanIdGetter<T> spanIdGetter) {
       return Observable.fromIterable(joinSources)
           .flatMapSingle(source -> this.maybeBuildMapEntry(source, spanIdGetter))
           .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
     }
 
-    private <T> Single<Entry<T, Collection<String>>> maybeBuildMapEntry(
+    private <T> Single<Entry<T, String>> maybeBuildMapEntry(
         T source, SpanIdGetter<T> spanIdGetter) {
-      return spanIdGetter.getSpanIds(source).map(ids -> Map.entry(source, ids));
+      return spanIdGetter.getSpanId(source).map(id -> Map.entry(source, id));
     }
   }
 

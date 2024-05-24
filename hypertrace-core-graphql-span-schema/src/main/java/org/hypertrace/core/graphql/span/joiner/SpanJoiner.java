@@ -12,17 +12,16 @@ public interface SpanJoiner {
   SpanJoiner NO_OP_JOINER =
       new SpanJoiner() {
         @Override
-        public <T> Single<Map<T, Collection<Span>>> joinSpans(
+        public <T> Single<Map<T, Span>> joinSpans(
             Collection<T> joinSources, SpanIdGetter<T> spanIdGetter) {
           return Single.just(Collections.emptyMap());
         }
       };
 
-  <T> Single<Map<T, Collection<Span>>> joinSpans(
-      Collection<T> joinSources, SpanIdGetter<T> spanIdGetter);
+  <T> Single<Map<T, Span>> joinSpans(Collection<T> joinSources, SpanIdGetter<T> spanIdGetter);
 
   @FunctionalInterface
   interface SpanIdGetter<T> {
-    Single<Collection<String>> getSpanIds(T source);
+    Single<String> getSpanId(T source);
   }
 }
