@@ -3,12 +3,11 @@ package org.hypertrace.core.graphql.span.joiner;
 import static com.google.common.collect.ImmutableList.copyOf;
 import static com.google.common.collect.Iterables.concat;
 import static org.hypertrace.core.graphql.atttributes.scopes.HypertraceCoreAttributeScopeString.SPAN;
-import static org.hypertrace.core.graphql.span.joiner.SpanJoin.SPANS_KEY;
+import static org.hypertrace.core.graphql.span.joiner.MultipleSpanJoin.SPANS_KEY;
 import static org.hypertrace.core.graphql.span.joiner.SpanJoin.SPAN_KEY;
 
-import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Multimaps;
 import graphql.schema.DataFetchingFieldSelectionSet;
 import graphql.schema.SelectedField;
 import io.reactivex.rxjava3.core.Observable;
@@ -88,27 +87,25 @@ public class DefaultSpanJoinerBuilder implements SpanJoinerBuilder {
     @Override
     public <T> Single<Map<T, Span>> joinSpan(
         Collection<T> joinSources, SpanIdGetter<T> spanIdGetter) {
-      return this.buildSourceToIdMap(joinSources, spanIdGetter)
-          .flatMap(
-              sourceToSpanIdsMap ->
-                  this.buildSpanRequest(sourceToSpanIdsMap, SPAN_KEY)
-                      .flatMap(spanDao::getSpans)
-                      .map(this::buildSpanIdToSpanMap)
-                      .map(
-                          spanIdToSpanMap ->
-                              this.buildSourceToSpanListMultiMap(
-                                  sourceToSpanIdsMap, spanIdToSpanMap)))
-          .map(Multimaps::asMap)
-          .map(this::reduceMap);
+      Function<T, Single<List<String>>> idsGetter =
+          source -> spanIdGetter.getSpanId(source).map(List::of);
+      return this.joinSpans(joinSources, idsGetter, SPAN_KEY).map(this::reduceMap);
     }
 
     @Override
     public <T> Single<ListMultimap<T, Span>> joinSpans(
         Collection<T> joinSources, MultipleSpanIdGetter<T> multipleSpanIdGetter) {
-      return this.buildSourceToIdsMap(joinSources, multipleSpanIdGetter)
+      return this.joinSpans(joinSources, multipleSpanIdGetter::getSpanIds, SPANS_KEY);
+    }
+
+    private <T> Single<ListMultimap<T, Span>> joinSpans(
+        Collection<T> joinSources,
+        Function<T, Single<List<String>>> idsGetter,
+        String joinSpanKey) {
+      return this.buildSourceToIdsMap(joinSources, idsGetter)
           .flatMap(
               sourceToSpanIdsMap ->
-                  this.buildSpanRequest(sourceToSpanIdsMap, SPANS_KEY)
+                  this.buildSpanRequest(sourceToSpanIdsMap, joinSpanKey)
                       .flatMap(spanDao::getSpans)
                       .map(this::buildSpanIdToSpanMap)
                       .map(
@@ -117,48 +114,29 @@ public class DefaultSpanJoinerBuilder implements SpanJoinerBuilder {
                                   sourceToSpanIdsMap, spanIdToSpanMap)));
     }
 
-    private <T> Map<T, Span> reduceMap(Map<T, List<Span>> multiMap) {
-      return multiMap.entrySet().stream()
-          .filter(entry -> !entry.getValue().isEmpty())
-          .collect(Collectors.toUnmodifiableMap(Entry::getKey, entry -> entry.getValue().get(0)));
+    private <T> Map<T, Span> reduceMap(ListMultimap<T, Span> listMultimap) {
+      return listMultimap.entries().stream()
+          .collect(
+              Collectors.toUnmodifiableMap(
+                  Entry::getKey, Entry::getValue, (first, second) -> first));
     }
 
-    private <T> Single<Map<T, List<String>>> buildSourceToIdMap(
-        Collection<T> joinSources, SpanIdGetter<T> spanIdGetter) {
+    private <T> Single<ImmutableListMultimap<T, String>> buildSourceToIdsMap(
+        Collection<T> joinSources, Function<T, Single<List<String>>> idsGetter) {
       return Observable.fromIterable(joinSources)
-          .flatMapSingle(source -> this.maybeBuildMapEntry(source, spanIdGetter))
-          .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+          .flatMapSingle(source -> idsGetter.apply(source).map(ids -> Map.entry(source, ids)))
+          .collect(
+              ImmutableListMultimap.flatteningToImmutableListMultimap(
+                  Entry::getKey, entry -> entry.getValue().stream()));
     }
 
-    private <T> Single<Map<T, List<String>>> buildSourceToIdsMap(
-        Collection<T> joinSources, MultipleSpanIdGetter<T> multipleSpanIdGetter) {
-      return Observable.fromIterable(joinSources)
-          .flatMapSingle(source -> this.maybeBuildMapEntry(source, multipleSpanIdGetter))
-          .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
-    }
-
-    private <T> Single<Entry<T, List<String>>> maybeBuildMapEntry(
-        T source, SpanIdGetter<T> spanIdGetter) {
-      return spanIdGetter.getSpanId(source).map(List::of).map(ids -> Map.entry(source, ids));
-    }
-
-    private <T> Single<Entry<T, List<String>>> maybeBuildMapEntry(
-        T source, MultipleSpanIdGetter<T> multipleSpanIdGetter) {
-      return multipleSpanIdGetter.getSpanIds(source).map(ids -> Map.entry(source, ids));
-    }
-
-    private <T> ListMultimap<T, Span> buildSourceToSpanListMultiMap(
-        Map<T, List<String>> sourceToSpanIdsMap, Map<String, Span> spanIdToSpanMap) {
-      ListMultimap<T, Span> listMultimap = ArrayListMultimap.create();
-      for (Entry<T, List<String>> entry : sourceToSpanIdsMap.entrySet()) {
-        T source = entry.getKey();
-        for (String spanId : entry.getValue()) {
-          if (spanIdToSpanMap.containsKey(spanId)) {
-            listMultimap.put(source, spanIdToSpanMap.get(spanId));
-          }
-        }
-      }
-      return Multimaps.unmodifiableListMultimap(listMultimap);
+    private <T> ImmutableListMultimap<T, Span> buildSourceToSpanListMultiMap(
+        ListMultimap<T, String> sourceToSpanIdsMultimap, Map<String, Span> spanIdToSpanMap) {
+      return sourceToSpanIdsMultimap.entries().stream()
+          .filter(entry -> spanIdToSpanMap.containsKey(entry.getValue()))
+          .collect(
+              ImmutableListMultimap.toImmutableListMultimap(
+                  Entry::getKey, entry -> spanIdToSpanMap.get(entry.getValue())));
     }
 
     private List<SelectedField> getSelections(String joinSpanKey) {
@@ -174,10 +152,9 @@ public class DefaultSpanJoinerBuilder implements SpanJoinerBuilder {
     }
 
     private <T> Single<SpanRequest> buildSpanRequest(
-        Map<T, List<String>> sourceToSpanIdsMap, String joinSpanKey) {
+        ListMultimap<T, String> sourceToSpanIdsMultimap, String joinSpanKey) {
       Collection<String> spanIds =
-          sourceToSpanIdsMap.values().stream()
-              .flatMap(List::stream)
+          sourceToSpanIdsMultimap.values().stream()
               .distinct()
               .collect(Collectors.toUnmodifiableList());
       List<SelectedField> selectedFields = getSelections(joinSpanKey);
