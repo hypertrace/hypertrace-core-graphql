@@ -3,6 +3,8 @@ package org.hypertrace.core.graphql.span.joiner;
 import static java.util.Collections.emptyList;
 import static java.util.Map.entry;
 import static org.hypertrace.core.graphql.atttributes.scopes.HypertraceCoreAttributeScopeString.SPAN;
+import static org.hypertrace.core.graphql.span.joiner.SpanSource.DOMAIN_EVENT_SPAN_VIEW;
+import static org.hypertrace.core.graphql.span.joiner.SpanSource.SPAN_EVENT_VIEW;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anySet;
@@ -112,7 +114,8 @@ public class SpanJoinerBuilderTest {
                 List.of("pathToSpan"))
             .blockingGet();
     assertEquals(
-        expected, joiner.joinSpan(joinSources, new TestJoinSourceIdGetter()).blockingGet());
+        expected,
+        joiner.joinSpan(joinSources, new TestJoinSourceIdGetter(), SPAN_EVENT_VIEW).blockingGet());
   }
 
   @Test
@@ -155,7 +158,9 @@ public class SpanJoinerBuilderTest {
             .blockingGet();
     assertEquals(
         expected,
-        joiner.joinSpans(joinSources, new TestMultipleJoinSourceIdGetter()).blockingGet());
+        joiner
+            .joinSpans(joinSources, new TestMultipleJoinSourceIdGetter(), DOMAIN_EVENT_SPAN_VIEW)
+            .blockingGet());
   }
 
   private void mockResult(List<Span> spans) {

@@ -16,21 +16,26 @@ public interface SpanJoiner {
       new SpanJoiner() {
         @Override
         public <T> Single<Map<T, Span>> joinSpan(
-            Collection<T> joinSources, SpanIdGetter<T> spanIdGetter) {
+            Collection<T> joinSources, SpanIdGetter<T> spanIdGetter, SpanSource spanSource) {
           return Single.just(Collections.emptyMap());
         }
 
         @Override
         public <T> Single<ListMultimap<T, Span>> joinSpans(
-            Collection<T> joinSources, MultipleSpanIdGetter<T> multipleSpanIdGetter) {
+            Collection<T> joinSources,
+            MultipleSpanIdGetter<T> multipleSpanIdGetter,
+            SpanSource spanSource) {
           return Single.just(ArrayListMultimap.create());
         }
       };
 
-  <T> Single<Map<T, Span>> joinSpan(Collection<T> joinSources, SpanIdGetter<T> spanIdGetter);
+  <T> Single<Map<T, Span>> joinSpan(
+      Collection<T> joinSources, SpanIdGetter<T> spanIdGetter, SpanSource spanSource);
 
   <T> Single<ListMultimap<T, Span>> joinSpans(
-      Collection<T> joinSources, MultipleSpanIdGetter<T> multipleSpanIdGetter);
+      Collection<T> joinSources,
+      MultipleSpanIdGetter<T> multipleSpanIdGetter,
+      SpanSource spanSource);
 
   @FunctionalInterface
   interface SpanIdGetter<T> {

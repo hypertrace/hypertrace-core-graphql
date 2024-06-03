@@ -5,6 +5,7 @@ import static com.google.common.collect.Iterables.concat;
 import static org.hypertrace.core.graphql.atttributes.scopes.HypertraceCoreAttributeScopeString.SPAN;
 import static org.hypertrace.core.graphql.span.joiner.MultipleSpanJoin.SPANS_KEY;
 import static org.hypertrace.core.graphql.span.joiner.SpanJoin.SPAN_KEY;
+import static org.hypertrace.core.graphql.span.joiner.SpanSource.DOMAIN_EVENT_SPAN_VIEW;
 
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
@@ -49,6 +50,7 @@ import org.hypertrace.core.graphql.utils.schema.SelectionQuery;
 public class DefaultSpanJoinerBuilder implements SpanJoinerBuilder {
 
   private static final int ZERO_OFFSET = 0;
+  private static final String IS_ANOMALOUS_KEY = "isAnomalous";
   private final SpanDao spanDao;
   private final GraphQlSelectionFinder selectionFinder;
 
@@ -86,26 +88,29 @@ public class DefaultSpanJoinerBuilder implements SpanJoinerBuilder {
 
     @Override
     public <T> Single<Map<T, Span>> joinSpan(
-        Collection<T> joinSources, SpanIdGetter<T> spanIdGetter) {
+        Collection<T> joinSources, SpanIdGetter<T> spanIdGetter, SpanSource spanSource) {
       Function<T, Single<List<String>>> idsGetter =
           source -> spanIdGetter.getSpanId(source).map(List::of);
-      return this.joinSpans(joinSources, idsGetter, SPAN_KEY).map(this::reduceMap);
+      return this.joinSpans(joinSources, idsGetter, SPAN_KEY, spanSource).map(this::reduceMap);
     }
 
     @Override
     public <T> Single<ListMultimap<T, Span>> joinSpans(
-        Collection<T> joinSources, MultipleSpanIdGetter<T> multipleSpanIdGetter) {
-      return this.joinSpans(joinSources, multipleSpanIdGetter::getSpanIds, SPANS_KEY);
+        Collection<T> joinSources,
+        MultipleSpanIdGetter<T> multipleSpanIdGetter,
+        SpanSource spanSource) {
+      return this.joinSpans(joinSources, multipleSpanIdGetter::getSpanIds, SPANS_KEY, spanSource);
     }
 
     private <T> Single<ListMultimap<T, Span>> joinSpans(
         Collection<T> joinSources,
         Function<T, Single<List<String>>> idsGetter,
-        String joinSpanKey) {
+        String joinSpanKey,
+        SpanSource spanSource) {
       return this.buildSourceToIdsMap(joinSources, idsGetter)
           .flatMap(
               sourceToSpanIdsMap ->
-                  this.buildSpanRequest(sourceToSpanIdsMap, joinSpanKey)
+                  this.buildSpanRequest(sourceToSpanIdsMap, joinSpanKey, spanSource)
                       .flatMap(spanDao::getSpans)
                       .map(this::buildSpanIdToSpanMap)
                       .map(
@@ -152,13 +157,15 @@ public class DefaultSpanJoinerBuilder implements SpanJoinerBuilder {
     }
 
     private <T> Single<SpanRequest> buildSpanRequest(
-        ListMultimap<T, String> sourceToSpanIdsMultimap, String joinSpanKey) {
+        ListMultimap<T, String> sourceToSpanIdsMultimap,
+        String joinSpanKey,
+        SpanSource spanSource) {
       Collection<String> spanIds =
           sourceToSpanIdsMultimap.values().stream()
               .distinct()
               .collect(Collectors.toUnmodifiableList());
       List<SelectedField> selectedFields = getSelections(joinSpanKey);
-      return buildSpanIdsFilter(context, spanIds)
+      return buildSpanFilter(context, spanIds, spanSource)
           .flatMap(
               filterArguments -> buildSpanRequest(spanIds.size(), filterArguments, selectedFields));
     }
@@ -181,8 +188,14 @@ public class DefaultSpanJoinerBuilder implements SpanJoinerBuilder {
           .map(spanEventsRequest -> new SpanJoinRequest(context, spanEventsRequest));
     }
 
-    private Single<List<AttributeAssociation<FilterArgument>>> buildSpanIdsFilter(
-        GraphQlRequestContext context, Collection<String> spanIds) {
+    private Single<List<AttributeAssociation<FilterArgument>>> buildSpanFilter(
+        GraphQlRequestContext context, Collection<String> spanIds, SpanSource spanSource) {
+      if (DOMAIN_EVENT_SPAN_VIEW.equals(spanSource)) {
+        return filterRequestBuilder.build(
+            context,
+            SPAN,
+            Set.of(new DomainEventSpanViewSourceFilter(), new SpanIdFilter(spanIds)));
+      }
       return filterRequestBuilder.build(context, SPAN, Set.of(new SpanIdFilter(spanIds)));
     }
   }
@@ -195,6 +208,18 @@ public class DefaultSpanJoinerBuilder implements SpanJoinerBuilder {
     AttributeExpression keyExpression = null;
     FilterOperatorType operator = FilterOperatorType.IN;
     Collection<String> value;
+    AttributeScope idType = null;
+    String idScope = SPAN;
+  }
+
+  @Value
+  @Accessors(fluent = true)
+  private static class DomainEventSpanViewSourceFilter implements FilterArgument {
+    FilterType type = FilterType.ATTRIBUTE;
+    String key = null;
+    AttributeExpression keyExpression = new AttributeExpression(IS_ANOMALOUS_KEY, null);
+    FilterOperatorType operator = FilterOperatorType.EQUALS;
+    Boolean value = Boolean.TRUE;
     AttributeScope idType = null;
     String idScope = SPAN;
   }
