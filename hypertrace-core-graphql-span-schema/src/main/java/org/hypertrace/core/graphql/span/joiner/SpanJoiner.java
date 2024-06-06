@@ -32,6 +32,16 @@ public interface SpanJoiner {
         }
       };
 
+  default <T> Single<Map<T, Span>> joinSpan(
+      Collection<T> joinSources, SpanIdGetter<T> spanIdGetter) {
+    return joinSpan(joinSources, spanIdGetter, Collections.emptyList());
+  }
+
+  default <T> Single<ListMultimap<T, Span>> joinSpans(
+      Collection<T> joinSources, MultipleSpanIdGetter<T> multipleSpanIdGetter) {
+    return joinSpans(joinSources, multipleSpanIdGetter, Collections.emptyList());
+  }
+
   <T> Single<Map<T, Span>> joinSpan(
       Collection<T> joinSources,
       SpanIdGetter<T> spanIdGetter,
