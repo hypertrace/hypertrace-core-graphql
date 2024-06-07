@@ -16,7 +16,6 @@ com.google.code.findbugs:jsr305:3.0.2=compileClasspath,runtimeClasspath
 com.google.code.gson:gson:2.10.1=runtimeClasspath
 com.google.errorprone:error_prone_annotations:2.20.0=compileClasspath,runtimeClasspath
 com.google.guava:failureaccess:1.0.1=compileClasspath,runtimeClasspath
-com.google.guava:guava-parent:32.1.2-jre=compileClasspath,runtimeClasspath
 com.google.guava:guava:32.1.2-jre=compileClasspath,runtimeClasspath
 com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava=compileClasspath,runtimeClasspath
 com.google.inject:guice:6.0.0=compileClasspath,runtimeClasspath
