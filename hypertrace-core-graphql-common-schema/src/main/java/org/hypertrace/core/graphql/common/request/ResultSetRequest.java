@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import org.hypertrace.core.graphql.common.schema.arguments.TimeRangeArgument;
 import org.hypertrace.core.graphql.common.schema.results.arguments.filter.FilterArgument;
+import org.hypertrace.core.graphql.common.schema.results.arguments.filter.LogicalFilterOperator;
 import org.hypertrace.core.graphql.common.schema.results.arguments.order.OrderArgument;
 
 public interface ResultSetRequest<O extends OrderArgument> extends ContextualRequest {
@@ -23,6 +24,8 @@ public interface ResultSetRequest<O extends OrderArgument> extends ContextualReq
   List<AttributeAssociation<O>> orderArguments();
 
   Collection<AttributeAssociation<FilterArgument>> filterArguments();
+
+  LogicalFilterOperator logicalFilterOperator();
 
   Optional<String> spaceId();
 }

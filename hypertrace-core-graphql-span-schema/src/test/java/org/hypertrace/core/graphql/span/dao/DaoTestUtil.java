@@ -21,6 +21,7 @@ import org.hypertrace.core.graphql.common.schema.attributes.arguments.AttributeE
 import org.hypertrace.core.graphql.common.schema.results.arguments.filter.FilterArgument;
 import org.hypertrace.core.graphql.common.schema.results.arguments.filter.FilterOperatorType;
 import org.hypertrace.core.graphql.common.schema.results.arguments.filter.FilterType;
+import org.hypertrace.core.graphql.common.schema.results.arguments.filter.LogicalFilterOperator;
 import org.hypertrace.core.graphql.common.schema.results.arguments.order.OrderArgument;
 import org.hypertrace.core.graphql.context.GraphQlRequestContext;
 import org.hypertrace.core.graphql.span.request.SpanRequest;
@@ -85,6 +86,7 @@ class DaoTestUtil {
     int limit;
     int offset;
     List<AttributeAssociation<OrderArgument>> orderArguments;
+    LogicalFilterOperator logicalFilterOperator;
     Collection<AttributeAssociation<FilterArgument>> filterArguments;
     Optional<String> spaceId;
   }

@@ -20,6 +20,8 @@ import org.hypertrace.core.graphql.common.schema.arguments.TimeRangeArgument;
 import org.hypertrace.core.graphql.common.schema.attributes.arguments.AttributeExpression;
 import org.hypertrace.core.graphql.common.schema.results.ResultSet;
 import org.hypertrace.core.graphql.common.schema.results.arguments.filter.FilterArgument;
+import org.hypertrace.core.graphql.common.schema.results.arguments.filter.LogicalFilterOperator;
+import org.hypertrace.core.graphql.common.schema.results.arguments.filter.LogicalFilterOperatorArgument;
 import org.hypertrace.core.graphql.common.schema.results.arguments.order.OrderArgument;
 import org.hypertrace.core.graphql.common.schema.results.arguments.page.LimitArgument;
 import org.hypertrace.core.graphql.common.schema.results.arguments.page.OffsetArgument;
@@ -89,6 +91,11 @@ class DefaultResultSetRequestBuilder implements ResultSetRequestBuilder {
             .deserializeObjectList(arguments, orderArgumentClass)
             .orElse(Collections.emptyList());
 
+    LogicalFilterOperator logicalFilterOperator =
+        this.argumentDeserializer
+            .deserializePrimitive(arguments, LogicalFilterOperatorArgument.class)
+            .orElse(LogicalFilterOperator.AND);
+
     List<FilterArgument> requestedFilters =
         this.argumentDeserializer
             .deserializeObjectList(arguments, FilterArgument.class)
@@ -114,6 +121,7 @@ class DefaultResultSetRequestBuilder implements ResultSetRequestBuilder {
                     offset,
                     timeRange,
                     orders,
+                    logicalFilterOperator,
                     filters,
                     this.getAttributeQueryableFields(selectionSet),
                     spaceId))
@@ -128,6 +136,7 @@ class DefaultResultSetRequestBuilder implements ResultSetRequestBuilder {
       int offset,
       TimeRangeArgument timeRange,
       List<AttributeAssociation<O>> orderArguments,
+      LogicalFilterOperator logicalFilterOperator,
       Collection<AttributeAssociation<FilterArgument>> filterArguments,
       Stream<SelectedField> attributeQueryableFields,
       Optional<String> spaceId) {
@@ -145,6 +154,7 @@ class DefaultResultSetRequestBuilder implements ResultSetRequestBuilder {
                 limit,
                 offset,
                 orderArguments,
+                logicalFilterOperator,
                 filterArguments,
                 spaceId));
   }
@@ -184,6 +194,7 @@ class DefaultResultSetRequestBuilder implements ResultSetRequestBuilder {
                 limit,
                 0,
                 List.of(),
+                LogicalFilterOperator.AND,
                 filters,
                 Optional.empty()));
   }
@@ -206,6 +217,7 @@ class DefaultResultSetRequestBuilder implements ResultSetRequestBuilder {
                     originalRequest.limit(),
                     originalRequest.offset(),
                     originalRequest.orderArguments(),
+                    originalRequest.logicalFilterOperator(),
                     mergedFilters,
                     originalRequest.spaceId()));
   }
@@ -251,6 +263,7 @@ class DefaultResultSetRequestBuilder implements ResultSetRequestBuilder {
     int limit;
     int offset;
     List<AttributeAssociation<O>> orderArguments;
+    LogicalFilterOperator logicalFilterOperator;
     Collection<AttributeAssociation<FilterArgument>> filterArguments;
     Optional<String> spaceId;
   }
